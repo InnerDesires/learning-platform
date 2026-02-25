@@ -296,7 +296,7 @@ Before deploying your app, you need to:
 1. Ensure your app builds and serves in production. See [Production](#production) for more details.
 2. You can then deploy Payload as you would any other Node.js or Next.js application either directly on a VPS, DigitalOcean's Apps Platform, via Coolify or more. More guides coming soon.
 
-You can also deploy your app manually, check out the [deployment documentation](https://payloadcms.com/docs/production/deployment) for full details.
+You can also deploy your app manually, check out the [deployment documentation](https://payloadcms.com/docs/production/deployment) for full details. For a production checklist and Docker steps specific to this project, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## Questions
 
