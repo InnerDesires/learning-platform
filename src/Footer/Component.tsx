@@ -3,12 +3,14 @@ import Link from 'next/link'
 import React from 'react'
 
 import type { Footer } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
 
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
-export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
+export async function Footer({ locale }: { locale: SiteLocale }) {
+  const footerData: Footer = await getCachedGlobal('footer', 1, locale)()
 
   const navItems = footerData?.navItems || []
 
@@ -19,17 +21,20 @@ export async function Footer() {
           <Logo />
         </Link>
 
-        <nav className="flex flex-col md:flex-row gap-4">
-          {navItems.map(({ link }, i) => {
-            return (
-              <CMSLink
-                className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                key={i}
-                {...link}
-              />
-            )
-          })}
-        </nav>
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <nav className="flex flex-col md:flex-row gap-4">
+            {navItems.map(({ link }, i) => {
+              return (
+                <CMSLink
+                  className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                  key={i}
+                  {...link}
+                />
+              )
+            })}
+          </nav>
+          <LanguageSwitcher />
+        </div>
       </div>
     </footer>
   )

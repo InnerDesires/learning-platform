@@ -12,27 +12,28 @@ import { linkGroup } from '@/fields/linkGroup'
 export const hero: Field = {
   name: 'hero',
   type: 'group',
+  localized: true,
   fields: [
     {
       name: 'type',
       type: 'select',
       defaultValue: 'lowImpact',
-      label: 'Type',
+      label: 'Тип',
       options: [
         {
-          label: 'None',
+          label: 'Немає',
           value: 'none',
         },
         {
-          label: 'High Impact',
+          label: 'Високий вплив',
           value: 'highImpact',
         },
         {
-          label: 'Medium Impact',
+          label: 'Середній вплив',
           value: 'mediumImpact',
         },
         {
-          label: 'Low Impact',
+          label: 'Низький вплив',
           value: 'lowImpact',
         },
       ],
