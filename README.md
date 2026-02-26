@@ -40,11 +40,21 @@ pnpx create-payload-app my-project -t website
 ### Development
 
 1. First [clone the repo](#clone) if you have not done so already
-1. `cd my-project && cp .env.example .env` to copy the example environment variables
-1. `pnpm install && pnpm dev` to install dependencies and start the dev server
-1. open `http://localhost:3000` to open the app in your browser
+2. `cd my-project && cp .env.example .env` and fill in `DATABASE_URL`, `PAYLOAD_SECRET`, etc.
+3. **Use Blob storage locally:** use a **separate** Blob store for dev so uploads don’t mix with production. In Vercel create two stores (Storage → Blob, both **Public**): e.g. `learning-platform-media-dev` and `learning-platform-media`. For local dev, set the dev store token in `.env.local`:
+   ```bash
+   vercel link
+   vercel env pull .env.local
+   ```
+   Then add or override in `.env.local`: `BLOB_READ_WRITE_TOKEN_DEV=<token for dev store>`. Get the token from Storage → your dev store → Connect to Project (or copy from store settings). Then:
+   ```bash
+   pnpm run generate:importmap
+   ```
+   On Vercel, set only `BLOB_READ_WRITE_TOKEN` to the **production** store token (Production + Preview). The app uses `BLOB_READ_WRITE_TOKEN_DEV` when set (local), otherwise `BLOB_READ_WRITE_TOKEN` (production).
+4. `pnpm install && pnpm dev` to install dependencies and start the dev server
+5. Open `http://localhost:3000` and log in or create your first admin user
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+That's it! Changes made in `./src` will be reflected in your app. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
 
 ## How it works
 
@@ -185,6 +195,10 @@ To spin up this example locally, follow the [Quick Start](#quick-start). Then [S
 Postgres and other SQL-based databases follow a strict schema for managing your data. In comparison to our MongoDB adapter, this means that there's a few extra steps to working with Postgres.
 
 Note that often times when making big schema changes you can run the risk of losing data if you're not manually migrating it.
+
+#### Media (Vercel Blob) in development
+
+Media uses Vercel Blob when a token is set. Use **separate stores** for dev and production: create two Public Blob stores in Vercel (e.g. `myapp-media-dev` and `myapp-media`). Locally set `BLOB_READ_WRITE_TOKEN_DEV` to the dev store token (e.g. in `.env.local`); on Vercel set only `BLOB_READ_WRITE_TOKEN` to the production store token. The plugin uses `BLOB_READ_WRITE_TOKEN_DEV` when set, otherwise `BLOB_READ_WRITE_TOKEN`. Run `pnpm run generate:importmap` after setting either token. See [Quick Start](#development).
 
 #### Local development
 
