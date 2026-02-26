@@ -12,6 +12,7 @@ import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
+import { cyrillicSlugify } from '../../utilities/cyrillicSlugify'
 
 import {
   MetaDescriptionField,
@@ -23,6 +24,7 @@ import {
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
+  labels: { singular: 'Сторінка', plural: 'Сторінки' },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -59,13 +61,15 @@ export const Pages: CollectionConfig<'pages'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
+      label: 'Заголовок',
     },
     {
       type: 'tabs',
       tabs: [
         {
           fields: [hero],
-          label: 'Hero',
+          label: 'Герой',
         },
         {
           fields: [
@@ -74,12 +78,14 @@ export const Pages: CollectionConfig<'pages'> = {
               type: 'blocks',
               blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
               required: true,
+              localized: true,
+              label: 'Макет',
               admin: {
                 initCollapsed: true,
               },
             },
           ],
-          label: 'Content',
+          label: 'Контент',
         },
         {
           name: 'meta',
@@ -113,11 +119,12 @@ export const Pages: CollectionConfig<'pages'> = {
     {
       name: 'publishedAt',
       type: 'date',
+      label: 'Дата публікації',
       admin: {
         position: 'sidebar',
       },
     },
-    slugField(),
+    slugField({ slugify: cyrillicSlugify }),
   ],
   hooks: {
     afterChange: [revalidatePage],

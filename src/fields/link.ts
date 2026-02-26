@@ -6,11 +6,11 @@ export type LinkAppearances = 'default' | 'outline'
 
 export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
   default: {
-    label: 'Default',
+    label: 'За замовчуванням',
     value: 'default',
   },
   outline: {
-    label: 'Outline',
+    label: 'Контур',
     value: 'outline',
   },
 }
@@ -25,6 +25,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
   const linkResult: GroupField = {
     name: 'link',
     type: 'group',
+    label: 'Посилання',
     admin: {
       hideGutter: true,
     },
@@ -35,6 +36,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
           {
             name: 'type',
             type: 'radio',
+            label: 'Тип',
             admin: {
               layout: 'horizontal',
               width: '50%',
@@ -42,11 +44,11 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
             defaultValue: 'reference',
             options: [
               {
-                label: 'Internal link',
+                label: 'Внутрішнє посилання',
                 value: 'reference',
               },
               {
-                label: 'Custom URL',
+                label: 'Довільна URL',
                 value: 'custom',
               },
             ],
@@ -60,7 +62,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
               },
               width: '50%',
             },
-            label: 'Open in new tab',
+            label: 'Відкрити в новій вкладці',
           },
         ],
       },
@@ -74,7 +76,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
-      label: 'Document to link to',
+      label: 'Документ для посилання',
       relationTo: ['pages', 'posts'],
       required: true,
     },
@@ -84,7 +86,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'custom',
       },
-      label: 'Custom URL',
+      label: 'Довільна URL',
       required: true,
     },
   ]
@@ -105,10 +107,11 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
         {
           name: 'label',
           type: 'text',
+          localized: true,
           admin: {
             width: '50%',
           },
-          label: 'Label',
+          label: 'Підпис',
           required: true,
         },
       ],
@@ -127,8 +130,9 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
     linkResult.fields.push({
       name: 'appearance',
       type: 'select',
+      label: 'Зовнішній вигляд',
       admin: {
-        description: 'Choose how the link should be rendered.',
+        description: 'Оберіть як має відображатися посилання.',
       },
       defaultValue: 'default',
       options: appearanceOptionsToUse,

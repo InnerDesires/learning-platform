@@ -1,4 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { uk } from '@payloadcms/translations/languages/uk'
+import { en } from '@payloadcms/translations/languages/en'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -65,6 +67,18 @@ export default buildConfig({
   collections: [Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
+  i18n: {
+    fallbackLanguage: 'uk',
+    supportedLanguages: { uk, en },
+  },
+  localization: {
+    locales: [
+      { label: { uk: 'Українська', en: 'Ukrainian' }, code: 'uk' },
+      { label: { uk: 'Англійська', en: 'English' }, code: 'en' },
+    ],
+    defaultLocale: 'uk',
+    fallback: true,
+  },
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

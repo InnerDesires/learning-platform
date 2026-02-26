@@ -108,7 +108,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('uk' | 'en') | ('uk' | 'en')[];
   globals: {
     header: Header;
     footer: Footer;
@@ -117,7 +117,7 @@ export interface Config {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
-  locale: null;
+  locale: 'uk' | 'en';
   user: User;
   jobs: {
     tasks: {
@@ -189,7 +189,7 @@ export interface Page {
             url?: string | null;
             label: string;
             /**
-             * Choose how the link should be rendered.
+             * Оберіть як має відображатися посилання.
              */
             appearance?: ('default' | 'outline') | null;
           };
@@ -473,7 +473,7 @@ export interface CallToActionBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Оберіть як має відображатися посилання.
            */
           appearance?: ('default' | 'outline') | null;
         };
@@ -523,7 +523,7 @@ export interface ContentBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Оберіть як має відображатися посилання.
            */
           appearance?: ('default' | 'outline') | null;
         };

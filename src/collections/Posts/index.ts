@@ -26,9 +26,11 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+import { cyrillicSlugify } from '../../utilities/cyrillicSlugify'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
+  labels: { singular: 'Публікація', plural: 'Публікації' },
   access: {
     create: authenticated,
     delete: authenticated,
@@ -70,6 +72,8 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
+      label: 'Заголовок',
     },
     {
       type: 'tabs',
@@ -80,10 +84,13 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
+              localized: true,
+              label: 'Головне зображення',
             },
             {
               name: 'content',
               type: 'richText',
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
@@ -100,13 +107,14 @@ export const Posts: CollectionConfig<'posts'> = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: 'Контент',
         },
         {
           fields: [
             {
               name: 'relatedPosts',
               type: 'relationship',
+              label: 'Повʼязані публікації',
               admin: {
                 position: 'sidebar',
               },
@@ -123,6 +131,7 @@ export const Posts: CollectionConfig<'posts'> = {
             {
               name: 'categories',
               type: 'relationship',
+              label: 'Категорії',
               admin: {
                 position: 'sidebar',
               },
@@ -130,7 +139,7 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'categories',
             },
           ],
-          label: 'Meta',
+          label: 'Мета',
         },
         {
           name: 'meta',
@@ -164,6 +173,7 @@ export const Posts: CollectionConfig<'posts'> = {
     {
       name: 'publishedAt',
       type: 'date',
+      label: 'Дата публікації',
       admin: {
         date: {
           pickerAppearance: 'dayAndTime',
@@ -184,6 +194,7 @@ export const Posts: CollectionConfig<'posts'> = {
     {
       name: 'authors',
       type: 'relationship',
+      label: 'Автори',
       admin: {
         position: 'sidebar',
       },
@@ -214,7 +225,7 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    slugField({ slugify: cyrillicSlugify }),
   ],
   hooks: {
     afterChange: [revalidatePost],
