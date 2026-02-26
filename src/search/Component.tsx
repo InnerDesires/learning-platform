@@ -30,7 +30,8 @@ export const Search: React.FC = () => {
           onChange={(event) => {
             setValue(event.target.value)
           }}
-          placeholder="Search"
+          placeholder="What do you want to learn?"
+          className="rounded-full h-12 px-6 text-base bg-card shadow-sm border-border/50 focus:border-primary focus:ring-primary/20"
         />
         <button type="submit" className="sr-only">
           submit

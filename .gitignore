@@ -21,3 +21,4 @@ node_modules/
 /playwright/.cache/
 DEPLOYMENT.md
 .env*.local
+tsconfig.tsbuildinfo
