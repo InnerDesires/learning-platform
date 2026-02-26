@@ -20,3 +20,4 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 DEPLOYMENT.md
+.env*.local
