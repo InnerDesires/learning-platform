@@ -22,3 +22,4 @@ node_modules/
 DEPLOYMENT.md
 .env*.local
 tsconfig.tsbuildinfo
+.cursor/mcp.json
