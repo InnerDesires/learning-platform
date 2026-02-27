@@ -29,6 +29,7 @@ export const LanguageSwitcher: React.FC = () => {
           {i > 0 && <span className="text-muted-foreground text-sm">/</span>}
           <Link
             href={getLocalePath(code)}
+            data-testid={`lang-switch-${code}`}
             className={
               currentLocale === code
                 ? 'text-primary font-semibold text-sm'

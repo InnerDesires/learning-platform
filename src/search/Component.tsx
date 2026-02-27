@@ -32,6 +32,7 @@ export const Search: React.FC = () => {
         </Label>
         <Input
           id="search"
+          data-testid="search-input"
           onChange={(event) => {
             setValue(event.target.value)
           }}

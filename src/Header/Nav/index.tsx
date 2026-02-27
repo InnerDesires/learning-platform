@@ -29,6 +29,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
       <Link
         href={locale === 'en' ? '/en/search' : '/search'}
         className="ml-1 p-2 rounded-full transition-colors hover:bg-primary/10"
+        data-testid="header-search-link"
       >
         <span className="sr-only">{t.searchLabel}</span>
         <SearchIcon className="w-4 h-4 text-foreground" />

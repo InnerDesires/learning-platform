@@ -19,7 +19,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
   return (
     <header className="container relative z-20">
       <div className="py-6 flex justify-between items-center">
-        <Link href={locale === 'en' ? '/en' : '/'} className="flex items-center gap-2">
+        <Link
+          href={locale === 'en' ? '/en' : '/'}
+          className="flex items-center gap-2"
+          data-testid="header-logo-link"
+        >
           <Logo alt={t.logoAlt} loading="eager" priority="high" />
         </Link>
         <HeaderNav data={data} locale={locale} />

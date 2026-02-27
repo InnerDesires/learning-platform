@@ -1,10 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
+import { config as dotenvConfig } from 'dotenv'
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-import 'dotenv/config'
+dotenvConfig({ path: '.env.local' })
+dotenvConfig()
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -19,12 +17,12 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  expect: {
+    timeout: 15 * 1000,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    baseURL: 'http://localhost:3100',
     trace: 'on-first-retry',
   },
   projects: [
@@ -34,8 +32,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm dev',
-    reuseExistingServer: true,
-    url: 'http://localhost:3000',
+    command: 'pnpm build && pnpm start --port 3100',
+    reuseExistingServer: false,
+    timeout: 240 * 1000,
+    url: 'http://localhost:3100',
   },
 })
