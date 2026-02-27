@@ -11,10 +11,23 @@ import { Width } from '../Width'
 export const Textarea: React.FC<
   TextField & {
     errors: Partial<FieldErrorsImpl>
+    requiredLabel?: string
+    requiredMessage?: string
     register: UseFormRegister<FieldValues>
     rows?: number
   }
-> = ({ name, defaultValue, errors, label, register, required, rows = 3, width }) => {
+> = ({
+  name,
+  defaultValue,
+  errors,
+  label,
+  register,
+  required,
+  requiredLabel,
+  requiredMessage,
+  rows = 3,
+  width,
+}) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -22,7 +35,7 @@ export const Textarea: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">{requiredLabel || '(required)'}</span>
           </span>
         )}
       </Label>
@@ -34,7 +47,7 @@ export const Textarea: React.FC<
         {...register(name, { required: required })}
       />
 
-      {errors[name] && <Error name={name} />}
+      {errors[name] && <Error fallbackMessage={requiredMessage} name={name} />}
     </Width>
   )
 }

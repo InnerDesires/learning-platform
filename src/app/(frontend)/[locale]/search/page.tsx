@@ -8,6 +8,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
+import { getFrontendMessages } from '@/utilities/i18n'
 
 type Args = {
   params: Promise<{
@@ -19,6 +20,7 @@ type Args = {
 }
 export default async function Page({ params: paramsPromise, searchParams: searchParamsPromise }: Args) {
   const { locale } = await paramsPromise
+  const t = getFrontendMessages(locale)
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
@@ -69,7 +71,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
       <PageClient />
       <div className="container mb-16">
         <div className="prose max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">{locale === 'uk' ? 'Пошук' : 'Search'}</h1>
+          <h1 className="mb-8 lg:mb-16">{t.searchTitle}</h1>
 
           <div className="max-w-[50rem] mx-auto">
             <Search />
@@ -80,14 +82,16 @@ export default async function Page({ params: paramsPromise, searchParams: search
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs as CardPostData[]} />
       ) : (
-        <div className="container">{locale === 'uk' ? 'Нічого не знайдено.' : 'No results found.'}</div>
+        <div className="container">{t.searchNoResults}</div>
       )}
     </div>
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { locale } = await paramsPromise
+  const t = getFrontendMessages(locale)
   return {
-    title: `Payload Website Template Search`,
+    title: t.metadataSearchTitle,
   }
 }

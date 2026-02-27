@@ -1,13 +1,19 @@
 import type { ButtonProps } from '@/components/ui/button'
 
 import { buttonVariants } from '@/components/ui/button'
+import type { SiteLocale } from '@/utilities/locales'
 import { cn } from '@/utilities/ui'
+import { getFrontendMessages } from '@/utilities/i18n'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import * as React from 'react'
 
-const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
+const Pagination = ({
+  className,
+  locale = 'uk',
+  ...props
+}: React.ComponentProps<'nav'> & { locale?: SiteLocale }) => (
   <nav
-    aria-label="pagination"
+    aria-label={getFrontendMessages(locale).paginationAriaLabel}
     className={cn('mx-auto flex w-full justify-center', className)}
     role="navigation"
     {...props}
@@ -45,39 +51,48 @@ const PaginationLink = ({ className, isActive, size = 'icon', ...props }: Pagina
 
 const PaginationPrevious = ({
   className,
+  locale = 'uk',
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink> & { locale?: SiteLocale }) => (
   <PaginationLink
-    aria-label="Go to previous page"
+    aria-label={getFrontendMessages(locale).paginationPrevAria}
     className={cn('gap-1 pl-2.5', className)}
     size="default"
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
+    <span>{getFrontendMessages(locale).paginationPrev}</span>
   </PaginationLink>
 )
 
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
+const PaginationNext = ({
+  className,
+  locale = 'uk',
+  ...props
+}: React.ComponentProps<typeof PaginationLink> & { locale?: SiteLocale }) => (
   <PaginationLink
-    aria-label="Go to next page"
+    aria-label={getFrontendMessages(locale).paginationNextAria}
     className={cn('gap-1 pr-2.5', className)}
     size="default"
     {...props}
   >
-    <span>Next</span>
+    <span>{getFrontendMessages(locale).paginationNext}</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )
 
-const PaginationEllipsis = ({ className, ...props }: React.ComponentProps<'span'>) => (
+const PaginationEllipsis = ({
+  className,
+  locale = 'uk',
+  ...props
+}: React.ComponentProps<'span'> & { locale?: SiteLocale }) => (
   <span
     aria-hidden
     className={cn('flex h-9 w-9 items-center justify-center', className)}
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
+    <span className="sr-only">{getFrontendMessages(locale).paginationMore}</span>
   </span>
 )
 

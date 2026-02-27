@@ -11,9 +11,11 @@ import { Width } from '../Width'
 export const Email: React.FC<
   EmailField & {
     errors: Partial<FieldErrorsImpl>
+    requiredLabel?: string
+    requiredMessage?: string
     register: UseFormRegister<FieldValues>
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, requiredLabel, requiredMessage, width }) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
@@ -21,7 +23,7 @@ export const Email: React.FC<
 
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">{requiredLabel || '(required)'}</span>
           </span>
         )}
       </Label>
@@ -32,7 +34,7 @@ export const Email: React.FC<
         {...register(name, { pattern: /^\S[^\s@]*@\S+$/, required })}
       />
 
-      {errors[name] && <Error name={name} />}
+      {errors[name] && <Error fallbackMessage={requiredMessage} name={name} />}
     </Width>
   )
 }

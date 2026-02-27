@@ -1,14 +1,18 @@
 import { formatDateTime } from 'src/utilities/formatDateTime'
 import React from 'react'
+import type { SiteLocale } from '@/utilities/locales'
 
 import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
+import { getFrontendMessages } from '@/utilities/i18n'
 
 export const PostHero: React.FC<{
+  locale: SiteLocale
   post: Post
-}> = ({ post }) => {
+}> = ({ locale, post }) => {
+  const t = getFrontendMessages(locale)
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
 
   const hasAuthors =
@@ -27,7 +31,7 @@ export const PostHero: React.FC<{
                     key={index}
                     className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-primary/10 text-primary"
                   >
-                    {categoryTitle || 'Untitled category'}
+                    {categoryTitle || t.untitledCategory}
                   </span>
                 )
               }
