@@ -7,19 +7,15 @@ import React from 'react'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
-import { headers } from 'next/headers'
-import type { SiteLocale } from '@/utilities/locales'
+import { defaultLocale } from '@/utilities/locales'
 
 import './globals.css'
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const headersList = await headers()
-  const locale = (headersList.get('x-locale') as SiteLocale) || 'uk'
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       className={cn(GeistSans.variable, GeistMono.variable)}
-      lang={locale}
+      lang={defaultLocale}
       data-theme="light"
       suppressHydrationWarning
     >

@@ -4,8 +4,8 @@ import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
+import { SetHtmlLang } from '@/components/SetHtmlLang'
 import type { SiteLocale } from '@/utilities/locales'
-import { draftMode } from 'next/headers'
 
 export default async function LocaleLayout({
   children,
@@ -15,13 +15,13 @@ export default async function LocaleLayout({
   params: Promise<{ locale: SiteLocale }>
 }) {
   const { locale } = await params
-  const { isEnabled } = await draftMode()
 
   return (
     <Providers>
+      <SetHtmlLang locale={locale} />
       <AdminBar
         adminBarProps={{
-          preview: isEnabled,
+          preview: false,
         }}
       />
       <Header locale={locale} />
