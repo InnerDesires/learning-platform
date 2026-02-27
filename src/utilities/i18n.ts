@@ -34,6 +34,11 @@ type FrontendMessages = {
   copy: string
   copied: string
   logoAlt: string
+  signIn: string
+  profile: string
+  signOut: string
+  menuOpen: string
+  menuClose: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -71,6 +76,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copy: 'Копіювати',
     copied: 'Скопійовано!',
     logoAlt: 'Логотип Payload',
+    signIn: 'Увійти',
+    profile: 'Профіль',
+    signOut: 'Вийти',
+    menuOpen: 'Відкрити меню',
+    menuClose: 'Закрити меню',
   },
   en: {
     searchTitle: 'Search',
@@ -106,6 +116,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copy: 'Copy',
     copied: 'Copied!',
     logoAlt: 'Payload Logo',
+    signIn: 'Sign in',
+    profile: 'Profile',
+    signOut: 'Sign out',
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
   },
 }
 
