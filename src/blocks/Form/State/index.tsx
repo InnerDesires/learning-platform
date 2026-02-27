@@ -20,15 +20,17 @@ export const State: React.FC<
   StateField & {
     control: Control
     errors: Partial<FieldErrorsImpl>
+    requiredLabel?: string
+    requiredMessage?: string
   }
-> = ({ name, control, errors, label, required, width }) => {
+> = ({ name, control, errors, label, required, requiredLabel, requiredMessage, width }) => {
   return (
     <Width width={width}>
       <Label htmlFor={name}>
         {label}
         {required && (
           <span className="required">
-            * <span className="sr-only">(required)</span>
+            * <span className="sr-only">{requiredLabel || '(required)'}</span>
           </span>
         )}
       </Label>
@@ -58,7 +60,7 @@ export const State: React.FC<
         }}
         rules={{ required }}
       />
-      {errors[name] && <Error name={name} />}
+      {errors[name] && <Error fallbackMessage={requiredMessage} name={name} />}
     </Width>
   )
 }

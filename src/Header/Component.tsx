@@ -8,5 +8,5 @@ import type { SiteLocale } from '@/utilities/locales'
 export async function Header({ locale }: { locale: SiteLocale }) {
   const headerData: Header = await getCachedGlobal('header', 1, locale)()
 
-  return <HeaderClient data={headerData} />
+  return <HeaderClient data={headerData} locale={locale} />
 }

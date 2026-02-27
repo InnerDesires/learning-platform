@@ -1,7 +1,7 @@
 'use client'
 import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
@@ -10,6 +10,7 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { getFrontendMessagesFromPathname } from '@/utilities/i18n'
 
 export type FormBlockType = {
   blockName?: string
@@ -45,6 +46,8 @@ export const FormBlock: React.FC<
   const [hasSubmitted, setHasSubmitted] = useState<boolean>()
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
+  const pathname = usePathname()
+  const t = getFrontendMessagesFromPathname(pathname)
 
   const onSubmit = useCallback(
     (data: FormFieldBlock[]) => {
@@ -82,7 +85,7 @@ export const FormBlock: React.FC<
             setIsLoading(false)
 
             setError({
-              message: res.errors?.[0]?.message || 'Internal Server Error',
+              message: res.errors?.[0]?.message || t.formInternalServerError,
               status: res.status,
             })
 
@@ -103,14 +106,14 @@ export const FormBlock: React.FC<
           console.warn(err)
           setIsLoading(false)
           setError({
-            message: 'Something went wrong.',
+            message: t.formSomethingWrong,
           })
         }
       }
 
       void submitForm()
     },
-    [router, formID, redirect, confirmationType],
+    [router, formID, redirect, confirmationType, t.formInternalServerError, t.formSomethingWrong],
   )
 
   return (
@@ -123,7 +126,7 @@ export const FormBlock: React.FC<
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
           )}
-          {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
+          {isLoading && !hasSubmitted && <p>{t.formLoadingPleaseWait}</p>}
           {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
@@ -142,6 +145,8 @@ export const FormBlock: React.FC<
                             {...formMethods}
                             control={control}
                             errors={errors}
+                            requiredLabel={t.formRequiredLabel}
+                            requiredMessage={t.formFieldRequired}
                             register={register}
                           />
                         </div>

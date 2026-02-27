@@ -8,6 +8,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
+import { getFrontendMessages } from '@/utilities/i18n'
 
 export const revalidate = 600
 
@@ -19,6 +20,7 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
+  const t = getFrontendMessages(locale)
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
@@ -40,32 +42,35 @@ export default async function Page({ params: paramsPromise }: Args) {
       <PageClient />
       <div className="container mb-16">
         <div className="prose max-w-none">
-          <h1>{locale === 'uk' ? 'Публікації' : 'Posts'}</h1>
+          <h1>{t.postsTitle}</h1>
         </div>
       </div>
 
       <div className="container mb-8">
         <PageRange
           collection="posts"
+          locale={locale}
           currentPage={posts.page}
           limit={12}
           totalDocs={posts.totalDocs}
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive locale={locale} posts={posts.docs} />
 
       <div className="container">
         {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
+          <Pagination locale={locale} page={posts.page} totalPages={posts.totalPages} />
         )}
       </div>
     </div>
   )
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { locale } = await paramsPromise
+  const t = getFrontendMessages(locale)
   return {
-    title: `Payload Website Template Posts`,
+    title: t.metadataPostsTitle,
   }
 }

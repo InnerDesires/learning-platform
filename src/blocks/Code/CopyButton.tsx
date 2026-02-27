@@ -2,15 +2,20 @@
 import { Button } from '@/components/ui/button'
 import { CopyIcon } from '@payloadcms/ui/icons/Copy'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
 
 export function CopyButton({ code }: { code: string }) {
-  const [text, setText] = useState('Copy')
+  const pathname = usePathname()
+  const locale = getLocaleFromPathname(pathname)
+  const t = getFrontendMessages(locale)
+  const [text, setText] = useState(t.copy)
 
   function updateCopyStatus() {
-    if (text === 'Copy') {
-      setText(() => 'Copied!')
+    if (text === t.copy) {
+      setText(() => t.copied)
       setTimeout(() => {
-        setText(() => 'Copy')
+        setText(() => t.copy)
       }, 1000)
     }
   }

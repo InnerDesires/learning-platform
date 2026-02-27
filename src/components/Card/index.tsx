@@ -5,8 +5,11 @@ import Link from 'next/link'
 import React, { Fragment } from 'react'
 
 import type { Post } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
 
 import { Media } from '@/components/Media'
+import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
+import { usePathname } from 'next/navigation'
 
 export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
 
@@ -14,12 +17,16 @@ export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
   doc?: CardPostData
+  locale?: SiteLocale
   relationTo?: 'posts'
   showCategories?: boolean
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
-  const { className, doc, relationTo, showCategories, title: titleFromProps } = props
+  const pathname = usePathname()
+  const localeFromPath = getLocaleFromPathname(pathname)
+  const { className, doc, locale, relationTo, showCategories, title: titleFromProps } = props
+  const t = getFrontendMessages(locale || localeFromPath)
 
   const { slug, categories, meta, title } = doc || {}
   const { description, image: metaImage } = meta || {}
@@ -40,7 +47,7 @@ export const Card: React.FC<{
       <div className="relative w-full overflow-hidden">
         {!metaImage && (
           <div className="aspect-video bg-secondary flex items-center justify-center text-muted-foreground text-sm">
-            No image
+            {t.cardNoImage}
           </div>
         )}
         {metaImage && typeof metaImage !== 'string' && (
@@ -60,7 +67,7 @@ export const Card: React.FC<{
               {categories?.map((category, index) => {
                 if (typeof category === 'object') {
                   const { title: titleFromCategory } = category
-                  const categoryTitle = titleFromCategory || 'Untitled category'
+                  const categoryTitle = titleFromCategory || t.untitledCategory
                   return (
                     <span
                       key={index}

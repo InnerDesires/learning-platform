@@ -3,12 +3,15 @@
 import React from 'react'
 
 import type { Header as HeaderType } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
 
 import { CMSLink } from '@/components/Link'
 import Link from 'next/link'
 import { SearchIcon } from 'lucide-react'
+import { getFrontendMessages } from '@/utilities/i18n'
 
-export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ data, locale }) => {
+  const t = getFrontendMessages(locale)
   const navItems = data?.navItems || []
 
   return (
@@ -24,10 +27,10 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         )
       })}
       <Link
-        href="/search"
+        href={locale === 'en' ? '/en/search' : '/search'}
         className="ml-1 p-2 rounded-full transition-colors hover:bg-primary/10"
       >
-        <span className="sr-only">Search</span>
+        <span className="sr-only">{t.searchLabel}</span>
         <SearchIcon className="w-4 h-4 text-foreground" />
       </Link>
     </nav>
