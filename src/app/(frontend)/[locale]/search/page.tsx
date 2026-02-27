@@ -69,9 +69,11 @@ export default async function Page({ params: paramsPromise, searchParams: search
   return (
     <div className="pt-24 pb-24">
       <PageClient />
-      <div className="container mb-16">
+      <div data-testid="search-page-content" className="container mb-16">
         <div className="prose max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">{t.searchTitle}</h1>
+          <h1 data-testid="search-page-title" className="mb-8 lg:mb-16">
+            {t.searchTitle}
+          </h1>
 
           <div className="max-w-[50rem] mx-auto">
             <Search />

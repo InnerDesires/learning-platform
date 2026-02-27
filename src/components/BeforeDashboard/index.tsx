@@ -8,7 +8,7 @@ const baseClass = 'before-dashboard'
 
 const BeforeDashboard: React.FC = () => {
   return (
-    <div className={baseClass}>
+    <div className={baseClass} data-testid="before-dashboard-root">
       <Banner className={`${baseClass}__banner`} type="success">
         <h4>Welcome to your dashboard!</h4>
       </Banner>

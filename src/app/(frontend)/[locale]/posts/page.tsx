@@ -40,9 +40,9 @@ export default async function Page({ params: paramsPromise }: Args) {
   return (
     <div className="pt-24 pb-24">
       <PageClient />
-      <div className="container mb-16">
+      <div data-testid="posts-page-content" className="container mb-16">
         <div className="prose max-w-none">
-          <h1>{t.postsTitle}</h1>
+          <h1 data-testid="posts-page-title">{t.postsTitle}</h1>
         </div>
       </div>
 
