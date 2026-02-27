@@ -5,8 +5,9 @@ import type { PayloadAdminBarProps, PayloadMeUser } from '@payloadcms/admin-bar'
 import { cn } from '@/utilities/ui'
 import { useSelectedLayoutSegments } from 'next/navigation'
 import { PayloadAdminBar } from '@payloadcms/admin-bar'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from '@/lib/auth/client'
 
 import './index.scss'
 
@@ -29,6 +30,8 @@ const collectionLabels = {
   },
 }
 
+type MeUserWithRole = PayloadMeUser & { role?: ('admin' | 'learner')[] | null }
+
 const Title: React.FC = () => <span>Dashboard</span>
 
 export const AdminBar: React.FC<{
@@ -37,13 +40,24 @@ export const AdminBar: React.FC<{
   const { adminBarProps } = props || {}
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
+  const isAdminFromPayload = useRef(false)
   const collection = (
     collectionLabels[segments?.[1] as keyof typeof collectionLabels] ? segments[1] : 'pages'
   ) as keyof typeof collectionLabels
   const router = useRouter()
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (!session?.user) {
+      setShow(false)
+    }
+  }, [session])
 
   const onAuthChange = React.useCallback((user: PayloadMeUser) => {
-    setShow(Boolean(user?.id))
+    const u = user as MeUserWithRole
+    const isAdmin = Boolean(u?.id && u?.role?.includes('admin'))
+    isAdminFromPayload.current = isAdmin
+    setShow(isAdmin)
   }, [])
 
   return (

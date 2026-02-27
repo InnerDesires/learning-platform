@@ -26,7 +26,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
         >
           <Logo alt={t.logoAlt} loading="eager" priority="high" />
         </Link>
-        <HeaderNav data={data} locale={locale} />
+        <div className="relative">
+          <HeaderNav data={data} locale={locale} />
+        </div>
       </div>
     </header>
   )

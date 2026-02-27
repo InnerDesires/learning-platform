@@ -1,18 +1,20 @@
-import { getPayload } from 'payload'
+import { getPayloadAuth } from 'payload-auth/better-auth'
 import config from '../../src/payload.config.js'
+import type { ConstructedBetterAuthPluginOptions } from '../../src/lib/auth/options.js'
 
 export const testUser = {
   email: 'dev@payloadcms.com',
-  password: 'test',
+  password: 'test-password-123',
+  name: 'Test User',
 }
 
-/**
- * Seeds a test user for e2e admin tests.
- */
-export async function seedTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+async function getPayload() {
+  return getPayloadAuth<ConstructedBetterAuthPluginOptions>(config)
+}
 
-  // Delete existing test user if any
+export async function seedTestUser(): Promise<void> {
+  const payload = await getPayload()
+
   await payload.delete({
     collection: 'users',
     where: {
@@ -22,18 +24,31 @@ export async function seedTestUser(): Promise<void> {
     },
   })
 
-  // Create fresh test user
-  await payload.create({
-    collection: 'users',
-    data: testUser,
+  await payload.betterAuth.api.signUpEmail({
+    body: {
+      email: testUser.email,
+      password: testUser.password,
+      name: testUser.name,
+    },
   })
+
+  const users = await payload.find({
+    collection: 'users',
+    where: { email: { equals: testUser.email } },
+    limit: 1,
+  })
+
+  if (users.docs[0]) {
+    await payload.update({
+      collection: 'users',
+      id: users.docs[0].id,
+      data: { role: ['admin'] } as Record<string, unknown>,
+    })
+  }
 }
 
-/**
- * Cleans up test user after tests
- */
 export async function cleanupTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+  const payload = await getPayload()
 
   await payload.delete({
     collection: 'users',

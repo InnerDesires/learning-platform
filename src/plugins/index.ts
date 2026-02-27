@@ -4,12 +4,14 @@ import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { betterAuthPlugin } from 'payload-auth/better-auth'
 import { Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { betterAuthPluginOptions } from '@/lib/auth/options'
 
 import { Page, Post } from '@/payload-types'
 import { Media } from '@/collections/Media'
@@ -33,6 +35,7 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 }
 
 export const plugins: Plugin[] = [
+  betterAuthPlugin(betterAuthPluginOptions),
   ...(vercelBlobPlugin ? [vercelBlobPlugin] : []),
   redirectsPlugin({
     collections: ['pages', 'posts'],

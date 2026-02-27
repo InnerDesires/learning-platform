@@ -1,4 +1,4 @@
-// Any setup scripts you might need go here
+import { config } from 'dotenv'
 
-// Load .env files
-import 'dotenv/config'
+config({ path: '.env.local', override: true })
+config({ path: '.env' })

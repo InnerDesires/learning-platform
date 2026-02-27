@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getSessionCookie } from 'better-auth/cookies'
 
 const defaultLocale = 'uk'
 const locales = ['uk', 'en']
+
+const protectedPrefixes = ['/courses/', '/profile', '/certificates']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -24,6 +27,22 @@ export function middleware(request: NextRequest) {
   if (pathnameLocale === defaultLocale) {
     const newPathname = pathname.replace(`/${defaultLocale}`, '') || '/'
     return NextResponse.redirect(new URL(newPathname, request.url))
+  }
+
+  const cleanPath = pathnameLocale
+    ? pathname.replace(`/${pathnameLocale}`, '') || '/'
+    : pathname
+
+  if (protectedPrefixes.some((p) => cleanPath.startsWith(p))) {
+    const sessionCookie = getSessionCookie(request)
+    if (!sessionCookie) {
+      const locale = pathnameLocale || defaultLocale
+      const loginPath = locale === defaultLocale ? '/login' : `/${locale}/login`
+      const redirectParam = encodeURIComponent(pathname)
+      return NextResponse.redirect(
+        new URL(`${loginPath}?redirect=${redirectParam}`, request.url),
+      )
+    }
   }
 
   if (pathnameLocale) {
