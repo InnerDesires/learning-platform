@@ -1,0 +1,10 @@
+---
+description: Rules for interacting with the local dev server
+alwaysApply: true
+---
+
+# Dev Server
+
+- The dev server runs on `http://localhost:3000`. NEVER start a new instance.
+- If port 3000 is not responding, ask the user to restart the server — do NOT launch `pnpm dev` yourself.
+- NEVER use alternative ports (3001, 3002, etc.). Only access the app on port 3000.

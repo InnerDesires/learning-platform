@@ -3,6 +3,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
+import { mcpPlugin } from '@payloadcms/plugin-mcp'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { betterAuthPlugin } from 'payload-auth/better-auth'
 import { Plugin } from 'payload'
@@ -37,6 +38,47 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 export const plugins: Plugin[] = [
   betterAuthPlugin(betterAuthPluginOptions),
   ...(vercelBlobPlugin ? [vercelBlobPlugin] : []),
+  mcpPlugin({
+    collections: {
+      posts: {
+        enabled: true,
+        description:
+          'Blog posts and articles about learning, education, and related topics. Posts have a title, hero image, rich text content, categories, authors, SEO metadata, and support drafts/publishing. Content is localized in Ukrainian (uk) and English (en).',
+      },
+      pages: {
+        enabled: true,
+        description:
+          'Static pages like the homepage, contact page, etc. Pages have a title, hero section, layout blocks (content, CTA, media, archive, form), and SEO metadata. Content is localized in Ukrainian (uk) and English (en).',
+      },
+      categories: {
+        enabled: true,
+        description:
+          'Categories used to organize and tag posts. Each category has a localized title and a slug. Content is localized in Ukrainian (uk) and English (en).',
+      },
+      media: {
+        enabled: {
+          find: true,
+          create: false,
+          update: true,
+          delete: false,
+        },
+        description:
+          'Media files including images. Each media item has alt text and an optional caption. Used as hero images, post images, and page media.',
+      },
+    },
+    globals: {
+      header: {
+        enabled: true,
+        description:
+          'Site header with navigation items. Contains a navItems array with links (label, type, reference/url). Content is localized in Ukrainian (uk) and English (en).',
+      },
+      footer: {
+        enabled: true,
+        description:
+          'Site footer with navigation items. Contains a navItems array with links (label, type, reference/url). Content is localized in Ukrainian (uk) and English (en).',
+      },
+    },
+  }),
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
