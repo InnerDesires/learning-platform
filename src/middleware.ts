@@ -4,7 +4,8 @@ import { getSessionCookie } from 'better-auth/cookies'
 const defaultLocale = 'uk'
 const locales = ['uk', 'en']
 
-const protectedPrefixes = ['/courses/', '/profile', '/certificates']
+const protectedPrefixes = ['/profile', '/certificates']
+const protectedPatterns = [/^\/courses\/[^/]+\/steps/]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -33,7 +34,11 @@ export function middleware(request: NextRequest) {
     ? pathname.replace(`/${pathnameLocale}`, '') || '/'
     : pathname
 
-  if (protectedPrefixes.some((p) => cleanPath.startsWith(p))) {
+  const isProtected =
+    protectedPrefixes.some((p) => cleanPath.startsWith(p)) ||
+    protectedPatterns.some((p) => p.test(cleanPath))
+
+  if (isProtected) {
     const sessionCookie = getSessionCookie(request)
     if (!sessionCookie) {
       const locale = pathnameLocale || defaultLocale

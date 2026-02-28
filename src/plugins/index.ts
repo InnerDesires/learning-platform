@@ -16,11 +16,12 @@ import { betterAuthPluginOptions } from '@/lib/auth/options'
 
 import { Page, Post } from '@/payload-types'
 import { Media } from '@/collections/Media'
+import { CourseFiles } from '@/collections/CourseFiles'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const vercelBlobPlugin = process.env.BLOB_READ_WRITE_TOKEN
   ? vercelBlobStorage({
-      collections: { [Media.slug]: true },
+      collections: { [Media.slug]: true, [CourseFiles.slug]: true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     })
   : null
