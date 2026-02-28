@@ -19,9 +19,8 @@ export default async function LoginPage({ params, searchParams }: Args) {
     redirect(redirectTo || '/')
   }
 
-  const googleEnabled = Boolean(
-    process.env.GOOGLE_CLIENT_ID && process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
-  )
+  const isProduction = process.env.VERCEL_ENV === 'production' || !process.env.VERCEL
+  const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && isProduction)
 
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
