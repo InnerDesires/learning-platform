@@ -1139,3 +1139,43 @@ For deeper exploration of specific topics, refer to the context files located in
 - GitHub: https://github.com/payloadcms/payload
 - Examples: https://github.com/payloadcms/payload/tree/main/examples
 - Templates: https://github.com/payloadcms/payload/tree/main/templates
+
+## Cursor Cloud specific instructions
+
+### Services
+
+| Service | Required | Notes |
+|---------|----------|-------|
+| PostgreSQL 16 | Yes | Local instance on default port 5432. DB name: `learning_platform_dev`, user: `postgres`, password: `postgres`. |
+| Next.js dev server | Yes | `pnpm dev` (port 3000). Payload admin at `/admin`, frontend at `/uk` or `/en`. |
+
+### Starting PostgreSQL
+
+```bash
+sudo pg_ctlcluster 16 main start
+```
+
+### Environment variables
+
+A `.env` file is already present at the repo root with local-dev defaults. See `.env.example` for the full list.
+
+### Running the dev server
+
+```bash
+pnpm dev
+```
+
+On first run against an empty database, the Payload Postgres adapter (`push: true`) will auto-create all tables. This schema push takes ~15-20 s, so the first request will be slow.
+
+### Lint / TypeScript / Tests
+
+- **Lint**: `pnpm lint` (warnings only, no errors expected)
+- **TypeScript**: `tsc --noEmit`
+- **Integration tests**: `pnpm test:int` — requires PostgreSQL running. The default vitest `hookTimeout` (10 s) may be too short on the first run when the schema push hasn't happened yet; start the dev server once first to push the schema, then tests will pass within the default timeout.
+- **E2E tests**: `pnpm test:e2e` — requires Playwright browsers (`pnpm exec playwright install`) and a running dev server.
+
+### Gotchas
+
+- The Postgres adapter uses `push: true`, so **no migrations are needed** for local dev. Schema changes are applied automatically on server start.
+- Media uploads default to the local `public/media/` directory unless `BLOB_READ_WRITE_TOKEN` / `BLOB_READ_WRITE_TOKEN_DEV` are set.
+- Google OAuth is optional; email/password auth (via Better Auth) works without it.
