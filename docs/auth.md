@@ -75,11 +75,26 @@ Peer dependencies: `payload >= 3.69.0`, `@payloadcms/next >= 3.69.0` (satisfied 
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `BETTER_AUTH_SECRET` | `openssl rand -hex 32` | Signs session cookies |
-| `NEXT_PUBLIC_BETTER_AUTH_URL` | `http://localhost:3000` | Base URL for auth API calls |
+| `NEXT_PUBLIC_BETTER_AUTH_URL` | `http://localhost:3000` | Base URL for auth API calls. **Optional on Vercel** — auto-derived from `VERCEL_PROJECT_PRODUCTION_URL`. Only needed for local dev or custom domain overrides. |
 | `GOOGLE_CLIENT_ID` | `xxx.apps.googleusercontent.com` | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | `GOCSPX-xxx` | Google OAuth client secret |
 
-Google OAuth redirect URI: `{NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth/callback/google`
+### Base URL resolution order
+
+Both the server config (`options.ts`) and the client (`client.ts`) resolve the base URL in the same priority:
+
+1. `NEXT_PUBLIC_BETTER_AUTH_URL` — explicit override (local dev, custom domain)
+2. `VERCEL_PROJECT_PRODUCTION_URL` / `NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL` — Vercel's stable production domain, available on **all** deployments (production + preview)
+3. `VERCEL_URL` / `NEXT_PUBLIC_VERCEL_URL` — per-deployment URL (fallback)
+4. `http://localhost:3000` — local development fallback
+
+On Vercel, `VERCEL_PROJECT_PRODUCTION_URL` is the production domain (e.g. `learning-platform-six-cyan.vercel.app`) and is always set, even on preview deployments. This means auth API calls from preview deployments route to the production domain, which is correct because Better Auth sessions are tied to a single origin and Google OAuth redirect URIs are registered against the production domain.
+
+Google OAuth redirect URI: `https://{production-domain}/api/auth/callback/google`
+
+### Google OAuth on preview deployments
+
+Google OAuth requires pre-registered redirect URIs. Since preview deployment URLs are dynamic and unpredictable, the Google sign-in button is **hidden on preview deployments**. The check uses `VERCEL_ENV === 'production'` — on previews, only email/password login is available. On production and local dev, Google OAuth is shown if `GOOGLE_CLIENT_ID` is set.
 
 ## File structure
 
@@ -352,11 +367,11 @@ If `/admin` redirects to the first-admin setup screen but rejects your email as 
 
 ### Session cookie not set after sign in
 
-Check that `NEXT_PUBLIC_BETTER_AUTH_URL` matches the origin you're accessing the app from. The `trustedOrigins` config must include this URL.
+Check that the resolved base URL matches the origin you're accessing the app from. On Vercel, this is `VERCEL_PROJECT_PRODUCTION_URL`. Locally, set `NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000`. The `trustedOrigins` config must include the URL.
 
 ### Google OAuth callback fails
 
-Verify that the redirect URI in Google Cloud Console matches exactly: `{NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth/callback/google`. The path is case-sensitive and must include the protocol.
+Verify that the redirect URI in Google Cloud Console matches exactly: `https://{production-domain}/api/auth/callback/google`. The path is case-sensitive and must include the protocol.
 
 ### Admin bar stays visible after sign out
 

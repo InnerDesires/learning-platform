@@ -1,29 +1,40 @@
 import type { BetterAuthOptions, PayloadAuthOptions } from 'payload-auth/better-auth'
 import { nextCookies } from 'better-auth/next-js'
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-
-const trustedOrigins = [baseURL]
-if (process.env.VERCEL_URL) {
-  trustedOrigins.push(`https://${process.env.VERCEL_URL}`)
+function resolveBaseURL(): string {
+  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return 'http://localhost:3000'
 }
 
+const baseURL = resolveBaseURL()
+
+const trustedOrigins = [baseURL]
+if (process.env.VERCEL_URL) trustedOrigins.push(`https://${process.env.VERCEL_URL}`)
+if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+  trustedOrigins.push(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
+
+const socialProviders: BetterAuthOptions['socialProviders'] =
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? {
+        google: {
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        },
+      }
+    : undefined
+
 export const betterAuthOptions = {
-  appName: 'learning-platform',
+  appName: 'Залізна Зміна',
   baseURL,
   trustedOrigins,
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
   },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  },
+  ...(socialProviders && { socialProviders }),
   session: {
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,

@@ -9,21 +9,31 @@ interface Props {
 }
 
 export const Logo = (props: Props) => {
-  const { alt, loading: loadingFromProps, priority: priorityFromProps, className } = props
-
-  const loading = loadingFromProps || 'lazy'
-  const priority = priorityFromProps || 'low'
+  const { alt, className } = props
 
   return (
-    <img
-      alt={alt || ''}
-      width={193}
-      height={34}
-      loading={loading}
-      fetchPriority={priority}
-      decoding="async"
-      className={clsx('max-w-[9.375rem] w-full h-[34px] invert', className)}
-      src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-logo-light.svg"
-    />
+    <span
+      role="img"
+      aria-label={alt || 'Залізна Зміна'}
+      className={clsx('inline-flex items-center gap-1.5 text-lg font-bold tracking-tight', className)}
+    >
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 100 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="shrink-0"
+        aria-hidden="true"
+      >
+        <rect width="100" height="100" rx="16" fill="currentColor" />
+        <path
+          d="M28 30h44v8H44v12h24v8H44v12h28v8H28z"
+          fill="var(--theme-bg, white)"
+          className="fill-white dark:fill-black"
+        />
+      </svg>
+      <span className="whitespace-nowrap">Залізна Зміна</span>
+    </span>
   )
 }

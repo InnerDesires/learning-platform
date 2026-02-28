@@ -4,47 +4,15 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { getFrontendMessages } from '@/utilities/i18n'
 import type { SiteLocale } from '@/utilities/locales'
-
-const labels = {
-  uk: {
-    title: 'Реєстрація',
-    name: "Ім'я",
-    email: 'Електронна пошта',
-    password: 'Пароль',
-    submit: 'Зареєструватися',
-    submitting: 'Реєструємо…',
-    or: 'або',
-    google: 'Зареєструватися через Google',
-    hasAccount: 'Вже є акаунт?',
-    login: 'Увійти',
-    errorGeneric: 'Не вдалося зареєструватися. Спробуйте ще раз.',
-    errorEmailTaken: 'Ця електронна пошта вже зайнята.',
-    passwordHint: 'Мінімум 8 символів',
-  },
-  en: {
-    title: 'Register',
-    name: 'Name',
-    email: 'Email',
-    password: 'Password',
-    submit: 'Register',
-    submitting: 'Registering…',
-    or: 'or',
-    google: 'Sign up with Google',
-    hasAccount: 'Already have an account?',
-    login: 'Log in',
-    errorGeneric: 'Could not register. Please try again.',
-    errorEmailTaken: 'This email is already taken.',
-    passwordHint: 'Minimum 8 characters',
-  },
-} as const
 
 export const RegisterForm: React.FC<{
   locale: SiteLocale
   redirectTo?: string
   googleEnabled?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true }) => {
-  const t = labels[locale]
+  const t = getFrontendMessages(locale)
   const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -68,9 +36,9 @@ export const RegisterForm: React.FC<{
 
     if (signUpError) {
       if (signUpError.status === 422) {
-        setError(t.errorEmailTaken)
+        setError(t.registerErrorEmailTaken)
       } else {
-        setError(t.errorGeneric)
+        setError(t.registerErrorGeneric)
       }
       setLoading(false)
     } else {
@@ -92,12 +60,12 @@ export const RegisterForm: React.FC<{
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.title}</h1>
+      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.registerTitle}</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
           <label htmlFor="name" className="mb-1 block text-sm font-medium">
-            {t.name}
+            {t.registerName}
           </label>
           <input
             id="name"
@@ -111,7 +79,7 @@ export const RegisterForm: React.FC<{
 
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium">
-            {t.email}
+            {t.registerEmail}
           </label>
           <input
             id="email"
@@ -126,7 +94,7 @@ export const RegisterForm: React.FC<{
 
         <div>
           <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            {t.password}
+            {t.registerPassword}
           </label>
           <input
             id="password"
@@ -138,7 +106,7 @@ export const RegisterForm: React.FC<{
             onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
-          <p className="mt-1 text-xs text-muted-foreground">{t.passwordHint}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t.registerPasswordHint}</p>
         </div>
 
         {error && (
@@ -150,7 +118,7 @@ export const RegisterForm: React.FC<{
           disabled={loading}
           className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? t.submitting : t.submit}
+          {loading ? t.registerSubmitting : t.registerSubmit}
         </button>
       </form>
 
@@ -158,7 +126,7 @@ export const RegisterForm: React.FC<{
         <>
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-sm text-muted-foreground">{t.or}</span>
+            <span className="text-sm text-muted-foreground">{t.registerOr}</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -185,15 +153,15 @@ export const RegisterForm: React.FC<{
                 fill="#EA4335"
               />
             </svg>
-            {t.google}
+            {t.registerGoogle}
           </button>
         </>
       )}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        {t.hasAccount}{' '}
+        {t.registerHasAccount}{' '}
         <Link href={loginHref} className="font-medium text-primary hover:underline">
-          {t.login}
+          {t.registerLogin}
         </Link>
       </p>
     </div>

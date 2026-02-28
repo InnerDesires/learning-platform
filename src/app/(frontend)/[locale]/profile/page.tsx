@@ -3,6 +3,7 @@ import { LogOut, Mail, Shield, Calendar } from 'lucide-react'
 
 import { getPayload } from '@/lib/payload'
 import { requireSession } from '@/lib/auth/requireSession'
+import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { SignOutButton } from './SignOutButton'
 
@@ -10,33 +11,12 @@ type Args = {
   params: Promise<{ locale: SiteLocale }>
 }
 
-const labels = {
-  uk: {
-    title: 'Профіль',
-    email: 'Електронна пошта',
-    role: 'Роль',
-    joined: 'Дата реєстрації',
-    signOut: 'Вийти з акаунту',
-    roleAdmin: 'Адміністратор',
-    roleLearner: 'Учень',
-  },
-  en: {
-    title: 'Profile',
-    email: 'Email',
-    role: 'Role',
-    joined: 'Joined',
-    signOut: 'Sign out',
-    roleAdmin: 'Admin',
-    roleLearner: 'Learner',
-  },
-} as const
-
 export default async function ProfilePage({ params }: Args) {
   const { locale } = await params
   const profilePath = locale === defaultLocale ? '/profile' : `/${locale}/profile`
   const session = await requireSession(locale, profilePath)
   const user = session.user
-  const t = labels[locale]
+  const t = getFrontendMessages(locale)
 
   const payload = await getPayload()
   const userDoc = await payload.findByID({
@@ -77,7 +57,7 @@ export default async function ProfilePage({ params }: Args) {
         <div className="flex items-center gap-3">
           <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
           <div>
-            <p className="text-xs text-muted-foreground">{t.email}</p>
+            <p className="text-xs text-muted-foreground">{t.profileEmail}</p>
             <p className="text-sm font-medium">{user.email}</p>
           </div>
         </div>
@@ -85,11 +65,11 @@ export default async function ProfilePage({ params }: Args) {
         <div className="flex items-center gap-3">
           <Shield className="h-5 w-5 text-muted-foreground shrink-0" />
           <div>
-            <p className="text-xs text-muted-foreground">{t.role}</p>
+            <p className="text-xs text-muted-foreground">{t.profileRole}</p>
             <p className="text-sm font-medium">
               {(user as { role?: string[] }).role?.includes('admin')
-                ? t.roleAdmin
-                : t.roleLearner}
+                ? t.profileRoleAdmin
+                : t.profileRoleLearner}
             </p>
           </div>
         </div>
@@ -97,7 +77,7 @@ export default async function ProfilePage({ params }: Args) {
         <div className="flex items-center gap-3">
           <Calendar className="h-5 w-5 text-muted-foreground shrink-0" />
           <div>
-            <p className="text-xs text-muted-foreground">{t.joined}</p>
+            <p className="text-xs text-muted-foreground">{t.profileJoined}</p>
             <p className="text-sm font-medium">{joinedDate ?? '—'}</p>
           </div>
         </div>
@@ -106,7 +86,7 @@ export default async function ProfilePage({ params }: Args) {
       <div className="mt-8 flex justify-center">
         <SignOutButton locale={locale}>
           <LogOut className="h-4 w-4 mr-2" />
-          {t.signOut}
+          {t.profileSignOut}
         </SignOutButton>
       </div>
     </div>
@@ -116,7 +96,7 @@ export default async function ProfilePage({ params }: Args) {
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale } = await params
   return {
-    title: labels[locale].title,
+    title: getFrontendMessages(locale).profileTitle,
   }
 }
 

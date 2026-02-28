@@ -4,43 +4,15 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { getFrontendMessages } from '@/utilities/i18n'
 import type { SiteLocale } from '@/utilities/locales'
-
-const labels = {
-  uk: {
-    title: 'Увійти',
-    continueTo: 'Увійдіть, щоб продовжити',
-    email: 'Електронна пошта',
-    password: 'Пароль',
-    submit: 'Увійти',
-    submitting: 'Входимо…',
-    or: 'або',
-    google: 'Увійти через Google',
-    noAccount: 'Немає акаунту?',
-    register: 'Зареєструватися',
-    errorGeneric: 'Не вдалося увійти. Перевірте дані та спробуйте ще раз.',
-  },
-  en: {
-    title: 'Log in',
-    continueTo: 'Log in to continue',
-    email: 'Email',
-    password: 'Password',
-    submit: 'Log in',
-    submitting: 'Logging in…',
-    or: 'or',
-    google: 'Sign in with Google',
-    noAccount: "Don't have an account?",
-    register: 'Register',
-    errorGeneric: 'Could not sign in. Please check your credentials and try again.',
-  },
-} as const
 
 export const LoginForm: React.FC<{
   locale: SiteLocale
   redirectTo?: string
   googleEnabled?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true }) => {
-  const t = labels[locale]
+  const t = getFrontendMessages(locale)
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -61,7 +33,7 @@ export const LoginForm: React.FC<{
     })
 
     if (signInError) {
-      setError(t.errorGeneric)
+      setError(t.loginErrorGeneric)
       setLoading(false)
     } else {
       router.push(callbackURL)
@@ -83,13 +55,13 @@ export const LoginForm: React.FC<{
   return (
     <div className="mx-auto w-full max-w-md">
       <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">
-        {redirectTo ? t.continueTo : t.title}
+        {redirectTo ? t.loginContinueTo : t.loginTitle}
       </h1>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
           <label htmlFor="email" className="mb-1 block text-sm font-medium">
-            {t.email}
+            {t.loginEmail}
           </label>
           <input
             id="email"
@@ -104,7 +76,7 @@ export const LoginForm: React.FC<{
 
         <div>
           <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            {t.password}
+            {t.loginPassword}
           </label>
           <input
             id="password"
@@ -126,7 +98,7 @@ export const LoginForm: React.FC<{
           disabled={loading}
           className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? t.submitting : t.submit}
+          {loading ? t.loginSubmitting : t.loginSubmit}
         </button>
       </form>
 
@@ -134,7 +106,7 @@ export const LoginForm: React.FC<{
         <>
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-sm text-muted-foreground">{t.or}</span>
+            <span className="text-sm text-muted-foreground">{t.loginOr}</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -161,15 +133,15 @@ export const LoginForm: React.FC<{
                 fill="#EA4335"
               />
             </svg>
-            {t.google}
+            {t.loginGoogle}
           </button>
         </>
       )}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        {t.noAccount}{' '}
+        {t.loginNoAccount}{' '}
         <Link href={registerHref} className="font-medium text-primary hover:underline">
-          {t.register}
+          {t.loginRegister}
         </Link>
       </p>
     </div>

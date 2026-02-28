@@ -39,6 +39,37 @@ type FrontendMessages = {
   signOut: string
   menuOpen: string
   menuClose: string
+  loginTitle: string
+  loginContinueTo: string
+  loginEmail: string
+  loginPassword: string
+  loginSubmit: string
+  loginSubmitting: string
+  loginOr: string
+  loginGoogle: string
+  loginNoAccount: string
+  loginRegister: string
+  loginErrorGeneric: string
+  registerTitle: string
+  registerName: string
+  registerEmail: string
+  registerPassword: string
+  registerSubmit: string
+  registerSubmitting: string
+  registerOr: string
+  registerGoogle: string
+  registerHasAccount: string
+  registerLogin: string
+  registerErrorGeneric: string
+  registerErrorEmailTaken: string
+  registerPasswordHint: string
+  profileTitle: string
+  profileEmail: string
+  profileRole: string
+  profileJoined: string
+  profileSignOut: string
+  profileRoleAdmin: string
+  profileRoleLearner: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -75,12 +106,43 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formRequiredLabel: "(обов'язково)",
     copy: 'Копіювати',
     copied: 'Скопійовано!',
-    logoAlt: 'Логотип Payload',
+    logoAlt: 'Логотип Залізна Зміна',
     signIn: 'Увійти',
     profile: 'Профіль',
     signOut: 'Вийти',
     menuOpen: 'Відкрити меню',
     menuClose: 'Закрити меню',
+    loginTitle: 'Увійти',
+    loginContinueTo: 'Увійдіть, щоб продовжити',
+    loginEmail: 'Електронна пошта',
+    loginPassword: 'Пароль',
+    loginSubmit: 'Увійти',
+    loginSubmitting: 'Входимо…',
+    loginOr: 'або',
+    loginGoogle: 'Увійти через Google',
+    loginNoAccount: 'Немає акаунту?',
+    loginRegister: 'Зареєструватися',
+    loginErrorGeneric: 'Не вдалося увійти. Перевірте дані та спробуйте ще раз.',
+    registerTitle: 'Реєстрація',
+    registerName: "Ім'я",
+    registerEmail: 'Електронна пошта',
+    registerPassword: 'Пароль',
+    registerSubmit: 'Зареєструватися',
+    registerSubmitting: 'Реєструємо…',
+    registerOr: 'або',
+    registerGoogle: 'Зареєструватися через Google',
+    registerHasAccount: 'Вже є акаунт?',
+    registerLogin: 'Увійти',
+    registerErrorGeneric: 'Не вдалося зареєструватися. Спробуйте ще раз.',
+    registerErrorEmailTaken: 'Ця електронна пошта вже зайнята.',
+    registerPasswordHint: 'Мінімум 8 символів',
+    profileTitle: 'Профіль',
+    profileEmail: 'Електронна пошта',
+    profileRole: 'Роль',
+    profileJoined: 'Дата реєстрації',
+    profileSignOut: 'Вийти з акаунту',
+    profileRoleAdmin: 'Адміністратор',
+    profileRoleLearner: 'Учень',
   },
   en: {
     searchTitle: 'Search',
@@ -115,12 +177,43 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formRequiredLabel: '(required)',
     copy: 'Copy',
     copied: 'Copied!',
-    logoAlt: 'Payload Logo',
+    logoAlt: 'Iron Squad Logo',
     signIn: 'Sign in',
     profile: 'Profile',
     signOut: 'Sign out',
     menuOpen: 'Open menu',
     menuClose: 'Close menu',
+    loginTitle: 'Log in',
+    loginContinueTo: 'Log in to continue',
+    loginEmail: 'Email',
+    loginPassword: 'Password',
+    loginSubmit: 'Log in',
+    loginSubmitting: 'Logging in…',
+    loginOr: 'or',
+    loginGoogle: 'Sign in with Google',
+    loginNoAccount: "Don't have an account?",
+    loginRegister: 'Register',
+    loginErrorGeneric: 'Could not sign in. Please check your credentials and try again.',
+    registerTitle: 'Register',
+    registerName: 'Name',
+    registerEmail: 'Email',
+    registerPassword: 'Password',
+    registerSubmit: 'Register',
+    registerSubmitting: 'Registering…',
+    registerOr: 'or',
+    registerGoogle: 'Sign up with Google',
+    registerHasAccount: 'Already have an account?',
+    registerLogin: 'Log in',
+    registerErrorGeneric: 'Could not register. Please try again.',
+    registerErrorEmailTaken: 'This email is already taken.',
+    registerPasswordHint: 'Minimum 8 characters',
+    profileTitle: 'Profile',
+    profileEmail: 'Email',
+    profileRole: 'Role',
+    profileJoined: 'Joined',
+    profileSignOut: 'Sign out',
+    profileRoleAdmin: 'Admin',
+    profileRoleLearner: 'Learner',
   },
 }
 
