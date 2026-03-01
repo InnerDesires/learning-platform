@@ -35,35 +35,31 @@ export const CompleteStepButton: React.FC<Props> = ({
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  const handleComplete = () => {
-    startTransition(async () => {
-      if (!isCourseCompleted && !isAlreadyCompleted) {
-        await completeStep(enrollmentId, stepBlockId, courseId)
-      }
-
-      if (!isLastStep) {
-        router.push(`/courses/${courseSlug}/steps/${nextStepIndex}`)
-      } else {
-        router.push(`/courses/${courseSlug}`)
-      }
-      router.refresh()
+  const navigateNext = () => {
+    const target = isLastStep
+      ? `/courses/${courseSlug}`
+      : `/courses/${courseSlug}/steps/${nextStepIndex}`
+    startTransition(() => {
+      router.push(target)
     })
   }
 
-  if (isCourseCompleted || isAlreadyCompleted) {
-    if (isLastStep) {
-      return (
-        <Button onClick={() => router.push(`/courses/${courseSlug}`)} variant="outline" size="lg">
-          {completeLabel}
-        </Button>
-      )
+  const handleComplete = () => {
+    if (!isCourseCompleted && !isAlreadyCompleted) {
+      completeStep(enrollmentId, stepBlockId, courseId)
     }
+    navigateNext()
+  }
+
+  if (isCourseCompleted || isAlreadyCompleted) {
     return (
       <Button
-        onClick={() => router.push(`/courses/${courseSlug}/steps/${nextStepIndex}`)}
+        onClick={navigateNext}
+        disabled={isPending}
+        variant={isLastStep ? 'outline' : 'default'}
         size="lg"
       >
-        {nextLabel}
+        {isPending ? '...' : isLastStep ? completeLabel : nextLabel}
       </Button>
     )
   }
