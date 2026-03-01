@@ -26,7 +26,7 @@ export const Courses: CollectionConfig = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100,
+        interval: 10000,
       },
       schedulePublish: true,
     },
