@@ -70,6 +70,33 @@ type FrontendMessages = {
   profileSignOut: string
   profileRoleAdmin: string
   profileRoleLearner: string
+  coursesTitle: string
+  coursesMetaTitle: string
+  coursesAllCategories: string
+  courseSteps: string
+  courseStepsCount: string
+  courseEnroll: string
+  courseStartLearning: string
+  courseContinueLearning: string
+  courseCompleted: string
+  courseOverview: string
+  courseLoginToEnroll: string
+  stepCompleteAndContinue: string
+  stepComplete: string
+  stepPrevious: string
+  stepNext: string
+  stepProgress: string
+  stepOf: string
+  stepRichText: string
+  stepVideo: string
+  stepFile: string
+  stepDownloadFile: string
+  stepOpenFile: string
+  courseBackToCourses: string
+  courseBackToOverview: string
+  courseEnrolledCount: string
+  courseCompletedCount: string
+  courseReviewMaterials: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -143,6 +170,33 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Вийти з акаунту',
     profileRoleAdmin: 'Адміністратор',
     profileRoleLearner: 'Учень',
+    coursesTitle: 'Курси',
+    coursesMetaTitle: 'Курси | Залізна Зміна',
+    coursesAllCategories: 'Усі категорії',
+    courseSteps: 'Кроки',
+    courseStepsCount: 'кроків',
+    courseEnroll: 'Записатися на курс',
+    courseStartLearning: 'Почати навчання',
+    courseContinueLearning: 'Продовжити навчання',
+    courseCompleted: 'Завершено',
+    courseOverview: 'Огляд курсу',
+    courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
+    stepCompleteAndContinue: 'Завершити і продовжити',
+    stepComplete: 'Позначити як завершений',
+    stepPrevious: 'Попередній',
+    stepNext: 'Наступний',
+    stepProgress: 'Прогрес',
+    stepOf: 'з',
+    stepRichText: 'Текст',
+    stepVideo: 'Відео',
+    stepFile: 'Файл',
+    stepDownloadFile: 'Завантажити файл',
+    stepOpenFile: 'Відкрити файл',
+    courseBackToCourses: 'До курсів',
+    courseBackToOverview: 'До огляду курсу',
+    courseEnrolledCount: 'учнів',
+    courseCompletedCount: 'завершили',
+    courseReviewMaterials: 'Переглянути матеріали',
   },
   en: {
     searchTitle: 'Search',
@@ -214,6 +268,33 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Sign out',
     profileRoleAdmin: 'Admin',
     profileRoleLearner: 'Learner',
+    coursesTitle: 'Courses',
+    coursesMetaTitle: 'Courses | Iron Squad',
+    coursesAllCategories: 'All categories',
+    courseSteps: 'Steps',
+    courseStepsCount: 'steps',
+    courseEnroll: 'Enroll in course',
+    courseStartLearning: 'Start learning',
+    courseContinueLearning: 'Continue learning',
+    courseCompleted: 'Completed',
+    courseOverview: 'Course overview',
+    courseLoginToEnroll: 'Log in to enroll in this course',
+    stepCompleteAndContinue: 'Complete & Continue',
+    stepComplete: 'Mark as complete',
+    stepPrevious: 'Previous',
+    stepNext: 'Next',
+    stepProgress: 'Progress',
+    stepOf: 'of',
+    stepRichText: 'Text',
+    stepVideo: 'Video',
+    stepFile: 'File',
+    stepDownloadFile: 'Download file',
+    stepOpenFile: 'Open file',
+    courseBackToCourses: 'Back to courses',
+    courseBackToOverview: 'Back to overview',
+    courseEnrolledCount: 'enrolled',
+    courseCompletedCount: 'completed',
+    courseReviewMaterials: 'Review materials',
   },
 }
 

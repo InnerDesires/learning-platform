@@ -7,6 +7,10 @@ import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
+import { CourseCategories } from './collections/CourseCategories'
+import { CourseFiles } from './collections/CourseFiles'
+import { Courses } from './collections/Courses'
+import { Enrollments } from './collections/Enrollments'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -65,7 +69,17 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    CourseCategories,
+    CourseFiles,
+    Courses,
+    Enrollments,
+  ],
   cors: [
     getServerSideURL(),
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
