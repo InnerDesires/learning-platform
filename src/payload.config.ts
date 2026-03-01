@@ -7,10 +7,12 @@ import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
+import { Comments } from './collections/Comments'
 import { CourseCategories } from './collections/CourseCategories'
 import { CourseFiles } from './collections/CourseFiles'
 import { Courses } from './collections/Courses'
 import { Enrollments } from './collections/Enrollments'
+import { Likes } from './collections/Likes'
 import { QuizAttempts } from './collections/QuizAttempts'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -80,6 +82,8 @@ export default buildConfig({
     CourseFiles,
     Courses,
     Enrollments,
+    Comments,
+    Likes,
     QuizAttempts,
   ],
   cors: [

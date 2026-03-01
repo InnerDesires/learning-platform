@@ -15,6 +15,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -73,6 +74,13 @@ export default async function Post({ params: paramsPromise }: Args) {
               locale={locale}
             />
           )}
+          <div className="max-w-[48rem] mx-auto">
+            <InteractionSection
+              targetCollection="posts"
+              targetId={post.id}
+              locale={locale}
+            />
+          </div>
         </div>
       </div>
     </article>

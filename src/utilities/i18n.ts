@@ -119,6 +119,21 @@ type FrontendMessages = {
   quizSelectAnswer: string
   quizNotAvailable: string
   quizCompleteStepsFirst: string
+  commentsTitle: string
+  commentsEmpty: string
+  commentsPlaceholder: string
+  commentsSubmit: string
+  commentsSubmitting: string
+  commentsLoginToComment: string
+  commentsReply: string
+  commentsReplying: string
+  commentsDelete: string
+  commentsDeleteConfirm: string
+  commentsShowReplies: string
+  commentsHideReplies: string
+  likesCount: string
+  likeLiked: string
+  likeNotLiked: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -241,6 +256,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizSelectAnswer: 'Оберіть відповідь',
     quizNotAvailable: 'Тест недоступний',
     quizCompleteStepsFirst: 'Завершіть усі кроки курсу, щоб отримати доступ до тесту',
+    commentsTitle: 'Коментарі',
+    commentsEmpty: 'Поки що немає коментарів. Будьте першими!',
+    commentsPlaceholder: 'Напишіть коментар…',
+    commentsSubmit: 'Надіслати',
+    commentsSubmitting: 'Надсилаємо…',
+    commentsLoginToComment: 'Увійдіть, щоб залишити коментар',
+    commentsReply: 'Відповісти',
+    commentsReplying: 'Відповідь на',
+    commentsDelete: 'Видалити',
+    commentsDeleteConfirm: 'Ви впевнені, що хочете видалити цей коментар?',
+    commentsShowReplies: 'Показати відповіді',
+    commentsHideReplies: 'Сховати відповіді',
+    likesCount: 'вподобань',
+    likeLiked: 'Вам сподобалось',
+    likeNotLiked: 'Вподобати',
   },
   en: {
     searchTitle: 'Search',
@@ -361,6 +391,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizSelectAnswer: 'Select an answer',
     quizNotAvailable: 'Quiz not available',
     quizCompleteStepsFirst: 'Complete all course steps to access the quiz',
+    commentsTitle: 'Comments',
+    commentsEmpty: 'No comments yet. Be the first!',
+    commentsPlaceholder: 'Write a comment…',
+    commentsSubmit: 'Submit',
+    commentsSubmitting: 'Submitting…',
+    commentsLoginToComment: 'Log in to leave a comment',
+    commentsReply: 'Reply',
+    commentsReplying: 'Replying to',
+    commentsDelete: 'Delete',
+    commentsDeleteConfirm: 'Are you sure you want to delete this comment?',
+    commentsShowReplies: 'Show replies',
+    commentsHideReplies: 'Hide replies',
+    likesCount: 'likes',
+    likeLiked: 'Liked',
+    likeNotLiked: 'Like',
   },
 }
 

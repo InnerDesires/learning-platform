@@ -11,6 +11,7 @@ import { CourseProgressAndSteps } from '@/components/Courses/CourseProgressAndSt
 import { ActionButtonSkeleton } from '@/components/Courses/ActionButtonSkeleton'
 import { StepsList } from '@/components/Courses/StepsList'
 import type { Course, Media as MediaType } from '@/payload-types'
+import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -167,6 +168,12 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             }}
           />
         </Suspense>
+
+        <InteractionSection
+          targetCollection="courses"
+          targetId={course.id}
+          locale={locale}
+        />
       </div>
     </div>
   )
