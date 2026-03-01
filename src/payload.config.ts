@@ -69,8 +69,21 @@ export default buildConfig({
     },
     push: true,
   }),
-  collections: [Pages, Posts, Media, Categories, Users, CourseCategories, Courses, CourseFiles, Enrollments],
-  cors: [getServerSideURL()].filter(Boolean),
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+    CourseCategories,
+    CourseFiles,
+    Courses,
+    Enrollments,
+  ],
+  cors: [
+    getServerSideURL(),
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  ].filter(Boolean),
   globals: [Header, Footer],
   i18n: {
     fallbackLanguage: 'uk',
