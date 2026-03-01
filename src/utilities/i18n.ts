@@ -94,6 +94,9 @@ type FrontendMessages = {
   stepOpenFile: string
   courseBackToCourses: string
   courseBackToOverview: string
+  courseEnrolledCount: string
+  courseCompletedCount: string
+  courseReviewMaterials: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -191,6 +194,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepOpenFile: 'Відкрити файл',
     courseBackToCourses: 'До курсів',
     courseBackToOverview: 'До огляду курсу',
+    courseEnrolledCount: 'учнів',
+    courseCompletedCount: 'завершили',
+    courseReviewMaterials: 'Переглянути матеріали',
   },
   en: {
     searchTitle: 'Search',
@@ -286,6 +292,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepOpenFile: 'Open file',
     courseBackToCourses: 'Back to courses',
     courseBackToOverview: 'Back to overview',
+    courseEnrolledCount: 'enrolled',
+    courseCompletedCount: 'completed',
+    courseReviewMaterials: 'Review materials',
   },
 }
 

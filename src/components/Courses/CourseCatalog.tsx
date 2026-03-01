@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { CourseCard, type CourseCardData } from './CourseCard'
+import { CourseCard, type CourseCardData, type CourseStats } from './CourseCard'
 import { CategoryFilter } from './CategoryFilter'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
@@ -15,10 +15,11 @@ type Props = {
   courses: CourseCardData[]
   categories: Category[]
   completedCourseIds: number[]
+  courseStats: Record<number, CourseStats>
   locale: SiteLocale
 }
 
-export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, locale }) => {
+export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, courseStats, locale }) => {
   const t = getFrontendMessages(locale)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
@@ -33,7 +34,7 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
   return (
     <div>
       {categories.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-6">
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
@@ -42,13 +43,14 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
           />
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {filteredCourses.map((course, index) => (
           <CourseCard
             key={course.slug || index}
             course={course}
             locale={locale}
             isCompleted={completedCourseIds.includes(course.id)}
+            stats={courseStats[course.id]}
             className="h-full"
           />
         ))}

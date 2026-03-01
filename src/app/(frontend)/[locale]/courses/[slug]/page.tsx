@@ -8,27 +8,14 @@ import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getSession } from '@/lib/auth/getSession'
 import { getEnrollment } from '../actions'
-import { Media } from '@/components/Media'
 import { EnrollButton } from '@/components/Courses/EnrollButton'
 import { ProgressBar } from '@/components/Courses/ProgressBar'
+import { StepsList } from '@/components/Courses/StepsList'
 import { Button } from '@/components/ui/button'
-import type { Course } from '@/payload-types'
+import type { Course, Media as MediaType } from '@/payload-types'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
-}
-
-function getStepIcon(blockType: string) {
-  switch (blockType) {
-    case 'richTextStep':
-      return '📄'
-    case 'youtubeVideoStep':
-      return '▶️'
-    case 'fileStep':
-      return '📎'
-    default:
-      return '•'
-  }
 }
 
 export default async function CourseOverviewPage({ params: paramsPromise }: Args) {
@@ -51,6 +38,17 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
   if (!course) notFound()
 
   const steps = course.steps ?? []
+
+  const enrollmentStats = await payload.find({
+    collection: 'enrollments',
+    where: { course: { equals: course.id } },
+    limit: 10000,
+    depth: 0,
+    select: { status: true },
+  })
+  const enrolledCount = enrollmentStats.totalDocs
+  const completedCount = enrollmentStats.docs.filter((e) => e.status === 'completed').length
+
   let session: Awaited<ReturnType<typeof getSession>> = null
   let enrollment: Awaited<ReturnType<typeof getEnrollment>> = null
 
@@ -60,13 +58,13 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
       enrollment = await getEnrollment(course.id)
     }
   } catch {
-    // Anonymous user
+    // anonymous
   }
 
   const completedSteps: string[] = Array.isArray(enrollment?.completedSteps)
     ? (enrollment.completedSteps as string[])
     : []
-  const completedCount = completedSteps.length
+  const completedStepCount = completedSteps.length
   const isEnrolled = !!enrollment
   const isCompleted = enrollment?.status === 'completed'
   const isLoggedIn = !!session?.user
@@ -74,93 +72,133 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
   const firstIncompleteIndex = steps.findIndex((step) => !completedSteps.includes(step.id ?? ''))
   const continueStepIndex = firstIncompleteIndex >= 0 ? firstIncompleteIndex + 1 : 1
 
-  return (
-    <div className="pt-24 pb-24">
-      <div className="container max-w-4xl">
-        <Link href="/courses" className="text-sm text-muted-foreground hover:text-primary transition-colors mb-6 inline-flex items-center gap-1">
-          ← {t.courseBackToCourses}
-        </Link>
+  const heroImage = course.heroImage && typeof course.heroImage === 'object'
+    ? course.heroImage as MediaType
+    : null
+  const heroUrl = heroImage?.sizes?.large?.url || heroImage?.sizes?.xlarge?.url || heroImage?.url
 
-        {course.heroImage && typeof course.heroImage === 'object' && (
-          <div className="rounded-2xl overflow-hidden mb-8 mt-4">
-            <Media resource={course.heroImage} />
+  return (
+    <div className="pb-16">
+      {/* Hero section with background image */}
+      <div className="relative overflow-hidden">
+        {heroUrl ? (
+          <>
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${heroUrl})` }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/90 to-background" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-background" />
+        )}
+        <div className="relative container max-w-5xl pt-20 pb-10">
+          <Link
+            href="/courses"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 mb-6"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            {t.courseBackToCourses}
+          </Link>
+
+          <div className="flex flex-col lg:flex-row lg:items-start gap-8">
+            <div className="flex-1 min-w-0">
+              {isCompleted && (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-500 text-white mb-3">
+                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  {t.courseCompleted}
+                </span>
+              )}
+              <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{course.title}</h1>
+              {course.description && (
+                <p className="mt-3 text-lg text-muted-foreground max-w-2xl">{course.description}</p>
+              )}
+
+              <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <line x1="9" y1="3" x2="9" y2="21" />
+                  </svg>
+                  {steps.length} {t.courseStepsCount}
+                </span>
+                {enrolledCount > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                    </svg>
+                    {enrolledCount} {t.courseEnrolledCount}
+                  </span>
+                )}
+                {completedCount > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                    {completedCount} {t.courseCompletedCount}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-6 flex gap-3 items-center flex-wrap">
+                {!isLoggedIn && (
+                  <Link href="/login">
+                    <Button size="lg">{t.courseLoginToEnroll}</Button>
+                  </Link>
+                )}
+                {isLoggedIn && !isEnrolled && (
+                  <EnrollButton
+                    courseId={course.id}
+                    courseSlug={course.slug}
+                    label={t.courseEnroll}
+                  />
+                )}
+                {isEnrolled && !isCompleted && (
+                  <Link href={`/courses/${course.slug}/steps/${continueStepIndex}`}>
+                    <Button size="lg">{t.courseContinueLearning}</Button>
+                  </Link>
+                )}
+                {isCompleted && (
+                  <Link href={`/courses/${course.slug}/steps/1`}>
+                    <Button size="lg" variant="outline">{t.courseReviewMaterials}</Button>
+                  </Link>
+                )}
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Progress + Steps */}
+      <div className="container max-w-5xl mt-8">
+        {isEnrolled && (
+          <ProgressBar
+            completed={completedStepCount}
+            total={steps.length}
+            label={t.stepProgress}
+            className="mb-8"
+          />
         )}
 
-        <div className="flex flex-col gap-6">
-          <div>
-            {isCompleted && (
-              <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-green-500 text-white mb-3">
-                {t.courseCompleted}
-              </span>
-            )}
-            <h1 className="text-3xl font-bold">{course.title}</h1>
-            {course.description && (
-              <p className="mt-3 text-lg text-muted-foreground">{course.description}</p>
-            )}
-          </div>
-
-          {isEnrolled && (
-            <ProgressBar
-              completed={completedCount}
-              total={steps.length}
-              label={t.stepProgress}
-            />
-          )}
-
-          <div className="flex gap-3 items-center">
-            {!isLoggedIn && (
-              <Link href="/login">
-                <Button size="lg" variant="outline">
-                  {t.courseLoginToEnroll}
-                </Button>
-              </Link>
-            )}
-            {isLoggedIn && !isEnrolled && (
-              <EnrollButton
-                courseId={course.id}
-                courseSlug={course.slug}
-                label={t.courseEnroll}
-              />
-            )}
-            {isEnrolled && !isCompleted && (
-              <Link href={`/courses/${course.slug}/steps/${continueStepIndex}`}>
-                <Button size="lg">{t.courseContinueLearning}</Button>
-              </Link>
-            )}
-            {isCompleted && (
-              <Link href={`/courses/${course.slug}/steps/1`}>
-                <Button size="lg" variant="outline">{t.courseStartLearning}</Button>
-              </Link>
-            )}
-          </div>
-
-          <div className="mt-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 min-w-0">
             <h2 className="text-xl font-semibold mb-4">
               {t.courseSteps} ({steps.length})
             </h2>
-            <div className="space-y-2">
-              {steps.map((step, index) => {
-                const isStepCompleted = completedSteps.includes(step.id ?? '')
-                const stepTitle = 'title' in step ? step.title : `${t.courseSteps} ${index + 1}`
-
-                return (
-                  <div
-                    key={step.id ?? index}
-                    className="flex items-center gap-3 p-3 rounded-lg border bg-card"
-                  >
-                    <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium bg-secondary">
-                      {isStepCompleted ? '✓' : index + 1}
-                    </span>
-                    <span className="mr-1">{getStepIcon(step.blockType)}</span>
-                    <span className="flex-1 text-sm font-medium">{stepTitle}</span>
-                    {isStepCompleted && (
-                      <span className="text-green-500 text-xs font-semibold">{t.courseCompleted}</span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+            <StepsList
+              steps={steps}
+              courseSlug={course.slug}
+              completedSteps={completedSteps}
+              linked={isEnrolled}
+              completedLabel={t.courseCompleted}
+              stepsLabel={t.courseSteps}
+            />
           </div>
         </div>
       </div>

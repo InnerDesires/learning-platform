@@ -6,6 +6,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseCatalog } from '@/components/Courses/CourseCatalog'
 import { getSession } from '@/lib/auth/getSession'
+import type { CourseStats } from '@/components/Courses/CourseCard'
 
 export const revalidate = 600
 
@@ -25,9 +26,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
       depth: 1,
       limit: 100,
       sort: '-createdAt',
-      where: {
-        _status: { equals: 'published' },
-      },
+      where: { _status: { equals: 'published' } },
       select: {
         id: true,
         title: true,
@@ -43,12 +42,29 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
       locale,
       limit: 50,
       sort: 'title',
-      select: {
-        id: true,
-        title: true,
-      },
+      select: { id: true, title: true },
     }),
   ])
+
+  const courseIds = coursesResult.docs.map((c) => c.id)
+  const courseStats: Record<number, CourseStats> = {}
+
+  if (courseIds.length > 0) {
+    const allEnrollments = await payload.find({
+      collection: 'enrollments',
+      where: { course: { in: courseIds } },
+      limit: 10000,
+      depth: 0,
+      select: { course: true, status: true },
+    })
+
+    for (const enrollment of allEnrollments.docs) {
+      const cid = typeof enrollment.course === 'object' ? enrollment.course.id : enrollment.course
+      if (!courseStats[cid]) courseStats[cid] = { enrolledCount: 0, completedCount: 0 }
+      courseStats[cid].enrolledCount++
+      if (enrollment.status === 'completed') courseStats[cid].completedCount++
+    }
+  }
 
   let completedCourseIds: number[] = []
   try {
@@ -70,7 +86,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
       )
     }
   } catch {
-    // Session may fail for anonymous users
+    // anonymous user
   }
 
   const categories = categoriesResult.docs.map((c) => ({
@@ -79,17 +95,16 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
   }))
 
   return (
-    <div className="pt-24 pb-24">
-      <div className="container mb-8">
-        <div className="prose max-w-none">
-          <h1>{t.coursesTitle}</h1>
-        </div>
+    <div className="pt-16 pb-16">
+      <div className="container mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">{t.coursesTitle}</h1>
       </div>
       <div className="container">
         <CourseCatalog
           courses={coursesResult.docs}
           categories={categories}
           completedCourseIds={completedCourseIds}
+          courseStats={courseStats}
           locale={locale}
         />
       </div>
@@ -100,7 +115,5 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale } = await paramsPromise
   const t = getFrontendMessages(locale)
-  return {
-    title: t.coursesMetaTitle,
-  }
+  return { title: t.coursesMetaTitle }
 }
