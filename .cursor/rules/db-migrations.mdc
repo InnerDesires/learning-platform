@@ -1,0 +1,13 @@
+---
+description: Database schema management with push vs migrations
+alwaysApply: true
+---
+
+# Database Schema Management
+
+- `push: true` in the Postgres adapter config only affects the **dev environment**. It auto-syncs the schema on startup via Drizzle push. It never runs in production.
+- **Production** schema changes are applied exclusively through **migrations** (`src/migrations/`).
+- Migrations run automatically on Vercel production after code is merged and deployed.
+- **Never run migrations on the dev server** — schema updates happen automatically via `push: true`.
+- When adding collections, fields, or plugins that change the DB schema, always create a corresponding migration for production.
+- Use `payload migrate:create` to generate migrations, or write them manually matching the existing pattern in `src/migrations/`.
