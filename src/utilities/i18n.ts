@@ -134,6 +134,17 @@ type FrontendMessages = {
   likesCount: string
   likeLiked: string
   likeNotLiked: string
+  certificateDownload: string
+  certificateTitle: string
+  certificatePlatformName: string
+  certificatePresented: string
+  certificateFor: string
+  certificateDateLabel: string
+  certificateCertId: string
+  certificatesPageTitle: string
+  certificatesMetaTitle: string
+  certificateNoCertificates: string
+  certificateCompletedOn: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -271,6 +282,17 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     likesCount: 'вподобань',
     likeLiked: 'Вам сподобалось',
     likeNotLiked: 'Вподобати',
+    certificateDownload: 'Завантажити сертифікат',
+    certificateTitle: 'Сертифікат про завершення',
+    certificatePlatformName: 'Залізна Зміна',
+    certificatePresented: 'Цей сертифікат підтверджує, що',
+    certificateFor: 'успішно завершив(ла) курс',
+    certificateDateLabel: 'Дата завершення',
+    certificateCertId: 'Номер сертифікату',
+    certificatesPageTitle: 'Мої сертифікати',
+    certificatesMetaTitle: 'Мої сертифікати | Залізна Зміна',
+    certificateNoCertificates: 'У вас ще немає сертифікатів. Завершіть курс, щоб отримати сертифікат.',
+    certificateCompletedOn: 'Завершено',
   },
   en: {
     searchTitle: 'Search',
@@ -406,6 +428,17 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     likesCount: 'likes',
     likeLiked: 'Liked',
     likeNotLiked: 'Like',
+    certificateDownload: 'Download Certificate',
+    certificateTitle: 'Certificate of Completion',
+    certificatePlatformName: 'Iron Squad',
+    certificatePresented: 'This certifies that',
+    certificateFor: 'has successfully completed the course',
+    certificateDateLabel: 'Date of Completion',
+    certificateCertId: 'Certificate ID',
+    certificatesPageTitle: 'My Certificates',
+    certificatesMetaTitle: 'My Certificates | Iron Squad',
+    certificateNoCertificates: "You don't have any certificates yet. Complete a course to earn one.",
+    certificateCompletedOn: 'Completed on',
   },
 }
 
