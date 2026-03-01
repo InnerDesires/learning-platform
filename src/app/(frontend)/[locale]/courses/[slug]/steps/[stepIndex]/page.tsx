@@ -24,23 +24,25 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   const { locale, slug, stepIndex: stepIndexStr } = await paramsPromise
   const t = getFrontendMessages(locale)
 
-  const session = await getSession()
+  const payload = await getPayload({ config: configPromise })
+
+  const [session, result] = await Promise.all([
+    getSession(),
+    payload.find({
+      collection: 'courses',
+      locale,
+      depth: 2,
+      where: {
+        slug: { equals: slug },
+        _status: { equals: 'published' },
+      },
+      limit: 1,
+    }),
+  ])
+
   if (!session?.user) {
     redirect('/login')
   }
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'courses',
-    locale,
-    depth: 2,
-    where: {
-      slug: { equals: slug },
-      _status: { equals: 'published' },
-    },
-    limit: 1,
-  })
 
   const course = result.docs[0] as Course | undefined
   if (!course) notFound()

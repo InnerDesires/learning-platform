@@ -1,17 +1,15 @@
 import type { Metadata } from 'next/types'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getSession } from '@/lib/auth/getSession'
-import { getEnrollment } from '../actions'
-import { EnrollButton } from '@/components/Courses/EnrollButton'
-import { ProgressBar } from '@/components/Courses/ProgressBar'
+import { CourseActionBar } from '@/components/Courses/CourseActionBar'
+import { CourseProgressAndSteps } from '@/components/Courses/CourseProgressAndSteps'
+import { ActionButtonSkeleton } from '@/components/Courses/ActionButtonSkeleton'
 import { StepsList } from '@/components/Courses/StepsList'
-import { Button } from '@/components/ui/button'
 import type { Course, Media as MediaType } from '@/payload-types'
 
 type Args = {
@@ -49,29 +47,6 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
   const enrolledCount = enrollmentStats.totalDocs
   const completedCount = enrollmentStats.docs.filter((e) => e.status === 'completed').length
 
-  let session: Awaited<ReturnType<typeof getSession>> = null
-  let enrollment: Awaited<ReturnType<typeof getEnrollment>> = null
-
-  try {
-    session = await getSession()
-    if (session?.user) {
-      enrollment = await getEnrollment(course.id)
-    }
-  } catch {
-    // anonymous
-  }
-
-  const completedSteps: string[] = Array.isArray(enrollment?.completedSteps)
-    ? (enrollment.completedSteps as string[])
-    : []
-  const completedStepCount = completedSteps.length
-  const isEnrolled = !!enrollment
-  const isCompleted = enrollment?.status === 'completed'
-  const isLoggedIn = !!session?.user
-
-  const firstIncompleteIndex = steps.findIndex((step) => !completedSteps.includes(step.id ?? ''))
-  const continueStepIndex = firstIncompleteIndex >= 0 ? firstIncompleteIndex + 1 : 1
-
   const heroImage = course.heroImage && typeof course.heroImage === 'object'
     ? course.heroImage as MediaType
     : null
@@ -79,7 +54,6 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
 
   return (
     <div className="pb-16">
-      {/* Hero section with background image */}
       <div className="relative overflow-hidden">
         {heroUrl ? (
           <>
@@ -105,14 +79,6 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
 
           <div className="flex flex-col lg:flex-row lg:items-start gap-8">
             <div className="flex-1 min-w-0">
-              {isCompleted && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-500 text-white mb-3">
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  {t.courseCompleted}
-                </span>
-              )}
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight">{course.title}</h1>
               {course.description && (
                 <p className="mt-3 text-lg text-muted-foreground max-w-2xl">{course.description}</p>
@@ -146,61 +112,56 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                 )}
               </div>
 
-              <div className="mt-6 flex gap-3 items-center flex-wrap">
-                {!isLoggedIn && (
-                  <Link href="/login">
-                    <Button size="lg">{t.courseLoginToEnroll}</Button>
-                  </Link>
-                )}
-                {isLoggedIn && !isEnrolled && (
-                  <EnrollButton
-                    courseId={course.id}
-                    courseSlug={course.slug}
-                    label={t.courseEnroll}
-                  />
-                )}
-                {isEnrolled && !isCompleted && (
-                  <Link href={`/courses/${course.slug}/steps/${continueStepIndex}`}>
-                    <Button size="lg">{t.courseContinueLearning}</Button>
-                  </Link>
-                )}
-                {isCompleted && (
-                  <Link href={`/courses/${course.slug}/steps/1`}>
-                    <Button size="lg" variant="outline">{t.courseReviewMaterials}</Button>
-                  </Link>
-                )}
-              </div>
+              <Suspense fallback={<ActionButtonSkeleton />}>
+                <CourseActionBar
+                  courseId={course.id}
+                  courseSlug={course.slug}
+                  steps={steps}
+                  labels={{
+                    completed: t.courseCompleted,
+                    loginToEnroll: t.courseLoginToEnroll,
+                    enroll: t.courseEnroll,
+                    continueLearning: t.courseContinueLearning,
+                    reviewMaterials: t.courseReviewMaterials,
+                  }}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Progress + Steps */}
       <div className="container max-w-5xl mt-8">
-        {isEnrolled && (
-          <ProgressBar
-            completed={completedStepCount}
-            total={steps.length}
-            label={t.stepProgress}
-            className="mb-8"
+        <Suspense
+          fallback={
+            <div className="flex flex-col lg:flex-row gap-8">
+              <div className="flex-1 min-w-0">
+                <h2 className="text-xl font-semibold mb-4">
+                  {t.courseSteps} ({steps.length})
+                </h2>
+                <StepsList
+                  steps={steps}
+                  courseSlug={course.slug}
+                  completedSteps={[]}
+                  linked={false}
+                  completedLabel={t.courseCompleted}
+                  stepsLabel={t.courseSteps}
+                />
+              </div>
+            </div>
+          }
+        >
+          <CourseProgressAndSteps
+            courseId={course.id}
+            courseSlug={course.slug}
+            steps={steps}
+            labels={{
+              stepProgress: t.stepProgress,
+              courseCompleted: t.courseCompleted,
+              courseSteps: t.courseSteps,
+            }}
           />
-        )}
-
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-xl font-semibold mb-4">
-              {t.courseSteps} ({steps.length})
-            </h2>
-            <StepsList
-              steps={steps}
-              courseSlug={course.slug}
-              completedSteps={completedSteps}
-              linked={isEnrolled}
-              completedLabel={t.courseCompleted}
-              stepsLabel={t.courseSteps}
-            />
-          </div>
-        </div>
+        </Suspense>
       </div>
     </div>
   )
