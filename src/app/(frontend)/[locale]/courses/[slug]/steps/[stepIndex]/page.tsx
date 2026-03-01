@@ -10,6 +10,7 @@ import { getEnrollment } from '../../../actions'
 import { ProgressBar } from '@/components/Courses/ProgressBar'
 import { CompleteStepButton } from '@/components/Courses/CompleteStepButton'
 import { YouTubeEmbed } from '@/components/Courses/YouTubeEmbed'
+import { FileEmbed } from '@/components/Courses/FileEmbed'
 import { StepsList } from '@/components/Courses/StepsList'
 import { Button } from '@/components/ui/button'
 import RichText from '@/components/RichText'
@@ -120,41 +121,15 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
                     <p className="text-muted-foreground">{step.description}</p>
                   )}
                   {file?.url && (
-                    <div className="border rounded-xl p-5 bg-card">
-                      <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                        <div className="flex-shrink-0 w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
-                          {file.mimeType?.includes('pdf') ? (
-                            <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                              <line x1="8" y1="21" x2="16" y2="21" />
-                              <line x1="12" y1="17" x2="12" y2="21" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate text-sm">
-                            {file.title || file.filename}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {file.mimeType?.includes('pdf') ? 'PDF' : 'Presentation'}
-                            {file.filesize ? ` · ${Math.round(file.filesize / 1024)} KB` : ''}
-                          </p>
-                        </div>
-                        <div className="flex gap-2">
-                          <a href={file.url} target="_blank" rel="noopener noreferrer">
-                            <Button variant="outline" size="sm">{t.stepOpenFile}</Button>
-                          </a>
-                          <a href={file.url} download>
-                            <Button variant="secondary" size="sm">{t.stepDownloadFile}</Button>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
+                    <FileEmbed
+                      url={file.url}
+                      mimeType={file.mimeType}
+                      filename={file.filename}
+                      title={file.title}
+                      filesize={file.filesize}
+                      downloadLabel={t.stepDownloadFile}
+                      openLabel={t.stepOpenFile}
+                    />
                   )}
                 </div>
               )}

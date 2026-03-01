@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { admin } from '../access/admin'
-import { authenticated } from '../access/authenticated'
+import { anyone } from '../access/anyone'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -17,7 +17,7 @@ export const CourseFiles: CollectionConfig = {
   access: {
     create: admin,
     delete: admin,
-    read: authenticated,
+    read: anyone,
     update: admin,
   },
   fields: [
