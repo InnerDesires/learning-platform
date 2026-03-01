@@ -2,6 +2,7 @@
 
 import React, { useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { LoaderCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { completeStep } from '@/app/(frontend)/[locale]/courses/actions'
 
@@ -46,6 +47,13 @@ export const CompleteStepButton: React.FC<Props> = ({
 
   const handleComplete = () => {
     if (!isCourseCompleted && !isAlreadyCompleted) {
+      if (isLastStep) {
+        startTransition(async () => {
+          await completeStep(enrollmentId, stepBlockId, courseId)
+          router.push(`/courses/${courseSlug}`)
+        })
+        return
+      }
       completeStep(enrollmentId, stepBlockId, courseId)
     }
     navigateNext()
@@ -59,14 +67,16 @@ export const CompleteStepButton: React.FC<Props> = ({
         variant={isLastStep ? 'outline' : 'default'}
         size="lg"
       >
-        {isPending ? '...' : isLastStep ? completeLabel : nextLabel}
+        {isPending && <LoaderCircle className="w-4 h-4 animate-spin" />}
+        {isLastStep ? completeLabel : nextLabel}
       </Button>
     )
   }
 
   return (
     <Button onClick={handleComplete} disabled={isPending} size="lg">
-      {isPending ? '...' : isLastStep ? completeLabel : completeAndContinueLabel}
+      {isPending && <LoaderCircle className="w-4 h-4 animate-spin" />}
+      {isLastStep ? completeLabel : completeAndContinueLabel}
     </Button>
   )
 }

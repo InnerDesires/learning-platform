@@ -51,6 +51,7 @@
     "lucide-react": "0.563.0",
     "next": "15.4.11",
     "next-sitemap": "^4.2.3",
+    "nextjs-toploader": "^3.9.17",
     "payload": "3.78.0",
     "payload-auth": "^1.8.4",
     "prism-react-renderer": "^2.3.1",
