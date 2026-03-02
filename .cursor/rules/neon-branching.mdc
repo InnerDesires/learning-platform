@@ -1,0 +1,41 @@
+---
+description: Neon database branching for isolated dev environments
+alwaysApply: true
+---
+
+# Neon Database Branching
+
+When working in Cursor Cloud (or any shared dev environment), you MUST use your own Neon branch to avoid migration conflicts and data collisions with parallel agents.
+
+## At Session Start
+
+1. Authenticate the Neon CLI. Auth precedence (see [Neon CLI auth](https://neon.com/docs/reference/cli-auth)):
+   - **1.** `--api-key` option (if provided)
+   - **2.** `NEON_API_KEY` environment variable (if set)
+   - **3.** `credentials.json` from `pnpm exec neonctl auth` (local)
+   - **4.** Web authentication (interactive; fails in headless/CI)
+   For Cursor Cloud or headless runs use **2**: set `NEON_API_KEY` in `.env`. The shell does not load `.env` by default; when running `neonctl` from a script or agent, ensure `NEON_API_KEY` is in the environment (e.g. run the CLI from Node with `require('dotenv').config()` then `execSync('pnpm exec neonctl ...', { env: process.env })`).
+
+2. Create a branch and get its connection string by running these commands yourself:
+   - `pnpm exec neonctl branches create --name cursor-<random> --parent dev --project-id ancient-cell-80589995 --output json` (use a unique name, e.g. `cursor-$(date +%s)-$RANDOM` or similar)
+   - From the JSON output, take `branch.id`
+   - Run `pnpm exec neonctl connection-string <BRANCH_ID> --pooled --project-id ancient-cell-80589995` and capture the printed connection string
+   - Write it to `.env` as `DATABASE_URL=<connection_string>` (overwrite any existing `DATABASE_URL` line)
+
+3. Start the dev server with `pnpm dev` if it is not already running.
+
+## At Session End
+
+Delete your branch with the Neon CLI:
+
+```bash
+pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
+```
+
+Or delete the branch from the Neon Console (dev-payload project).
+
+## Notes
+
+- The parent branch (`dev`) already has the schema. Your branch is a copy-on-write fork; `push: true` will sync any schema changes on first connect.
+- Never use the shared default `DATABASE_URL` when multiple agents may run in parallel.
+- Production uses a separate Neon project; this rule applies only to dev.

@@ -1146,18 +1146,34 @@ For deeper exploration of specific topics, refer to the context files located in
 
 | Service | Required | Notes |
 |---------|----------|-------|
-| PostgreSQL 16 | Yes | Local instance on default port 5432. DB name: `learning_platform_dev`, user: `postgres`, password: `postgres`. |
+| Neon Postgres (dev-payload) | Yes | Use Neon branching. Each agent session MUST create its own branch to avoid migration conflicts. |
 | Next.js dev server | Yes | `pnpm dev` (port 3000). Payload admin at `/admin`, frontend at `/uk` or `/en`. |
 
-### Starting PostgreSQL
+### Database Branching
 
-```bash
-sudo pg_ctlcluster 16 main start
-```
+Each Cursor Cloud agent session must use an isolated Neon branch. See [.cursor/rules/neon-branching.mdc](.cursor/rules/neon-branching.mdc) for the full workflow.
+
+**Neon CLI authentication** (precedence order):
+
+1. `--api-key` option (if provided)
+2. `NEON_API_KEY` environment variable (if set)
+3. `credentials.json` from `neon auth` (e.g. `pnpm exec neonctl auth`)
+4. Web authentication (interactive; fails in headless/CI)
+
+For Cursor Cloud or headless runs, use **option 2**: set `NEON_API_KEY` in `.env`. The shell does not load `.env` by default, so when running `neonctl` from a script or agent either export `NEON_API_KEY` first or run the CLI from a process that loads `.env` (e.g. Node with `require('dotenv').config()` then `execSync('pnpm exec neonctl ...', { env: process.env })`).
+
+Summary:
+
+1. Set `NEON_API_KEY` in `.env` (from Neon Console → dev-payload → Settings → API keys)
+2. Create branch and get connection string (ensure `NEON_API_KEY` is in the environment when running `neonctl`, e.g. via dotenv as above): `pnpm exec neonctl branches create --name cursor-<unique> --parent dev --project-id ancient-cell-80589995 --output json`, then `pnpm exec neonctl connection-string <BRANCH_ID> --pooled --project-id ancient-cell-80589995`, then write the connection string to `.env` as `DATABASE_URL`
+3. Start the dev server with `pnpm dev`
+4. At session end, delete the branch with `pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995`
+
+The parent `dev` branch already has the schema; your branch is a copy-on-write fork. `push: true` will sync schema changes on first connect.
 
 ### Environment variables
 
-A `.env` file is already present at the repo root with local-dev defaults. See `.env.example` for the full list.
+A `.env` file is already present at the repo root. The default `DATABASE_URL` points to the dev-payload project's `dev` branch. Overwrite it with your branch's connection string before starting the dev server.
 
 ### Running the dev server
 
@@ -1165,7 +1181,7 @@ A `.env` file is already present at the repo root with local-dev defaults. See `
 pnpm dev
 ```
 
-On first run against an empty database, the Payload Postgres adapter (`push: true`) will auto-create all tables. This schema push takes ~15-20 s, so the first request will be slow.
+Start the dev server only after setting up your Neon branch and writing its connection string to `.env`. On first connect, the Payload Postgres adapter (`push: true`) will sync the schema; this can take ~15-20 s.
 
 ### Lint / TypeScript / Tests
 
