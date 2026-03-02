@@ -2,7 +2,7 @@ import { cn } from '@/utilities/ui'
 import React from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 
-import { Card, CardPostData } from '@/components/Card'
+import { Card, CardPostData, CardRelationTo } from '@/components/Card'
 
 export type Props = {
   locale?: SiteLocale
@@ -23,7 +23,7 @@ export const CollectionArchive: React.FC<Props> = (props) => {
                 doc={result}
                 key={index}
                 locale={locale}
-                relationTo="posts"
+                relationTo={(result.collectionType as CardRelationTo) || 'posts'}
                 showCategories
               />
             )

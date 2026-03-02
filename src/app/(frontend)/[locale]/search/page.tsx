@@ -34,6 +34,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
       slug: true,
       categories: true,
       meta: true,
+      collectionType: true,
     },
     pagination: false,
     ...(query
