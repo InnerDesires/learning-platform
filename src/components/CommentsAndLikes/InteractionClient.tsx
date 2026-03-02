@@ -40,7 +40,7 @@ export function InteractionClient({
 }: InteractionClientProps) {
   return (
     <div>
-      <div className="flex items-center gap-4 pt-2 pb-4 border-b border-border">
+      <div className="flex items-center gap-4 pt-4 pb-4 pl-2">
         <LikeButton
           targetCollection={targetCollection}
           targetId={targetId}

@@ -16,6 +16,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
+import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -54,6 +55,9 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
+  const postLikesCounts = await getLikesCountsBatch('posts', [post.id])
+  const likesCount = postLikesCounts[post.id] ?? 0
+
   return (
     <article className="pb-16">
       <PageClient />
@@ -62,7 +66,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <PostHero locale={locale} post={post} />
+      <PostHero locale={locale} post={post} likesCount={likesCount} />
 
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">

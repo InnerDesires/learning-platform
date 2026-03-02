@@ -19,7 +19,7 @@ interface Labels {
 
 interface CommentItemProps {
   comment: CommentWithMeta
-  replies: CommentWithMeta[]
+  repliesByParent: Record<number, CommentWithMeta[]>
   isAuthenticated: boolean
   currentUserId: number | null
   isAdmin: boolean
@@ -65,7 +65,7 @@ function UserAvatar({ name, image }: { name: string; image?: string | null }) {
 
 export function CommentItem({
   comment,
-  replies,
+  repliesByParent,
   isAuthenticated,
   currentUserId,
   isAdmin,
@@ -74,6 +74,7 @@ export function CommentItem({
   onDelete,
   depth = 0,
 }: CommentItemProps) {
+  const replies = repliesByParent[comment.id] ?? []
   const [showReplyForm, setShowReplyForm] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -177,7 +178,7 @@ export function CommentItem({
                 <CommentItem
                   key={reply.id}
                   comment={reply}
-                  replies={[]}
+                  repliesByParent={repliesByParent}
                   isAuthenticated={isAuthenticated}
                   currentUserId={currentUserId}
                   isAdmin={isAdmin}

@@ -61,9 +61,7 @@ export function CommentsSection({
         return [...state, action.comment]
       }
       if (action.type === 'delete') {
-        return state.filter(
-          (c) => c.id !== action.commentId && c.parent !== action.commentId,
-        )
+        return state.filter((c) => c.id !== action.commentId && c.parent !== action.commentId)
       }
       return state
     },
@@ -112,9 +110,7 @@ export function CommentsSection({
         setOptimisticComments({ type: 'delete', commentId })
         const result = await deleteCommentAction(commentId)
         if (result.success) {
-          setComments((prev) =>
-            prev.filter((c) => c.id !== commentId && c.parent !== commentId),
-          )
+          setComments((prev) => prev.filter((c) => c.id !== commentId && c.parent !== commentId))
         }
       })
       return true
@@ -132,7 +128,7 @@ export function CommentsSection({
   }
 
   return (
-    <section className="mt-12">
+    <section className="mt-6">
       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
         {labels.title}
         {optimisticComments.length > 0 && (
@@ -183,7 +179,7 @@ export function CommentsSection({
             <CommentItem
               key={comment.id}
               comment={comment}
-              replies={repliesByParent[comment.id] || []}
+              repliesByParent={repliesByParent}
               isAuthenticated={isAuthenticated}
               currentUserId={currentUserId}
               isAdmin={isAdmin}

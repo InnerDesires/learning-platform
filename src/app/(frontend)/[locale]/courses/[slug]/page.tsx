@@ -12,6 +12,7 @@ import { ActionButtonSkeleton } from '@/components/Courses/ActionButtonSkeleton'
 import { StepsList } from '@/components/Courses/StepsList'
 import type { Course, Media as MediaType } from '@/payload-types'
 import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
+import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -38,19 +39,24 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
 
   const steps = course.steps ?? []
 
-  const enrollmentStats = await payload.find({
-    collection: 'enrollments',
-    where: { course: { equals: course.id } },
-    limit: 10000,
-    depth: 0,
-    select: { status: true },
-  })
+  const [enrollmentStats, courseLikesCounts] = await Promise.all([
+    payload.find({
+      collection: 'enrollments',
+      where: { course: { equals: course.id } },
+      limit: 10000,
+      depth: 0,
+      select: { status: true },
+    }),
+    getLikesCountsBatch('courses', [course.id]),
+  ])
   const enrolledCount = enrollmentStats.totalDocs
   const completedCount = enrollmentStats.docs.filter((e) => e.status === 'completed').length
+  const likesCount = courseLikesCounts[course.id] ?? 0
 
-  const heroImage = course.heroImage && typeof course.heroImage === 'object'
-    ? course.heroImage as MediaType
-    : null
+  const heroImage =
+    course.heroImage && typeof course.heroImage === 'object'
+      ? (course.heroImage as MediaType)
+      : null
   const heroUrl = heroImage?.sizes?.large?.url || heroImage?.sizes?.xlarge?.url || heroImage?.url
 
   return (
@@ -72,7 +78,13 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             href="/courses"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 mb-6"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <polyline points="15 18 9 12 15 6" />
             </svg>
             {t.courseBackToCourses}
@@ -87,7 +99,13 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
 
               <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                     <line x1="9" y1="3" x2="9" y2="21" />
                   </svg>
@@ -95,7 +113,13 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                 </span>
                 {enrolledCount > 0 && (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                       <circle cx="9" cy="7" r="4" />
                     </svg>
@@ -104,7 +128,13 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                 )}
                 {completedCount > 0 && (
                   <span className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                       <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
@@ -169,11 +199,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
           />
         </Suspense>
 
-        <InteractionSection
-          targetCollection="courses"
-          targetId={course.id}
-          locale={locale}
-        />
+        <InteractionSection targetCollection="courses" targetId={course.id} locale={locale} />
       </div>
     </div>
   )
