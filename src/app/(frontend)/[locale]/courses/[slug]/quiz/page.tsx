@@ -90,22 +90,6 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
           </p>
         </div>
 
-        {attempts.length > 0 && (
-          <div className="mb-8">
-            <QuizAttemptHistory
-              attempts={attempts}
-              labels={{
-                quizAttemptHistory: t.quizAttemptHistory,
-                quizAttemptNumber: t.quizAttemptNumber,
-                quizScore: t.quizScore,
-                quizPassed: t.quizPassed,
-                quizFailed: t.quizFailed,
-                quizNoAttempts: t.quizNoAttempts,
-              }}
-            />
-          </div>
-        )}
-
         <QuizForm
           courseId={course.id}
           courseSlug={course.slug}
@@ -133,6 +117,22 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
             quizAttemptWarning: t.quizAttemptWarning,
           }}
         />
+
+        {attempts.length > 0 && (
+          <div className="mt-10 pt-8 border-t">
+            <QuizAttemptHistory
+              attempts={attempts}
+              labels={{
+                quizAttemptHistory: t.quizAttemptHistory,
+                quizAttemptNumber: t.quizAttemptNumber,
+                quizScore: t.quizScore,
+                quizPassed: t.quizPassed,
+                quizFailed: t.quizFailed,
+                quizNoAttempts: t.quizNoAttempts,
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   )

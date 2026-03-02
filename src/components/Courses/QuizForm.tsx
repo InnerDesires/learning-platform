@@ -169,11 +169,16 @@ export const QuizForm: React.FC<Props> = ({
         const selected = selectedAnswers[qId] ?? []
 
         return (
-          <div key={qId} className="space-y-3">
-            <h3 className="font-medium">
-              {labels.quizQuestion} {qIndex + 1}. {question.question}
-            </h3>
-            <div className="space-y-2 pl-1">
+          <div key={qId} className="rounded-xl border border-border/60 bg-card/50 overflow-hidden">
+            <div className="px-5 pt-5 pb-4">
+              <div className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                  {qIndex + 1}
+                </span>
+                <h3 className="font-medium text-[15px] leading-snug pt-0.5">{question.question}</h3>
+              </div>
+            </div>
+            <div className="px-5 pb-5 space-y-2">
               {question.answers?.map((answer) => {
                 const aId = answer.id ?? ''
                 const isSelected = selected.includes(aId)
