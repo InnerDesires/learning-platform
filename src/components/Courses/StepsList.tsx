@@ -80,7 +80,13 @@ export const StepsList: React.FC<Props> = ({
                     : 'bg-muted text-muted-foreground',
               )}
             >
-              {isComplete ? '✓' : i + 1}
+              {isComplete ? (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                i + 1
+              )}
             </span>
             <span className="flex-shrink-0 text-muted-foreground">
               {getStepIcon(step.blockType)}

@@ -155,6 +155,95 @@ export const Courses: CollectionConfig = {
       ],
     },
     {
+      name: 'quiz',
+      type: 'group',
+      label: 'Фінальний тест',
+      fields: [
+        {
+          name: 'enabled',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Увімкнути тест',
+        },
+        {
+          name: 'title',
+          type: 'text',
+          localized: true,
+          label: 'Назва тесту',
+          admin: {
+            condition: (data) => data?.quiz?.enabled === true,
+          },
+        },
+        {
+          name: 'description',
+          type: 'textarea',
+          localized: true,
+          label: 'Опис тесту',
+          admin: {
+            condition: (data) => data?.quiz?.enabled === true,
+          },
+        },
+        {
+          name: 'passingScore',
+          type: 'number',
+          min: 0,
+          max: 100,
+          defaultValue: 70,
+          label: 'Прохідний бал (%)',
+          admin: {
+            condition: (data) => data?.quiz?.enabled === true,
+          },
+        },
+        {
+          name: 'questions',
+          type: 'array',
+          label: 'Питання',
+          labels: {
+            singular: 'Питання',
+            plural: 'Питання',
+          },
+          minRows: 1,
+          admin: {
+            condition: (data) => data?.quiz?.enabled === true,
+          },
+          fields: [
+            {
+              name: 'question',
+              type: 'text',
+              required: true,
+              localized: true,
+              label: 'Питання',
+            },
+            {
+              name: 'answers',
+              type: 'array',
+              label: 'Відповіді',
+              labels: {
+                singular: 'Відповідь',
+                plural: 'Відповіді',
+              },
+              minRows: 2,
+              fields: [
+                {
+                  name: 'text',
+                  type: 'text',
+                  required: true,
+                  localized: true,
+                  label: 'Текст відповіді',
+                },
+                {
+                  name: 'isCorrect',
+                  type: 'checkbox',
+                  defaultValue: false,
+                  label: 'Правильна відповідь',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       label: 'Дата публікації',

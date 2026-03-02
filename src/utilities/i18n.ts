@@ -97,6 +97,28 @@ type FrontendMessages = {
   courseEnrolledCount: string
   courseCompletedCount: string
   courseReviewMaterials: string
+  quizTitle: string
+  quizDescription: string
+  quizPassingScore: string
+  quizAttemptWarning: string
+  quizSubmit: string
+  quizTryAgain: string
+  quizBackToCourse: string
+  quizPassed: string
+  quizFailed: string
+  quizScore: string
+  quizCorrectAnswers: string
+  quizAttemptNumber: string
+  quizAttemptHistory: string
+  quizTakeQuiz: string
+  quizRetakeQuiz: string
+  quizBestScore: string
+  quizOf: string
+  quizQuestion: string
+  quizNoAttempts: string
+  quizSelectAnswer: string
+  quizNotAvailable: string
+  quizCompleteStepsFirst: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -197,6 +219,28 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseEnrolledCount: 'учнів',
     courseCompletedCount: 'завершили',
     courseReviewMaterials: 'Переглянути матеріали',
+    quizTitle: 'Фінальний тест',
+    quizDescription: 'Опис тесту',
+    quizPassingScore: 'Прохідний бал',
+    quizAttemptWarning: 'Усі спроби записуються. Кількість спроб та результати зберігаються.',
+    quizSubmit: 'Надіслати відповіді',
+    quizTryAgain: 'Спробувати ще раз',
+    quizBackToCourse: 'Повернутися до курсу',
+    quizPassed: 'Тест складено',
+    quizFailed: 'Тест не складено',
+    quizScore: 'Результат',
+    quizCorrectAnswers: 'Правильних відповідей',
+    quizAttemptNumber: 'Спроба',
+    quizAttemptHistory: 'Історія спроб',
+    quizTakeQuiz: 'Пройти тест',
+    quizRetakeQuiz: 'Перескласти тест',
+    quizBestScore: 'Найкращий результат',
+    quizOf: 'з',
+    quizQuestion: 'Питання',
+    quizNoAttempts: 'Ви ще не проходили цей тест',
+    quizSelectAnswer: 'Оберіть відповідь',
+    quizNotAvailable: 'Тест недоступний',
+    quizCompleteStepsFirst: 'Завершіть усі кроки курсу, щоб отримати доступ до тесту',
   },
   en: {
     searchTitle: 'Search',
@@ -295,6 +339,28 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseEnrolledCount: 'enrolled',
     courseCompletedCount: 'completed',
     courseReviewMaterials: 'Review materials',
+    quizTitle: 'Final Quiz',
+    quizDescription: 'Quiz Description',
+    quizPassingScore: 'Passing Score',
+    quizAttemptWarning: 'All attempts are recorded. Your attempt count and scores will be stored.',
+    quizSubmit: 'Submit Answers',
+    quizTryAgain: 'Try Again',
+    quizBackToCourse: 'Back to Course',
+    quizPassed: 'Quiz Passed',
+    quizFailed: 'Quiz Failed',
+    quizScore: 'Score',
+    quizCorrectAnswers: 'Correct Answers',
+    quizAttemptNumber: 'Attempt',
+    quizAttemptHistory: 'Attempt History',
+    quizTakeQuiz: 'Take Quiz',
+    quizRetakeQuiz: 'Retake Quiz',
+    quizBestScore: 'Best Score',
+    quizOf: 'of',
+    quizQuestion: 'Question',
+    quizNoAttempts: "You haven't attempted this quiz yet",
+    quizSelectAnswer: 'Select an answer',
+    quizNotAvailable: 'Quiz not available',
+    quizCompleteStepsFirst: 'Complete all course steps to access the quiz',
   },
 }
 

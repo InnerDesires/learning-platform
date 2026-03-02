@@ -92,6 +92,28 @@ export const Enrollments: CollectionConfig = {
         condition: (data) => data?.status === 'completed',
       },
     },
+    {
+      name: 'quizPassed',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'Тест складено',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'bestQuizScore',
+      type: 'number',
+      min: 0,
+      max: 100,
+      label: 'Найкращий результат тесту',
+      admin: { readOnly: true },
+    },
+    {
+      name: 'quizAttempts',
+      type: 'number',
+      defaultValue: 0,
+      label: 'Кількість спроб',
+      admin: { readOnly: true },
+    },
   ],
   hooks: {
     beforeValidate: [

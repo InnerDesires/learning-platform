@@ -15,6 +15,7 @@ type Props = {
   nextStepIndex: number
   isAlreadyCompleted: boolean
   isCourseCompleted: boolean
+  quizEnabled?: boolean
   completeAndContinueLabel: string
   completeLabel: string
   nextLabel: string
@@ -29,6 +30,7 @@ export const CompleteStepButton: React.FC<Props> = ({
   nextStepIndex,
   isAlreadyCompleted,
   isCourseCompleted,
+  quizEnabled,
   completeAndContinueLabel,
   completeLabel,
   nextLabel,
@@ -36,9 +38,13 @@ export const CompleteStepButton: React.FC<Props> = ({
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
+  const lastStepTarget = isLastStep && quizEnabled
+    ? `/courses/${courseSlug}/quiz`
+    : `/courses/${courseSlug}`
+
   const navigateNext = () => {
     const target = isLastStep
-      ? `/courses/${courseSlug}`
+      ? lastStepTarget
       : `/courses/${courseSlug}/steps/${nextStepIndex}`
     startTransition(() => {
       router.push(target)
@@ -50,7 +56,7 @@ export const CompleteStepButton: React.FC<Props> = ({
       if (isLastStep) {
         startTransition(async () => {
           await completeStep(enrollmentId, stepBlockId, courseId)
-          router.push(`/courses/${courseSlug}`)
+          router.push(lastStepTarget)
         })
         return
       }
