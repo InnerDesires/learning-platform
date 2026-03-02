@@ -11,6 +11,7 @@ import { CourseCategories } from './collections/CourseCategories'
 import { CourseFiles } from './collections/CourseFiles'
 import { Courses } from './collections/Courses'
 import { Enrollments } from './collections/Enrollments'
+import { QuizAttempts } from './collections/QuizAttempts'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -79,6 +80,7 @@ export default buildConfig({
     CourseFiles,
     Courses,
     Enrollments,
+    QuizAttempts,
   ],
   cors: [
     getServerSideURL(),

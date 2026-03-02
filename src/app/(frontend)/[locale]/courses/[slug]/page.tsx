@@ -117,12 +117,17 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                   courseId={course.id}
                   courseSlug={course.slug}
                   steps={steps}
+                  quizEnabled={course.quiz?.enabled === true}
                   labels={{
                     completed: t.courseCompleted,
                     loginToEnroll: t.courseLoginToEnroll,
                     enroll: t.courseEnroll,
                     continueLearning: t.courseContinueLearning,
                     reviewMaterials: t.courseReviewMaterials,
+                    quizTakeQuiz: t.quizTakeQuiz,
+                    quizRetakeQuiz: t.quizRetakeQuiz,
+                    quizPassed: t.quizPassed,
+                    quizBestScore: t.quizBestScore,
                   }}
                 />
               </Suspense>

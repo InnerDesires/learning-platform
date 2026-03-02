@@ -81,6 +81,7 @@ export interface Config {
     'course-files': CourseFile;
     courses: Course;
     enrollments: Enrollment;
+    'quiz-attempts': QuizAttempt;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     redirects: Redirect;
     forms: Form;
@@ -116,6 +117,7 @@ export interface Config {
     'course-files': CourseFilesSelect<false> | CourseFilesSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    'quiz-attempts': QuizAttemptsSelect<false> | QuizAttemptsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -1046,6 +1048,25 @@ export interface Course {
           }
       )[]
     | null;
+  quiz?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    passingScore?: number | null;
+    questions?:
+      | {
+          question: string;
+          answers?:
+            | {
+                text: string;
+                isCorrect?: boolean | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1074,6 +1095,34 @@ export interface Enrollment {
   status?: ('enrolled' | 'in_progress' | 'completed') | null;
   enrolledAt?: string | null;
   completedAt?: string | null;
+  quizPassed?: boolean | null;
+  bestQuizScore?: number | null;
+  quizAttempts?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quiz-attempts".
+ */
+export interface QuizAttempt {
+  id: number;
+  user: number | User;
+  course: number | Course;
+  score: number;
+  passed?: boolean | null;
+  totalQuestions: number;
+  correctAnswers: number;
+  answers?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  attemptNumber: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1429,6 +1478,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enrollments';
         value: number | Enrollment;
+      } | null)
+    | ({
+        relationTo: 'quiz-attempts';
+        value: number | QuizAttempt;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -1926,6 +1979,27 @@ export interface CoursesSelect<T extends boolean = true> {
               blockName?: T;
             };
       };
+  quiz?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+        passingScore?: T;
+        questions?:
+          | T
+          | {
+              question?: T;
+              answers?:
+                | T
+                | {
+                    text?: T;
+                    isCorrect?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
   publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1942,6 +2016,25 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   status?: T;
   enrolledAt?: T;
   completedAt?: T;
+  quizPassed?: T;
+  bestQuizScore?: T;
+  quizAttempts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quiz-attempts_select".
+ */
+export interface QuizAttemptsSelect<T extends boolean = true> {
+  user?: T;
+  course?: T;
+  score?: T;
+  passed?: T;
+  totalQuestions?: T;
+  correctAnswers?: T;
+  answers?: T;
+  attemptNumber?: T;
   updatedAt?: T;
   createdAt?: T;
 }

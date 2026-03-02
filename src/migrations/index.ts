@@ -3,6 +3,7 @@ import * as migration_20260226_140344 from './20260226_140344';
 import * as migration_20260227_181154_better_auth from './20260227_181154_better_auth';
 import * as migration_20260301_200000_mcp_plugin from './20260301_200000_mcp_plugin';
 import * as migration_20260301_205843 from './20260301_205843';
+import * as migration_20260302_010632 from './20260302_010632';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20260301_205843.up,
     down: migration_20260301_205843.down,
-    name: '20260301_205843'
+    name: '20260301_205843',
+  },
+  {
+    up: migration_20260302_010632.up,
+    down: migration_20260302_010632.down,
+    name: '20260302_010632'
   },
 ];
