@@ -13,10 +13,9 @@ import { usePathname } from 'next/navigation'
 
 export type CardRelationTo = 'posts' | 'courses' | 'course-categories'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'> & {
+export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
 }
-export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
