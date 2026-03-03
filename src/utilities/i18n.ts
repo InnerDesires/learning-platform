@@ -134,6 +134,33 @@ type FrontendMessages = {
   likesCount: string
   likeLiked: string
   likeNotLiked: string
+  certificateDownload: string
+  certificateTitle: string
+  certificatePlatformName: string
+  certificatePresented: string
+  certificateFor: string
+  certificateDateLabel: string
+  certificateCertId: string
+  certificatesPageTitle: string
+  certificatesMetaTitle: string
+  certificateNoCertificates: string
+  certificateCompletedOn: string
+  certificateVerifyLabel: string
+  verifyPageTitle: string
+  verifyMetaTitle: string
+  verifyValid: string
+  verifyValidDescription: string
+  verifyRecipient: string
+  verifyCourse: string
+  verifyDate: string
+  verifyCertId: string
+  verifyInvalid: string
+  verifyInvalidDescription: string
+  verifyDownload: string
+  verifyLandingTitle: string
+  verifyLandingDescription: string
+  verifyInputPlaceholder: string
+  verifyInputSubmit: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -271,6 +298,33 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     likesCount: 'вподобань',
     likeLiked: 'Вам сподобалось',
     likeNotLiked: 'Вподобати',
+    certificateDownload: 'Завантажити сертифікат',
+    certificateTitle: 'Сертифікат про завершення',
+    certificatePlatformName: 'Залізна Зміна',
+    certificatePresented: 'Цей сертифікат підтверджує, що',
+    certificateFor: 'успішно завершив(ла) курс',
+    certificateDateLabel: 'Дата завершення',
+    certificateCertId: 'Номер сертифікату',
+    certificatesPageTitle: 'Мої сертифікати',
+    certificatesMetaTitle: 'Мої сертифікати | Залізна Зміна',
+    certificateNoCertificates: 'У вас ще немає сертифікатів. Завершіть курс, щоб отримати сертифікат.',
+    certificateCompletedOn: 'Завершено',
+    certificateVerifyLabel: 'Перевірити',
+    verifyPageTitle: 'Перевірка сертифікату',
+    verifyMetaTitle: 'Перевірка сертифікату | Залізна Зміна',
+    verifyValid: 'Сертифікат дійсний',
+    verifyValidDescription: 'Цей сертифікат було видано платформою Залізна Зміна.',
+    verifyRecipient: 'Отримувач',
+    verifyCourse: 'Курс',
+    verifyDate: 'Дата завершення',
+    verifyCertId: 'Номер сертифікату',
+    verifyInvalid: 'Сертифікат недійсний',
+    verifyInvalidDescription: 'Цей сертифікат не може бути підтверджений. Можливо, посилання є некоректним або було змінено.',
+    verifyDownload: 'Завантажити сертифікат',
+    verifyLandingTitle: 'Перевірити сертифікат',
+    verifyLandingDescription: 'Відскануйте QR-код на сертифікаті або вставте посилання для перевірки нижче.',
+    verifyInputPlaceholder: 'Вставте посилання або код сертифікату',
+    verifyInputSubmit: 'Перевірити',
   },
   en: {
     searchTitle: 'Search',
@@ -406,6 +460,33 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     likesCount: 'likes',
     likeLiked: 'Liked',
     likeNotLiked: 'Like',
+    certificateDownload: 'Download Certificate',
+    certificateTitle: 'Certificate of Completion',
+    certificatePlatformName: 'Iron Squad',
+    certificatePresented: 'This certifies that',
+    certificateFor: 'has successfully completed the course',
+    certificateDateLabel: 'Date of Completion',
+    certificateCertId: 'Certificate ID',
+    certificatesPageTitle: 'My Certificates',
+    certificatesMetaTitle: 'My Certificates | Iron Squad',
+    certificateNoCertificates: "You don't have any certificates yet. Complete a course to earn one.",
+    certificateCompletedOn: 'Completed on',
+    certificateVerifyLabel: 'Verify',
+    verifyPageTitle: 'Certificate Verification',
+    verifyMetaTitle: 'Certificate Verification | Iron Squad',
+    verifyValid: 'Certificate is valid',
+    verifyValidDescription: 'This certificate was issued by the Iron Squad platform.',
+    verifyRecipient: 'Recipient',
+    verifyCourse: 'Course',
+    verifyDate: 'Date of Completion',
+    verifyCertId: 'Certificate ID',
+    verifyInvalid: 'Certificate is invalid',
+    verifyInvalidDescription: 'This certificate could not be verified. The link may be incorrect or tampered with.',
+    verifyDownload: 'Download Certificate',
+    verifyLandingTitle: 'Verify a Certificate',
+    verifyLandingDescription: 'Scan the QR code on a certificate or paste the verification link below.',
+    verifyInputPlaceholder: 'Paste a verification link or certificate code',
+    verifyInputSubmit: 'Verify',
   },
 }
 

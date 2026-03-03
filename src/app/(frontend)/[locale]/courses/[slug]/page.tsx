@@ -159,6 +159,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                     quizRetakeQuiz: t.quizRetakeQuiz,
                     quizPassed: t.quizPassed,
                     quizBestScore: t.quizBestScore,
+                    downloadCertificate: t.certificateDownload,
                   }}
                 />
               </Suspense>
