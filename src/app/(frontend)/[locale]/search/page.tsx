@@ -9,6 +9,7 @@ import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Args = {
   params: Promise<{
@@ -34,6 +35,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
       slug: true,
       categories: true,
       meta: true,
+      doc: true,
     },
     pagination: false,
     ...(query
@@ -66,6 +68,21 @@ export default async function Page({ params: paramsPromise, searchParams: search
       : {}),
   })
 
+  const searchDocToPostId: Array<{ searchId: number; postId: number }> = []
+  for (const result of posts.docs) {
+    const docValue = result.doc?.value
+    const postId = typeof docValue === 'object' && docValue !== null ? docValue.id : (docValue as number)
+    if (postId) searchDocToPostId.push({ searchId: result.id, postId })
+  }
+
+  const postIds = searchDocToPostId.map((e) => e.postId)
+  const postLikesCounts = await getLikesCountsBatch('posts', postIds)
+
+  const likesCountMap: Record<number, number> = {}
+  for (const { searchId, postId } of searchDocToPostId) {
+    if (postLikesCounts[postId] != null) likesCountMap[searchId] = postLikesCounts[postId]!
+  }
+
   return (
     <div className="pt-24 pb-24">
       <PageClient />
@@ -82,7 +99,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
       </div>
 
       {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+        <CollectionArchive posts={posts.docs as CardPostData[]} likesCountMap={likesCountMap} />
       ) : (
         <div className="container">{t.searchNoResults}</div>
       )}

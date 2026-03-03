@@ -81,6 +81,8 @@ export interface Config {
     'course-files': CourseFile;
     courses: Course;
     enrollments: Enrollment;
+    comments: Comment;
+    likes: Like;
     'quiz-attempts': QuizAttempt;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     redirects: Redirect;
@@ -117,6 +119,8 @@ export interface Config {
     'course-files': CourseFilesSelect<false> | CourseFilesSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
+    likes: LikesSelect<false> | LikesSelect<true>;
     'quiz-attempts': QuizAttemptsSelect<false> | QuizAttemptsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -1103,6 +1107,32 @@ export interface Enrollment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  body: string;
+  author: number | User;
+  targetCollection: 'posts' | 'courses';
+  targetId: number;
+  parent?: (number | null) | Comment;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "likes".
+ */
+export interface Like {
+  id: number;
+  user: number | User;
+  targetCollection: 'posts' | 'courses' | 'comments';
+  targetId: number;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "quiz-attempts".
  */
 export interface QuizAttempt {
@@ -1478,6 +1508,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enrollments';
         value: number | Enrollment;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'likes';
+        value: number | Like;
       } | null)
     | ({
         relationTo: 'quiz-attempts';
@@ -2019,6 +2057,30 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   quizPassed?: T;
   bestQuizScore?: T;
   quizAttempts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  body?: T;
+  author?: T;
+  targetCollection?: T;
+  targetId?: T;
+  parent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "likes_select".
+ */
+export interface LikesSelect<T extends boolean = true> {
+  user?: T;
+  targetCollection?: T;
+  targetId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
