@@ -1,5 +1,16 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer'
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Svg,
+  Rect,
+  renderToBuffer,
+  Link,
+} from '@react-pdf/renderer'
+import QRCode from 'qrcode'
 
 const styles = StyleSheet.create({
   page: {
@@ -90,16 +101,17 @@ const styles = StyleSheet.create({
   courseTitle: {
     fontSize: 18,
     color: '#2d3748',
-    marginBottom: 40,
+    marginBottom: 30,
     textAlign: 'center',
     maxWidth: 400,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-end',
     width: '100%',
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 10,
   },
   footerItem: {
     alignItems: 'center',
@@ -115,6 +127,22 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#2d3748',
   },
+  qrSection: {
+    alignItems: 'center',
+  },
+  verifyLabel: {
+    fontSize: 7,
+    color: '#718096',
+    marginTop: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  verifyUrl: {
+    fontSize: 7,
+    color: '#2a4a7f',
+    marginTop: 2,
+    textDecoration: 'none',
+  },
 })
 
 type CertificateProps = {
@@ -128,6 +156,40 @@ type CertificateProps = {
   formattedDate: string
   certIdLabel: string
   certId: string
+  verifyUrl?: string
+  verifyLabel?: string
+}
+
+function QRCodeSvg({ url, size = 70 }: { url: string; size?: number }) {
+  const qr = QRCode.create(url, { errorCorrectionLevel: 'M' })
+  const modules = qr.modules
+  const moduleCount = modules.size
+  const cellSize = size / moduleCount
+
+  const rects: React.ReactElement[] = []
+  for (let row = 0; row < moduleCount; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      if (modules.get(row, col)) {
+        rects.push(
+          <Rect
+            key={`${row}-${col}`}
+            x={col * cellSize}
+            y={row * cellSize}
+            width={cellSize}
+            height={cellSize}
+            fill="#1a365d"
+          />,
+        )
+      }
+    }
+  }
+
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <Rect x={0} y={0} width={size} height={size} fill="#FFFFFF" />
+      {rects}
+    </Svg>
+  )
 }
 
 function CertificateDocument(props: CertificateProps) {
@@ -154,6 +216,19 @@ function CertificateDocument(props: CertificateProps) {
                 <Text style={styles.footerLabel}>{props.dateLabel}</Text>
                 <Text style={styles.footerValue}>{props.formattedDate}</Text>
               </View>
+
+              {props.verifyUrl && (
+                <View style={styles.qrSection}>
+                  <QRCodeSvg url={props.verifyUrl} size={70} />
+                  {props.verifyLabel && (
+                    <Text style={styles.verifyLabel}>{props.verifyLabel}</Text>
+                  )}
+                  <Link src={props.verifyUrl} style={styles.verifyUrl}>
+                    <Text style={styles.verifyUrl}>{props.verifyUrl}</Text>
+                  </Link>
+                </View>
+              )}
+
               <View style={styles.footerItem}>
                 <Text style={styles.footerLabel}>{props.certIdLabel}</Text>
                 <Text style={styles.footerValue}>{props.certId}</Text>

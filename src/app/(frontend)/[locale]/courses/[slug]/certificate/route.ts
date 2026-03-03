@@ -3,6 +3,8 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { getSession } from '@/lib/auth/getSession'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getServerSideURL } from '@/utilities/getURL'
+import { generateCertificateToken } from '@/utilities/certificateToken'
 import type { SiteLocale } from '@/utilities/locales'
 import type { Course, User } from '@/payload-types'
 import { renderCertificatePdf } from './pdf'
@@ -55,11 +57,11 @@ export async function GET(
     return new Response('No completed enrollment found', { status: 403 })
   }
 
-  const userRecord = await payload.findByID({
+  const userRecord = (await payload.findByID({
     collection: 'users',
     id: Number(session.user.id),
     depth: 0,
-  }) as User
+  })) as User
 
   const userName = userRecord.name || session.user.name || session.user.email || 'Unknown'
   const completedAt = enrollment.completedAt
@@ -72,7 +74,10 @@ export async function GET(
     day: 'numeric',
   })
 
-  const certId = `CERT-${enrollment.id}`
+  const token = generateCertificateToken(enrollment.id, Number(session.user.id), course.id)
+  const certId = token.slice(0, token.indexOf('.')).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase()
+  const baseUrl = getServerSideURL()
+  const verifyUrl = `${baseUrl}/verify/${token}`
 
   const pdfBuffer = await renderCertificatePdf({
     platformName: t.certificatePlatformName,
@@ -84,7 +89,9 @@ export async function GET(
     dateLabel: t.certificateDateLabel,
     formattedDate,
     certIdLabel: t.certificateCertId,
-    certId,
+    certId: `CERT-${certId}`,
+    verifyUrl,
+    verifyLabel: t.certificateVerifyLabel,
   })
 
   return new Response(pdfBuffer, {
