@@ -7,10 +7,11 @@ import { Card, CardPostData, CardRelationTo } from '@/components/Card'
 export type Props = {
   locale?: SiteLocale
   posts: CardPostData[]
+  likesCountMap?: Record<number, number>
 }
 
 export const CollectionArchive: React.FC<Props> = (props) => {
-  const { locale, posts } = props
+  const { locale, posts, likesCountMap } = props
 
   return (
     <div className={cn('container')}>
@@ -25,6 +26,7 @@ export const CollectionArchive: React.FC<Props> = (props) => {
                 locale={locale}
                 relationTo={(result.collectionType as CardRelationTo) || 'posts'}
                 showCategories
+                likesCount={likesCountMap?.[result.id]}
               />
             )
           }

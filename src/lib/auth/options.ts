@@ -2,6 +2,8 @@ import type { BetterAuthOptions, PayloadAuthOptions } from 'payload-auth/better-
 import { nextCookies } from 'better-auth/next-js'
 
 function resolveBaseURL(): string {
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
   if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL)

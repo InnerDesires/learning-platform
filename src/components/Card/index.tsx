@@ -16,6 +16,7 @@ export type CardRelationTo = 'posts' | 'courses' | 'course-categories'
 export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
 }
+export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'>
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -25,11 +26,12 @@ export const Card: React.FC<{
   relationTo?: CardRelationTo
   showCategories?: boolean
   title?: string
+  likesCount?: number
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const pathname = usePathname()
   const localeFromPath = getLocaleFromPathname(pathname)
-  const { className, doc, locale, relationTo, showCategories, title: titleFromProps } = props
+  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount } = props
   const t = getFrontendMessages(locale || localeFromPath)
 
   const { slug, categories, meta, title } = doc || {}
@@ -97,6 +99,14 @@ export const Card: React.FC<{
         )}
         {description && (
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{sanitizedDescription}</p>
+        )}
+        {likesCount != null && likesCount > 0 && (
+          <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            {likesCount} {t.likesCount}
+          </div>
         )}
       </div>
     </article>

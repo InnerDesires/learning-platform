@@ -5,6 +5,7 @@ import * as migration_20260301_200000_mcp_plugin from './20260301_200000_mcp_plu
 import * as migration_20260301_205843 from './20260301_205843';
 import * as migration_20260302_010632 from './20260302_010632';
 import * as migration_20260302_161337 from './20260302_161337';
+import * as migration_20260302_124504 from './20260302_124504';
 
 export const migrations = [
   {
@@ -41,5 +42,9 @@ export const migrations = [
     up: migration_20260302_161337.up,
     down: migration_20260302_161337.down,
     name: '20260302_161337'
+  },{
+    up: migration_20260302_124504.up,
+    down: migration_20260302_124504.down,
+    name: '20260302_124504',
   },
 ];
