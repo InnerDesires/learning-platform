@@ -1240,6 +1240,74 @@ export interface PayloadMcpApiKey {
      */
     update?: boolean | null;
   };
+  courses?: {
+    /**
+     * Allow clients to find courses.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create courses.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update courses.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete courses.
+     */
+    delete?: boolean | null;
+  };
+  courseCategories?: {
+    /**
+     * Allow clients to find course-categories.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create course-categories.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update course-categories.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete course-categories.
+     */
+    delete?: boolean | null;
+  };
+  comments?: {
+    /**
+     * Allow clients to find comments.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create comments.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update comments.
+     */
+    update?: boolean | null;
+    /**
+     * Allow clients to delete comments.
+     */
+    delete?: boolean | null;
+  };
+  likes?: {
+    /**
+     * Allow clients to find likes.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create likes.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to delete likes.
+     */
+    delete?: boolean | null;
+  };
   header?: {
     /**
      * Allow clients to find header global.
@@ -2137,6 +2205,37 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
     | {
         find?: T;
         update?: T;
+      };
+  courses?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  courseCategories?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  comments?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+        delete?: T;
+      };
+  likes?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        delete?: T;
       };
   header?:
     | T

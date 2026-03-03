@@ -66,6 +66,31 @@ export const plugins: Plugin[] = [
         description:
           'Media files including images. Each media item has alt text and an optional caption. Used as hero images, post images, and page media.',
       },
+      courses: {
+        enabled: true,
+        description:
+          'Online courses with steps (rich text, YouTube video, file download), optional quiz, hero image, and category. Course steps are blocks within each course document. Content is localized in Ukrainian (uk) and English (en).',
+      },
+      'course-categories': {
+        enabled: true,
+        description:
+          'Categories for organizing courses. Each category has a localized title, description, image, and slug. Content is localized in Ukrainian (uk) and English (en).',
+      },
+      comments: {
+        enabled: true,
+        description:
+          'User comments on posts and courses. Each comment has a body (max 2000 chars), author, target collection (posts or courses), target ID, and optional parent comment for threading.',
+      },
+      likes: {
+        enabled: {
+          find: true,
+          create: true,
+          update: false,
+          delete: true,
+        },
+        description:
+          'User likes/reactions on posts, courses, and comments. Each like has a user, target collection, and target ID. Duplicate likes are rejected (409).',
+      },
     },
     globals: {
       header: {
