@@ -24,7 +24,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
           className="flex items-center gap-2"
           data-testid="header-logo-link"
         >
-          <Logo alt={t.logoAlt} loading="eager" priority="high" />
+          <Logo alt={t?.logoAlt || ''} loading="eager" priority="high" />
         </Link>
         <div className="relative">
           <HeaderNav data={data} locale={locale} />

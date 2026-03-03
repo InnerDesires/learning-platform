@@ -20,7 +20,7 @@ export async function Footer({ locale }: { locale: SiteLocale }) {
     <footer className="mt-auto border-t border-border bg-secondary/50">
       <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between md:items-center">
         <Link className="flex items-center" href={locale === 'en' ? '/en' : '/'}>
-          <Logo alt={t.logoAlt} />
+          <Logo alt={t?.logoAlt || ''} />
         </Link>
 
         <div className="flex flex-col md:flex-row md:items-center gap-4">

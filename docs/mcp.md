@@ -57,6 +57,10 @@ The MCP plugin exposes CRUD tools for each enabled collection and global:
 | `findPages` / `createPages` / `updatePages` / `deletePages` | Static pages |
 | `findCategories` / `createCategories` / `updateCategories` / `deleteCategories` | Post categories |
 | `findMedia` / `updateMedia` | Media uploads (create/delete disabled) |
+| `findCourses` / `createCourses` / `updateCourses` / `deleteCourses` | Online courses with steps and quizzes |
+| `findCourseCategories` / `createCourseCategories` / `updateCourseCategories` / `deleteCourseCategories` | Course categories |
+| `findComments` / `createComments` / `updateComments` / `deleteComments` | User comments on posts and courses |
+| `findLikes` / `createLikes` / `deleteLikes` | Likes/reactions (update disabled) |
 | `findHeader` / `updateHeader` | Site header navigation |
 | `findFooter` / `updateFooter` | Site footer navigation |
 
