@@ -11,14 +11,18 @@ import { Media } from '@/components/Media'
 import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
 import { usePathname } from 'next/navigation'
 
-export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'>
+export type CardRelationTo = 'posts' | 'courses' | 'course-categories'
+
+export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
+  collectionType?: string | null
+}
 
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
   doc?: CardPostData
   locale?: SiteLocale
-  relationTo?: 'posts'
+  relationTo?: CardRelationTo
   showCategories?: boolean
   title?: string
   likesCount?: number
@@ -35,7 +39,9 @@ export const Card: React.FC<{
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ')
-  const href = `/${relationTo}/${slug}`
+  const effectiveRelationTo = (doc?.collectionType as CardRelationTo) || relationTo
+  const href =
+    effectiveRelationTo === 'course-categories' ? '/courses' : `/${effectiveRelationTo}/${slug}`
 
   return (
     <article

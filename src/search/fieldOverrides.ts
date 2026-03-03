@@ -10,6 +10,14 @@ export const searchFields: Field[] = [
     },
   },
   {
+    name: 'collectionType',
+    type: 'text',
+    index: true,
+    admin: {
+      readOnly: true,
+    },
+  },
+  {
     name: 'meta',
     label: 'Meta',
     type: 'group',

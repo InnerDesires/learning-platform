@@ -1388,11 +1388,21 @@ export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      }
+    | {
+        relationTo: 'courses';
+        value: number | Course;
+      }
+    | {
+        relationTo: 'course-categories';
+        value: number | CourseCategory;
+      };
   slug?: string | null;
+  collectionType?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -2429,6 +2439,7 @@ export interface SearchSelect<T extends boolean = true> {
   priority?: T;
   doc?: T;
   slug?: T;
+  collectionType?: T;
   meta?:
     | T
     | {

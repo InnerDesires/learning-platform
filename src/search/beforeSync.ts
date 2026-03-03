@@ -5,11 +5,80 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     doc: { relationTo: collection },
   } = searchDoc
 
+  if (collection === 'courses') {
+    const { slug, id, category, title, description, heroImage } = originalDoc
+
+    const modifiedDoc: DocToSync = {
+      ...searchDoc,
+      slug,
+      collectionType: 'courses',
+      meta: {
+        title,
+        description: description || null,
+        image: typeof heroImage === 'object' ? heroImage?.id : heroImage,
+      },
+      categories: [],
+    }
+
+    if (category) {
+      const categoryId = typeof category === 'object' ? category.id : category
+      const categoryTitle = typeof category === 'object' ? category.title : null
+
+      if (categoryTitle) {
+        modifiedDoc.categories = [
+          { relationTo: 'course-categories', categoryID: String(categoryId), title: categoryTitle },
+        ]
+      } else if (categoryId) {
+        const doc = await req.payload.findByID({
+          collection: 'course-categories',
+          id: categoryId,
+          disableErrors: true,
+          depth: 0,
+          select: { title: true },
+          req,
+        })
+
+        if (doc !== null) {
+          modifiedDoc.categories = [
+            {
+              relationTo: 'course-categories',
+              categoryID: String(categoryId),
+              title: doc.title,
+            },
+          ]
+        } else {
+          console.error(
+            `Failed. Course category not found when syncing 'courses' with id: '${id}' to search.`,
+          )
+        }
+      }
+    }
+
+    return modifiedDoc
+  }
+
+  if (collection === 'course-categories') {
+    const { slug, title, description, image } = originalDoc
+
+    return {
+      ...searchDoc,
+      slug,
+      collectionType: 'course-categories',
+      meta: {
+        title,
+        description: description || null,
+        image: typeof image === 'object' ? image?.id : image,
+      },
+      categories: [],
+    }
+  }
+
   const { slug, id, categories, title, meta } = originalDoc
 
   const modifiedDoc: DocToSync = {
     ...searchDoc,
     slug,
+    collectionType: 'posts',
     meta: {
       ...meta,
       title: meta?.title || title,
