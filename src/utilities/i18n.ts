@@ -157,6 +157,10 @@ type FrontendMessages = {
   verifyInvalid: string
   verifyInvalidDescription: string
   verifyDownload: string
+  verifyLandingTitle: string
+  verifyLandingDescription: string
+  verifyInputPlaceholder: string
+  verifyInputSubmit: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -317,6 +321,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     verifyInvalid: 'Сертифікат недійсний',
     verifyInvalidDescription: 'Цей сертифікат не може бути підтверджений. Можливо, посилання є некоректним або було змінено.',
     verifyDownload: 'Завантажити сертифікат',
+    verifyLandingTitle: 'Перевірити сертифікат',
+    verifyLandingDescription: 'Відскануйте QR-код на сертифікаті або вставте посилання для перевірки нижче.',
+    verifyInputPlaceholder: 'Вставте посилання або код сертифікату',
+    verifyInputSubmit: 'Перевірити',
   },
   en: {
     searchTitle: 'Search',
@@ -475,6 +483,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     verifyInvalid: 'Certificate is invalid',
     verifyInvalidDescription: 'This certificate could not be verified. The link may be incorrect or tampered with.',
     verifyDownload: 'Download Certificate',
+    verifyLandingTitle: 'Verify a Certificate',
+    verifyLandingDescription: 'Scan the QR code on a certificate or paste the verification link below.',
+    verifyInputPlaceholder: 'Paste a verification link or certificate code',
+    verifyInputSubmit: 'Verify',
   },
 }
 

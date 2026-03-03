@@ -75,7 +75,7 @@ export async function GET(
   })
 
   const token = generateCertificateToken(enrollment.id, Number(session.user.id), course.id)
-  const certId = token.slice(0, token.indexOf('.')).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase()
+  const certId = token.slice(0, token.indexOf('~')).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase()
   const baseUrl = getServerSideURL()
   const verifyUrl = `${baseUrl}/verify/${token}`
 

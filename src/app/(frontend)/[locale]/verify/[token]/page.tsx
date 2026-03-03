@@ -116,7 +116,7 @@ export default async function VerifyPage({ params }: Args) {
     day: 'numeric',
   })
 
-  const certIdDisplay = token.slice(0, token.indexOf('.')).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase()
+  const certIdDisplay = token.slice(0, token.indexOf('~')).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12).toUpperCase()
 
   return (
     <div className="container max-w-xl py-24">

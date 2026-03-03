@@ -24,17 +24,17 @@ export function generateCertificateToken(
   const payload = buildPayload(enrollmentId, userId, courseId)
   const signature = hmacSign(payload)
   const data = Buffer.from(`${enrollmentId}:${userId}:${courseId}`).toString('base64url')
-  return `${data}.${signature}`
+  return `${data}~${signature}`
 }
 
 export function verifyCertificateToken(
   token: string,
 ): { valid: true; enrollmentId: number; userId: number; courseId: number } | { valid: false } {
-  const dotIndex = token.indexOf('.')
-  if (dotIndex === -1) return { valid: false }
+  const sepIndex = token.indexOf('~')
+  if (sepIndex === -1) return { valid: false }
 
-  const dataPart = token.slice(0, dotIndex)
-  const signaturePart = token.slice(dotIndex + 1)
+  const dataPart = token.slice(0, sepIndex)
+  const signaturePart = token.slice(sepIndex + 1)
 
   let decoded: string
   try {

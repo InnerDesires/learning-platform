@@ -7,16 +7,32 @@ import {
   StyleSheet,
   Svg,
   Rect,
+  Font,
   renderToBuffer,
   Link,
 } from '@react-pdf/renderer'
 import QRCode from 'qrcode'
+
+Font.register({
+  family: 'Roboto',
+  fonts: [
+    {
+      src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
+      fontWeight: 400,
+    },
+    {
+      src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
+      fontWeight: 700,
+    },
+  ],
+})
 
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#FFFFFF',
     padding: 0,
+    fontFamily: 'Roboto',
   },
   outerBorder: {
     margin: 30,
