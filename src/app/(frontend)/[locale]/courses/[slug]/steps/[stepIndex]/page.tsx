@@ -18,10 +18,14 @@ import type { Course, CourseFile } from '@/payload-types'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string; stepIndex: string }>
+  searchParams: Promise<{ oc?: string }>
 }
 
-export default async function StepViewerPage({ params: paramsPromise }: Args) {
-  const { locale, slug, stepIndex: stepIndexStr } = await paramsPromise
+export default async function StepViewerPage({ params: paramsPromise, searchParams: searchParamsPromise }: Args) {
+  const [{ locale, slug, stepIndex: stepIndexStr }, { oc }] = await Promise.all([
+    paramsPromise,
+    searchParamsPromise,
+  ])
   const t = getFrontendMessages(locale)
 
   const payload = await getPayload({ config: configPromise })
@@ -60,9 +64,13 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   }
 
   const step = steps[stepIndex]
-  const completedSteps: string[] = Array.isArray(enrollment.completedSteps)
+  const dbCompletedSteps: string[] = Array.isArray(enrollment.completedSteps)
     ? (enrollment.completedSteps as string[])
     : []
+  const validStepIds = new Set(steps.map((s) => s.id).filter(Boolean))
+  const optimisticIds = oc ? oc.split(',').filter((id) => validStepIds.has(id)) : []
+  const completedSteps = [...new Set([...dbCompletedSteps, ...optimisticIds])]
+  const pendingOptimisticIds = optimisticIds.filter((id) => !dbCompletedSteps.includes(id))
   const isStepCompleted = completedSteps.includes(step.id ?? '')
   const isCourseCompleted = enrollment.status === 'completed'
   const completedCount = completedSteps.length
@@ -165,6 +173,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
                 completeAndContinueLabel={t.stepCompleteAndContinue}
                 completeLabel={t.stepComplete}
                 nextLabel={t.stepNext}
+                optimisticStepIds={pendingOptimisticIds}
               />
             </div>
           </div>

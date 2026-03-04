@@ -38,7 +38,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
 
   return (
     <>
-      <nav className="flex gap-1 items-center bg-secondary/80 backdrop-blur-sm rounded-full px-2 py-1.5">
+        <nav className="flex gap-1 items-center bg-secondary/80 backdrop-blur-sm rounded-full px-2 py-1.5">
         <button
           type="button"
           onClick={toggleMobile}

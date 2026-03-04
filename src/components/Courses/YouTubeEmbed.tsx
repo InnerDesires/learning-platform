@@ -30,7 +30,7 @@ export const YouTubeEmbed: React.FC<Props> = ({ url }) => {
   }
 
   return (
-    <div className="aspect-video rounded-lg overflow-hidden max-w-3xl mx-auto">
+    <div className="aspect-video rounded-lg overflow-hidden">
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         title="YouTube video"

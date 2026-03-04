@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { LoaderCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { enrollInCourse } from '@/app/(frontend)/[locale]/courses/actions'
 
@@ -31,7 +32,8 @@ export const EnrollButton: React.FC<Props> = ({ courseId, courseSlug, label }) =
   return (
     <div>
       <Button onClick={handleEnroll} disabled={isPending} size="lg">
-        {isPending ? '...' : label}
+        {isPending && <LoaderCircle className="w-4 h-4 animate-spin" />}
+        {label}
       </Button>
       {error && <p className="text-destructive text-sm mt-2">{error}</p>}
     </div>

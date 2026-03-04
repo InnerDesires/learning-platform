@@ -19,6 +19,7 @@ type Props = {
   completeAndContinueLabel: string
   completeLabel: string
   nextLabel: string
+  optimisticStepIds?: string[]
 }
 
 export const CompleteStepButton: React.FC<Props> = ({
@@ -34,6 +35,7 @@ export const CompleteStepButton: React.FC<Props> = ({
   completeAndContinueLabel,
   completeLabel,
   nextLabel,
+  optimisticStepIds = [],
 }) => {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
@@ -42,12 +44,20 @@ export const CompleteStepButton: React.FC<Props> = ({
     ? `/courses/${courseSlug}/quiz`
     : `/courses/${courseSlug}`
 
+  const getNextStepUrl = (addStepId?: string) => {
+    if (isLastStep) return lastStepTarget
+    const basePath = `/courses/${courseSlug}/steps/${nextStepIndex}`
+    const ids = [...optimisticStepIds]
+    if (addStepId && !ids.includes(addStepId)) {
+      ids.push(addStepId)
+    }
+    if (ids.length === 0) return basePath
+    return `${basePath}?oc=${ids.join(',')}`
+  }
+
   const navigateNext = () => {
-    const target = isLastStep
-      ? lastStepTarget
-      : `/courses/${courseSlug}/steps/${nextStepIndex}`
     startTransition(() => {
-      router.push(target)
+      router.push(getNextStepUrl())
     })
   }
 
@@ -62,7 +72,10 @@ export const CompleteStepButton: React.FC<Props> = ({
       }
       completeStep(enrollmentId, stepBlockId, courseId)
     }
-    navigateNext()
+    const addId = (!isCourseCompleted && !isAlreadyCompleted) ? stepBlockId : undefined
+    startTransition(() => {
+      router.push(getNextStepUrl(addId))
+    })
   }
 
   if (isCourseCompleted || isAlreadyCompleted) {
