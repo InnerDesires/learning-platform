@@ -6,6 +6,7 @@ import { anyone } from '../access/anyone'
 export const Likes: CollectionConfig = {
   slug: 'likes',
   labels: { singular: 'Лайк', plural: 'Лайки' },
+  lockDocuments: false,
   admin: {
     defaultColumns: ['user', 'targetCollection', 'targetId', 'createdAt'],
     group: 'Взаємодія',

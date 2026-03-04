@@ -8,6 +8,7 @@ import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 export const Categories: CollectionConfig = {
   slug: 'categories',
   labels: { singular: 'Категорія', plural: 'Категорії' },
+  lockDocuments: false,
   access: {
     create: admin,
     delete: admin,

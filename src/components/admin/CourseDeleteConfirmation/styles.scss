@@ -1,0 +1,115 @@
+.course-delete {
+  margin-top: calc(var(--base) * 1.5);
+
+  &__warning {
+    background: color-mix(in srgb, var(--theme-error-500) 10%, transparent);
+    border: 1px solid var(--theme-error-500);
+    border-radius: var(--style-radius-s);
+    padding: var(--base);
+    margin-bottom: var(--base);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--theme-text);
+
+    ul {
+      margin: 0.4rem 0 0.4rem 1.25rem;
+      padding: 0;
+    }
+  }
+
+  &__button {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: var(--theme-error-500);
+    border: none;
+    border-radius: var(--style-radius-s);
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+  }
+
+  &__modal {
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--style-radius-m);
+    padding: calc(var(--base) * 2);
+    max-width: 460px;
+    width: 90%;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+
+    h3 {
+      margin: 0 0 var(--base) 0;
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0 0 0.75rem 0;
+      line-height: 1.5;
+    }
+  }
+
+  &__modal-list {
+    margin: 0.5rem 0 1rem 1.25rem;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  &__irreversible {
+    font-weight: 600;
+    color: var(--theme-error-500);
+  }
+
+  &__modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: calc(var(--base) * 1.5);
+  }
+
+  &__cancel,
+  &__confirm {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--style-radius-s);
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+  }
+
+  &__cancel {
+    background: var(--theme-elevation-150);
+    color: var(--theme-text);
+  }
+
+  &__confirm {
+    background-color: var(--theme-error-500);
+    color: #fff;
+  }
+}

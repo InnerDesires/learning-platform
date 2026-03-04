@@ -31,6 +31,7 @@ import { cyrillicSlugify } from '../../utilities/cyrillicSlugify'
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   labels: { singular: 'Публікація', plural: 'Публікації' },
+  lockDocuments: false,
   access: {
     create: admin,
     delete: admin,

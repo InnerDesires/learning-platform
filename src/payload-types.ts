@@ -1536,10 +1536,6 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
-      } | null)
-    | ({
         relationTo: 'sessions';
         value: number | Session;
       } | null)
@@ -1554,50 +1550,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'admin-invitations';
         value: number | AdminInvitation;
-      } | null)
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'posts';
-        value: number | Post;
-      } | null)
-    | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'categories';
-        value: number | Category;
-      } | null)
-    | ({
-        relationTo: 'course-categories';
-        value: number | CourseCategory;
-      } | null)
-    | ({
-        relationTo: 'course-files';
-        value: number | CourseFile;
-      } | null)
-    | ({
-        relationTo: 'courses';
-        value: number | Course;
-      } | null)
-    | ({
-        relationTo: 'enrollments';
-        value: number | Enrollment;
-      } | null)
-    | ({
-        relationTo: 'comments';
-        value: number | Comment;
-      } | null)
-    | ({
-        relationTo: 'likes';
-        value: number | Like;
-      } | null)
-    | ({
-        relationTo: 'quiz-attempts';
-        value: number | QuizAttempt;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';

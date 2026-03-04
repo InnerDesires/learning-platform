@@ -8,6 +8,7 @@ import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 export const CourseCategories: CollectionConfig = {
   slug: 'course-categories',
   labels: { singular: 'Категорія курсів', plural: 'Категорії курсів' },
+  lockDocuments: false,
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'createdAt'],
