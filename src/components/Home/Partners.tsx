@@ -1,7 +1,6 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { FadeIn } from './FadeIn'
 
 type Logo = {
   name: string
@@ -60,47 +59,25 @@ function MarqueeRow({ logos, reverse = false }: { logos: Logo[]; reverse?: boole
 }
 
 export function PartnersSection({ tag, title, description, logos }: Props) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-80px' })
-
   return (
-    <section ref={ref} className="py-32 overflow-hidden">
+    <section className="py-32 overflow-hidden">
       <div className="container">
         <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="inline-block px-4 py-1.5 rounded-full bg-[#F99E2D]/10 text-[#F99E2D] text-sm font-semibold tracking-wider uppercase mb-6"
-          >
+          <FadeIn className="inline-block px-4 py-1.5 rounded-full bg-[#F99E2D]/10 text-[#F99E2D] text-sm font-semibold tracking-wider uppercase mb-6">
             {tag}
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6"
-          >
+          </FadeIn>
+          <FadeIn delay={100} className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             {title}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-muted-foreground text-lg max-w-2xl mx-auto"
-          >
+          </FadeIn>
+          <FadeIn delay={200} className="text-muted-foreground text-lg max-w-2xl mx-auto">
             {description}
-          </motion.p>
+          </FadeIn>
         </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.3 }}
-      >
+      <FadeIn delay={300}>
         <MarqueeRow logos={logos} />
-      </motion.div>
+      </FadeIn>
     </section>
   )
 }
