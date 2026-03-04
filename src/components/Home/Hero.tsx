@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { FadeIn } from './FadeIn'
 
 type Props = {
   title: string
@@ -12,41 +12,9 @@ type Props = {
   locale: string
 }
 
-function GridBackground() {
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
-      {Array.from({ length: 5 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full bg-[#F99E2D]/8 blur-3xl"
-          style={{
-            width: 200 + i * 100,
-            height: 200 + i * 100,
-            left: `${15 + i * 18}%`,
-            top: `${20 + (i % 3) * 25}%`,
-          }}
-          animate={{
-            x: [0, 30, -20, 0],
-            y: [0, -20, 30, 0],
-            scale: [1, 1.1, 0.95, 1],
-          }}
-          transition={{
-            duration: 12 + i * 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
 export function HeroSection({ title, subtitle, cta, ctaSecondary, locale }: Props) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
-
-  const words = title.split(' ')
 
   return (
     <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a1228] via-[#1e3b8a] to-[#0f1d45]">
@@ -57,65 +25,37 @@ export function HeroSection({ title, subtitle, cta, ctaSecondary, locale }: Prop
         loading="eager"
         aria-hidden="true"
       />
-      <GridBackground />
 
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0a1228]/80 via-[#1e3b8a]/30 to-[#0a1228]/60" />
 
       <div className="container relative z-10 text-center py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mb-6"
+        <div
+          className={`mb-6 transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+          style={{ transitionDelay: '200ms' }}
         >
           <span className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/60 text-sm font-medium tracking-widest uppercase backdrop-blur-sm">
             {locale === 'uk' ? 'Платформа' : 'Platform'} {new Date().getFullYear()}
           </span>
-        </motion.div>
+        </div>
 
-        <h1 className="mb-6 select-none">
-          <span className="sr-only">{title}</span>
-          <span aria-hidden="true" className="flex justify-center flex-wrap gap-x-3 md:gap-x-5">
-            {words.map((word, wi) => (
-              <span key={wi} className="inline-flex whitespace-nowrap">
-                {word.split('').map((letter, li) => {
-                  const i = words.slice(0, wi).reduce((acc, w) => acc + w.length, 0) + li
-                  return (
-                    <motion.span
-                      key={i}
-                      initial={{ opacity: 0, y: 50, rotateX: -90 }}
-                      animate={mounted ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-                      transition={{
-                        duration: 0.6,
-                        delay: 0.4 + i * 0.05,
-                        ease: [0.215, 0.61, 0.355, 1],
-                      }}
-                      className="inline-block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/50"
-                      style={{ perspective: '600px' }}
-                    >
-                      {letter}
-                    </motion.span>
-                  )
-                })}
-              </span>
-            ))}
-          </span>
+        <h1
+          className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/50 mb-6 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          style={{ transitionDelay: '400ms' }}
+        >
+          {title}
         </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="text-lg md:text-xl lg:text-2xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed"
+        <p
+          className={`text-lg md:text-xl lg:text-2xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed transition-all duration-800 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+          style={{ transitionDelay: '700ms' }}
         >
           {subtitle}
-        </motion.p>
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={mounted ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+        <div
+          className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-800 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
+          style={{ transitionDelay: '900ms' }}
         >
           <Link
             href={`/${locale}/anketa`}
@@ -131,23 +71,17 @@ export function HeroSection({ title, subtitle, cta, ctaSecondary, locale }: Prop
           >
             {ctaSecondary}
           </Link>
-        </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={mounted ? { opacity: 1 } : {}}
-        transition={{ delay: 2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      <div
+        className={`absolute bottom-8 left-1/2 -translate-x-1/2 transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}
+        style={{ transitionDelay: '1500ms' }}
       >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5"
-        >
-          <motion.div className="w-1.5 h-1.5 rounded-full bg-white/40" />
-        </motion.div>
-      </motion.div>
+        <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5 animate-bounce">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
+        </div>
+      </div>
     </section>
   )
 }
