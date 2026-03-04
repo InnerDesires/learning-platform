@@ -17,14 +17,15 @@ interface HeaderClientProps {
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
   const t = getFrontendMessages(locale)
   return (
-    <header className="container relative z-20">
-      <div className="py-6 flex justify-between items-center">
+    <header className="sticky top-0 z-20 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl">
+      <div className="container py-3 flex justify-between items-center">
         <Link
           href={locale === 'en' ? '/en' : '/'}
-          className="flex items-center gap-2"
+          className="flex items-center gap-3"
           data-testid="header-logo-link"
         >
-          <Logo alt={t?.logoAlt || ''} loading="eager" priority="high" />
+          <Logo alt={t?.logoAlt || ''} loading="eager" priority="high" className="h-20 w-auto -mb-9 drop-shadow-md" />
+          <span className="text-lg font-black uppercase leading-tight tracking-tight text-foreground">{t.projectName}</span>
         </Link>
         <div className="relative">
           <HeaderNav data={data} locale={locale} />

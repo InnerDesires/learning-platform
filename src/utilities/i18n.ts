@@ -34,6 +34,7 @@ type FrontendMessages = {
   copy: string
   copied: string
   logoAlt: string
+  projectName: string
   signIn: string
   profile: string
   signOut: string
@@ -198,6 +199,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copy: 'Копіювати',
     copied: 'Скопійовано!',
     logoAlt: 'Логотип Залізна Зміна',
+    projectName: 'Залізна Зміна. Платформа',
     signIn: 'Увійти',
     profile: 'Профіль',
     signOut: 'Вийти',
@@ -245,8 +247,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseCompleted: 'Завершено',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
-    stepCompleteAndContinue: 'Завершити і продовжити',
-    stepComplete: 'Позначити як завершений',
+    stepCompleteAndContinue: 'Далі',
+    stepComplete: 'Завершити',
     stepPrevious: 'Попередній',
     stepNext: 'Наступний',
     stepProgress: 'Прогрес',
@@ -307,7 +309,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     certificateCertId: 'Номер сертифікату',
     certificatesPageTitle: 'Мої сертифікати',
     certificatesMetaTitle: 'Мої сертифікати | Залізна Зміна',
-    certificateNoCertificates: 'У вас ще немає сертифікатів. Завершіть курс, щоб отримати сертифікат.',
+    certificateNoCertificates:
+      'У вас ще немає сертифікатів. Завершіть курс, щоб отримати сертифікат.',
     certificateCompletedOn: 'Завершено',
     certificateVerifyLabel: 'Перевірити',
     verifyPageTitle: 'Перевірка сертифікату',
@@ -319,10 +322,12 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     verifyDate: 'Дата завершення',
     verifyCertId: 'Номер сертифікату',
     verifyInvalid: 'Сертифікат недійсний',
-    verifyInvalidDescription: 'Цей сертифікат не може бути підтверджений. Можливо, посилання є некоректним або було змінено.',
+    verifyInvalidDescription:
+      'Цей сертифікат не може бути підтверджений. Можливо, посилання є некоректним або було змінено.',
     verifyDownload: 'Завантажити сертифікат',
     verifyLandingTitle: 'Перевірити сертифікат',
-    verifyLandingDescription: 'Відскануйте QR-код на сертифікаті або вставте посилання для перевірки нижче.',
+    verifyLandingDescription:
+      'Відскануйте QR-код на сертифікаті або вставте посилання для перевірки нижче.',
     verifyInputPlaceholder: 'Вставте посилання або код сертифікату',
     verifyInputSubmit: 'Перевірити',
   },
@@ -360,6 +365,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copy: 'Copy',
     copied: 'Copied!',
     logoAlt: 'Iron Squad Logo',
+    projectName: 'Iron Squad. Platform',
     signIn: 'Sign in',
     profile: 'Profile',
     signOut: 'Sign out',
@@ -469,7 +475,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     certificateCertId: 'Certificate ID',
     certificatesPageTitle: 'My Certificates',
     certificatesMetaTitle: 'My Certificates | Iron Squad',
-    certificateNoCertificates: "You don't have any certificates yet. Complete a course to earn one.",
+    certificateNoCertificates:
+      "You don't have any certificates yet. Complete a course to earn one.",
     certificateCompletedOn: 'Completed on',
     certificateVerifyLabel: 'Verify',
     verifyPageTitle: 'Certificate Verification',
@@ -481,10 +488,12 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     verifyDate: 'Date of Completion',
     verifyCertId: 'Certificate ID',
     verifyInvalid: 'Certificate is invalid',
-    verifyInvalidDescription: 'This certificate could not be verified. The link may be incorrect or tampered with.',
+    verifyInvalidDescription:
+      'This certificate could not be verified. The link may be incorrect or tampered with.',
     verifyDownload: 'Download Certificate',
     verifyLandingTitle: 'Verify a Certificate',
-    verifyLandingDescription: 'Scan the QR code on a certificate or paste the verification link below.',
+    verifyLandingDescription:
+      'Scan the QR code on a certificate or paste the verification link below.',
     verifyInputPlaceholder: 'Paste a verification link or certificate code',
     verifyInputSubmit: 'Verify',
   },
