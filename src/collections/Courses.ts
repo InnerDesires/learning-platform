@@ -9,6 +9,7 @@ import { populatePublishedAt } from '../hooks/populatePublishedAt'
 export const Courses: CollectionConfig = {
   slug: 'courses',
   labels: { singular: 'Курс', plural: 'Курси' },
+  lockDocuments: false,
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', '_status', 'createdAt'],
@@ -22,6 +23,40 @@ export const Courses: CollectionConfig = {
   },
   hooks: {
     beforeChange: [populatePublishedAt],
+    beforeDelete: [
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'quiz-attempts',
+          where: { course: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'enrollments',
+          where: { course: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'comments',
+          where: {
+            and: [
+              { targetCollection: { equals: 'courses' } },
+              { targetId: { equals: id } },
+            ],
+          },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'likes',
+          where: {
+            and: [
+              { targetCollection: { equals: 'courses' } },
+              { targetId: { equals: id } },
+            ],
+          },
+          req,
+        })
+      },
+    ],
   },
   versions: {
     drafts: {
@@ -249,6 +284,16 @@ export const Courses: CollectionConfig = {
       label: 'Дата публікації',
       admin: {
         position: 'sidebar',
+      },
+    },
+    {
+      name: 'deleteConfirmation',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: '@/components/admin/CourseDeleteConfirmation',
+        },
       },
     },
   ],

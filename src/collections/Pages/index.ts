@@ -25,6 +25,7 @@ import {
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
   labels: { singular: 'Сторінка', plural: 'Сторінки' },
+  lockDocuments: false,
   access: {
     create: admin,
     delete: admin,

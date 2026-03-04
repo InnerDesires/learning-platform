@@ -15,6 +15,7 @@ const adminOrOwn: Access = ({ req: { user } }) => {
 export const Enrollments: CollectionConfig = {
   slug: 'enrollments',
   labels: { singular: 'Запис на курс', plural: 'Записи на курси' },
+  lockDocuments: false,
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['user', 'course', 'status', 'enrolledAt'],

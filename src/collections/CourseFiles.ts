@@ -11,6 +11,7 @@ const dirname = path.dirname(filename)
 export const CourseFiles: CollectionConfig = {
   slug: 'course-files',
   labels: { singular: 'Файл курсу', plural: 'Файли курсів' },
+  lockDocuments: false,
   admin: {
     group: 'Курси',
   },

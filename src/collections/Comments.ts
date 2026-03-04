@@ -14,6 +14,7 @@ const adminOrAuthor: Access = ({ req: { user } }) => {
 export const Comments: CollectionConfig = {
   slug: 'comments',
   labels: { singular: 'Коментар', plural: 'Коментарі' },
+  lockDocuments: false,
   admin: {
     useAsTitle: 'body',
     defaultColumns: ['body', 'author', 'targetCollection', 'createdAt'],

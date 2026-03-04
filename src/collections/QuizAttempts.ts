@@ -14,6 +14,7 @@ const adminOrOwn: Access = ({ req: { user } }) => {
 export const QuizAttempts: CollectionConfig = {
   slug: 'quiz-attempts',
   labels: { singular: 'Спроба тесту', plural: 'Спроби тестів' },
+  lockDocuments: false,
   admin: {
     group: 'Курси',
     defaultColumns: ['user', 'course', 'score', 'passed', 'createdAt'],

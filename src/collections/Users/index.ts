@@ -6,6 +6,7 @@ import { authenticated } from '../../access/authenticated'
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: { singular: 'Користувач', plural: 'Користувачі' },
+  lockDocuments: false,
   access: {
     admin: admin,
     create: admin,
