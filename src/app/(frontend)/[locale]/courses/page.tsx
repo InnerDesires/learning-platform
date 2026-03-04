@@ -49,7 +49,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
   const courseIds = coursesResult.docs.map((c) => c.id)
   const courseStats: Record<number, CourseStats> = {}
 
-  const [allEnrollmentsResult, userCompletedResult, courseLikesCounts] = await Promise.all([
+  const [allEnrollmentsResult, userCompletedResult, userInProgressResult, courseLikesCounts] = await Promise.all([
     courseIds.length > 0
       ? payload.find({
           collection: 'enrollments',
@@ -66,6 +66,19 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
             and: [
               { user: { equals: session.user.id } },
               { status: { equals: 'completed' } },
+            ],
+          },
+          limit: 1000,
+          depth: 0,
+        })
+      : Promise.resolve({ docs: [] }),
+    session?.user
+      ? payload.find({
+          collection: 'enrollments',
+          where: {
+            and: [
+              { user: { equals: session.user.id } },
+              { status: { in: ['enrolled', 'in_progress'] } },
             ],
           },
           limit: 1000,
@@ -92,6 +105,10 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
     typeof e.course === 'object' ? e.course.id : e.course,
   )
 
+  const inProgressCourseIds = userInProgressResult.docs.map((e) =>
+    typeof e.course === 'object' ? e.course.id : e.course,
+  )
+
   const categories = categoriesResult.docs.map((c) => ({
     id: c.id,
     title: c.title,
@@ -107,6 +124,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
           courses={coursesResult.docs}
           categories={categories}
           completedCourseIds={completedCourseIds}
+          inProgressCourseIds={inProgressCourseIds}
           courseStats={courseStats}
           locale={locale}
         />

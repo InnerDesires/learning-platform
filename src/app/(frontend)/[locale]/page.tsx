@@ -3,6 +3,8 @@ import type { SiteLocale } from '@/utilities/locales'
 import { HomePage } from '@/components/Home'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { Suspense } from 'react'
+import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsServer'
 
 type Args = {
   params: Promise<{
@@ -13,7 +15,16 @@ type Args = {
 export default async function Page({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
 
-  return <HomePage locale={locale} />
+  return (
+    <HomePage
+      locale={locale}
+      newsSlot={
+        <Suspense fallback={<NewsSectionSkeleton locale={locale} />}>
+          <NewsSectionServer locale={locale} />
+        </Suspense>
+      }
+    />
+  )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {

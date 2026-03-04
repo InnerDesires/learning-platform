@@ -80,6 +80,7 @@ type FrontendMessages = {
   courseStartLearning: string
   courseContinueLearning: string
   courseCompleted: string
+  courseInProgress: string
   courseOverview: string
   courseLoginToEnroll: string
   stepCompleteAndContinue: string
@@ -245,6 +246,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseStartLearning: 'Почати навчання',
     courseContinueLearning: 'Продовжити навчання',
     courseCompleted: 'Завершено',
+    courseInProgress: 'Розпочато',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
     stepCompleteAndContinue: 'Далі',
@@ -411,6 +413,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseStartLearning: 'Start learning',
     courseContinueLearning: 'Continue learning',
     courseCompleted: 'Completed',
+    courseInProgress: 'In Progress',
     courseOverview: 'Course overview',
     courseLoginToEnroll: 'Log in to enroll in this course',
     stepCompleteAndContinue: 'Complete & Continue',

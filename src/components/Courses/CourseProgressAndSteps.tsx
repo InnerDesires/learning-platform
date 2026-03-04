@@ -15,14 +15,18 @@ type Props = {
   courseId: number
   courseSlug: string
   steps: Step[]
+  quizEnabled?: boolean
   labels: {
     stepProgress: string
     courseCompleted: string
     courseSteps: string
+    quizTitle: string
+    quizPassed: string
+    quizCompleteStepsFirst: string
   }
 }
 
-export async function CourseProgressAndSteps({ courseId, courseSlug, steps, labels }: Props) {
+export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quizEnabled, labels }: Props) {
   const session = await getSession().catch(() => null)
   const enrollment = session?.user ? await getEnrollment(courseId) : null
   const isEnrolled = !!enrollment
@@ -31,12 +35,18 @@ export async function CourseProgressAndSteps({ courseId, courseSlug, steps, labe
     ? (enrollment.completedSteps as string[])
     : []
 
+  const allStepsCompleted = completedSteps.length >= steps.length
+  const quizPassed = enrollment?.quizPassed === true
+
+  const progressTotal = quizEnabled ? steps.length + 1 : steps.length
+  const progressCompleted = quizEnabled ? completedSteps.length + (quizPassed ? 1 : 0) : completedSteps.length
+
   return (
     <>
       {isEnrolled && (
         <ProgressBar
-          completed={completedSteps.length}
-          total={steps.length}
+          completed={progressCompleted}
+          total={progressTotal}
           label={labels.stepProgress}
           className="mb-8"
         />
@@ -53,6 +63,14 @@ export async function CourseProgressAndSteps({ courseId, courseSlug, steps, labe
             linked={isEnrolled}
             completedLabel={labels.courseCompleted}
             stepsLabel={labels.courseSteps}
+            quiz={quizEnabled ? {
+              enabled: true,
+              passed: quizPassed,
+              allStepsCompleted,
+              label: labels.quizTitle,
+              lockedLabel: labels.quizCompleteStepsFirst,
+              passedLabel: labels.quizPassed,
+            } : undefined}
           />
         </div>
       </div>

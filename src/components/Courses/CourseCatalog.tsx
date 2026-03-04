@@ -15,11 +15,12 @@ type Props = {
   courses: CourseCardData[]
   categories: Category[]
   completedCourseIds: number[]
+  inProgressCourseIds: number[]
   courseStats: Record<number, CourseStats>
   locale: SiteLocale
 }
 
-export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, courseStats, locale }) => {
+export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, inProgressCourseIds, courseStats, locale }) => {
   const t = getFrontendMessages(locale)
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
 
@@ -50,6 +51,7 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
             course={course}
             locale={locale}
             isCompleted={completedCourseIds.includes(course.id)}
+            isInProgress={inProgressCourseIds.includes(course.id)}
             stats={courseStats[course.id]}
             className="h-full"
           />
