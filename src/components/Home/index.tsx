@@ -1,12 +1,12 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent } from './content'
 import { HeroSection } from './Hero'
 import { StatsSection } from './Stats'
 import { AboutSection } from './About'
 import { TeamSection } from './Team'
-import { NewsSection } from './News'
 import { CoursesSection } from './Courses'
 import { PartnersSection } from './Partners'
 import { CalendarSection } from './Calendar'
@@ -17,9 +17,10 @@ import { ContactSection } from './Contact'
 
 type Props = {
   locale: SiteLocale
+  newsSlot: ReactNode
 }
 
-export function HomePage({ locale }: Props) {
+export function HomePage({ locale, newsSlot }: Props) {
   const c = getHomeContent(locale)
 
   return (
@@ -28,7 +29,7 @@ export function HomePage({ locale }: Props) {
       <StatsSection items={c.stats.children} />
       <CoursesSection {...c.courses} locale={locale} />
       <AboutSection {...c.about} locale={locale} />
-      <NewsSection {...c.news} locale={locale} />
+      {newsSlot}
       <VideoSection locale={locale} />
       <TeamSection {...c.team} />
       <PartnersSection {...c.partners} />

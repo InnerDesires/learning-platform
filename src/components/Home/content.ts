@@ -66,7 +66,6 @@ type HomeContent = {
     title: string
     description: string
     cta: string
-    items: { title: string; date: string; excerpt: string; slug: string }[]
   }
 }
 
@@ -199,29 +198,6 @@ const content: Record<SiteLocale, HomeContent> = {
       title: 'Останні новини',
       description: 'Слідкуйте за подіями проєкту',
       cta: 'Усі новини',
-      items: [
-        {
-          title: 'Залізна зміна знову в дорозі — Наша нова подорож у Карпати',
-          date: '15 листопада 2025',
-          excerpt:
-            'Нова захоплива подорож до Карпат — активності, пригоди та розвиток для учасників проєкту.',
-          slug: 'zalizna-zmina-znovu-v-dorozi',
-        },
-        {
-          title: 'Залізна зміна у Карпатському університеті!',
-          date: '8 листопада 2025',
-          excerpt:
-            'Освітній візит до Карпатського університету — нові знання та можливості для молоді.',
-          slug: 'zalizna-zmina-u-karpatskomu-universyteti',
-        },
-        {
-          title: 'З Днем залізничника України!',
-          date: '4 листопада 2025',
-          excerpt:
-            'Вітаємо з професійним святом! Дякуємо Укрзалізниці за підтримку нашого проєкту.',
-          slug: 'z-dnem-zaliznychnyka-ukrainy',
-        },
-      ],
     },
   },
   en: {
@@ -352,29 +328,6 @@ const content: Record<SiteLocale, HomeContent> = {
       title: 'Latest News',
       description: 'Follow project events',
       cta: 'All News',
-      items: [
-        {
-          title: 'Iron Squad is on the road again — Our new trip to the Carpathians',
-          date: 'November 15, 2025',
-          excerpt:
-            'A thrilling new trip to the Carpathians — activities, adventures, and growth for project participants.',
-          slug: 'zalizna-zmina-znovu-v-dorozi',
-        },
-        {
-          title: 'Iron Squad at the Carpathian University!',
-          date: 'November 8, 2025',
-          excerpt:
-            'An educational visit to Carpathian University — new knowledge and opportunities for youth.',
-          slug: 'zalizna-zmina-u-karpatskomu-universyteti',
-        },
-        {
-          title: "Happy Railway Worker's Day of Ukraine!",
-          date: 'November 4, 2025',
-          excerpt:
-            'Congratulations on the professional holiday! Thank you to Ukrzaliznytsia for supporting our project.',
-          slug: 'z-dnem-zaliznychnyka-ukrainy',
-        },
-      ],
     },
   },
 }

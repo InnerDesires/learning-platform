@@ -2,12 +2,16 @@
 
 import { FadeIn } from './FadeIn'
 import Link from 'next/link'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { Media } from '@/components/Media'
+import type { Media as MediaType } from '@/payload-types'
 
 type NewsItem = {
   title: string
   date: string
   excerpt: string
   slug: string
+  image?: MediaType | null
 }
 
 type Props = {
@@ -60,10 +64,17 @@ export function NewsSection({ tag, title, description, cta, items, locale }: Pro
               <article className="group hover:-translate-y-1.5 transition-transform">
                 <Link href={`/${locale}/posts/${item.slug}`} className="block">
                   <div className="relative h-48 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border border-border/50 mb-5 overflow-hidden">
+                    {item.image && (
+                      <Media
+                        resource={item.image}
+                        fill
+                        imgClassName="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute bottom-4 left-4">
                       <span className="px-3 py-1 rounded-full bg-white/90 text-foreground text-xs font-medium shadow-sm">
-                        {item.date}
+                        {item.date ? formatDateTime(item.date) : ''}
                       </span>
                     </div>
                   </div>

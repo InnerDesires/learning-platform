@@ -100,8 +100,8 @@ export default async function StepViewerPage({ params: paramsPromise, searchPara
         </div>
 
         <ProgressBar
-          completed={completedCount}
-          total={steps.length}
+          completed={course.quiz?.enabled ? completedCount + (enrollment.quizPassed ? 1 : 0) : completedCount}
+          total={course.quiz?.enabled ? steps.length + 1 : steps.length}
           className="mb-6"
         />
 
@@ -190,6 +190,14 @@ export default async function StepViewerPage({ params: paramsPromise, searchPara
                 linked
                 completedLabel={t.courseCompleted}
                 stepsLabel={t.courseSteps}
+                quiz={course.quiz?.enabled ? {
+                  enabled: true,
+                  passed: enrollment.quizPassed === true,
+                  allStepsCompleted: completedSteps.length >= steps.length,
+                  label: t.quizTitle,
+                  lockedLabel: t.quizCompleteStepsFirst,
+                  passedLabel: t.quizPassed,
+                } : undefined}
               />
             </div>
           </aside>

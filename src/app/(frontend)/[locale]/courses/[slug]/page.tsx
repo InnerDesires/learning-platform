@@ -183,6 +183,14 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                   linked={false}
                   completedLabel={t.courseCompleted}
                   stepsLabel={t.courseSteps}
+                  quiz={course.quiz?.enabled ? {
+                    enabled: true,
+                    passed: false,
+                    allStepsCompleted: false,
+                    label: t.quizTitle,
+                    lockedLabel: t.quizCompleteStepsFirst,
+                    passedLabel: t.quizPassed,
+                  } : undefined}
                 />
               </div>
             </div>
@@ -192,10 +200,14 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             courseId={course.id}
             courseSlug={course.slug}
             steps={steps}
+            quizEnabled={course.quiz?.enabled === true}
             labels={{
               stepProgress: t.stepProgress,
               courseCompleted: t.courseCompleted,
               courseSteps: t.courseSteps,
+              quizTitle: t.quizTitle,
+              quizPassed: t.quizPassed,
+              quizCompleteStepsFirst: t.quizCompleteStepsFirst,
             }}
           />
         </Suspense>

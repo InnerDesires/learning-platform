@@ -48,6 +48,14 @@ type Props = {
   linked?: boolean
   completedLabel: string
   stepsLabel: string
+  quiz?: {
+    enabled: boolean
+    passed: boolean
+    allStepsCompleted: boolean
+    label: string
+    lockedLabel: string
+    passedLabel: string
+  }
   className?: string
 }
 
@@ -59,6 +67,7 @@ export const StepsList: React.FC<Props> = ({
   linked = false,
   completedLabel,
   stepsLabel,
+  quiz,
   className,
 }) => {
   return (
@@ -126,6 +135,76 @@ export const StepsList: React.FC<Props> = ({
           </div>
         )
       })}
+      {quiz?.enabled && (() => {
+        const isQuizLocked = !quiz.allStepsCompleted
+        const isQuizPassed = quiz.passed
+
+        const quizContent = (
+          <>
+            <span
+              className={cn(
+                'flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors',
+                isQuizPassed
+                  ? 'bg-green-500 text-white'
+                  : isQuizLocked
+                    ? 'bg-muted text-muted-foreground/50'
+                    : 'bg-amber-500 text-white',
+              )}
+            >
+              {isQuizPassed ? (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              )}
+            </span>
+            <span className={cn('flex-shrink-0', isQuizLocked ? 'text-muted-foreground/50' : 'text-muted-foreground')}>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+              </svg>
+            </span>
+            <span className={cn('flex-1 text-sm font-medium truncate', isQuizLocked && 'text-muted-foreground/50')}>
+              {quiz.label}
+            </span>
+            {isQuizPassed && (
+              <span className="text-green-600 text-xs font-medium hidden sm:inline">
+                {quiz.passedLabel}
+              </span>
+            )}
+            {isQuizLocked && (
+              <span className="flex items-center gap-1 text-muted-foreground/50 text-xs">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </span>
+            )}
+          </>
+        )
+
+        if (linked && !isQuizLocked) {
+          return (
+            <Link
+              href={`/courses/${courseSlug}/quiz`}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors hover:bg-muted/50 border-t border-border/50 mt-1 pt-3"
+            >
+              {quizContent}
+            </Link>
+          )
+        }
+
+        return (
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-dashed border-border/60 bg-card/30 mt-1">
+            {quizContent}
+          </div>
+        )
+      })()}
     </nav>
   )
 }

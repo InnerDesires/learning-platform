@@ -19,11 +19,12 @@ type Props = {
   course: CourseCardData
   locale: SiteLocale
   isCompleted?: boolean
+  isInProgress?: boolean
   stats?: CourseStats
   className?: string
 }
 
-export const CourseCard: React.FC<Props> = ({ course, locale, isCompleted, stats, className }) => {
+export const CourseCard: React.FC<Props> = ({ course, locale, isCompleted, isInProgress, stats, className }) => {
   const t = getFrontendMessages(locale)
   const { slug, title, description, heroImage, category, steps } = course
   const categoryTitle = typeof category === 'object' && category ? category.title : null
@@ -61,6 +62,15 @@ export const CourseCard: React.FC<Props> = ({ course, locale, isCompleted, stats
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               {t.courseCompleted}
+            </div>
+          )}
+          {!isCompleted && isInProgress && (
+            <div className="absolute top-3 right-3 bg-blue-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <polyline points="12 6 12 12 16 14" strokeWidth="2" />
+              </svg>
+              {t.courseInProgress}
             </div>
           )}
         </div>
