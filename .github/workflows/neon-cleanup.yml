@@ -12,6 +12,6 @@ jobs:
         with:
           node-version: '22'
       - run: npm i -g neonctl
-      - run: neonctl branches delete "${{ github.head_ref }}" --project-id ancient-cell-80589995
+      - run: neonctl branches delete "preview/${{ github.head_ref }}" --project-id sweet-night-33633526
         env:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
