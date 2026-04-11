@@ -8,8 +8,10 @@ jobs:
   delete-neon-branch:
     runs-on: ubuntu-latest
     steps:
-      - uses: neondatabase/delete-branch-action@v3
+      - uses: actions/setup-node@v4
         with:
-          project_id: ancient-cell-80589995
-          branch: ${{ github.head_ref }}
-          api_key: ${{ secrets.NEON_API_KEY }}
+          node-version: '22'
+      - run: npm i -g neonctl
+      - run: neonctl branches delete "${{ github.head_ref }}" --project-id ancient-cell-80589995
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
