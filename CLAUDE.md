@@ -68,10 +68,12 @@ pnpm lint             # ESLint
 
 Each dev session needs its own Neon branch to avoid schema/data conflicts.
 
+Name the Neon branch after your **git branch name** — this is required for auto-cleanup on PR close (`.github/workflows/neon-cleanup.yml`).
+
 **Session start:**
 ```bash
-# 1. Create a branch
-pnpm exec neonctl branches create --name cursor-$(date +%s) --parent dev \
+# 1. Create a branch named after your git branch (e.g. feat/my-feature)
+pnpm exec neonctl branches create --name <git-branch-name> --parent dev \
   --project-id ancient-cell-80589995 --output json
 
 # 2. Get connection string (use branch.id from above)
@@ -82,7 +84,7 @@ pnpm exec neonctl connection-string <BRANCH_ID> --pooled \
 DATABASE_URL=<connection_string>
 ```
 
-**Session end** — delete your branch:
+**Session end** — delete your branch (or let the PR close action handle it):
 ```bash
 pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
 ```
