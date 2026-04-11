@@ -17,7 +17,7 @@ When working in Cursor Cloud (or any shared dev environment), you MUST use your 
    For Cursor Cloud or headless runs use **2**: set `NEON_API_KEY` in `.env`. The shell does not load `.env` by default; when running `neonctl` from a script or agent, ensure `NEON_API_KEY` is in the environment (e.g. run the CLI from Node with `require('dotenv').config()` then `execSync('pnpm exec neonctl ...', { env: process.env })`).
 
 2. Create a branch and get its connection string by running these commands yourself:
-   - `pnpm exec neonctl branches create --name cursor-<random> --parent dev --project-id ancient-cell-80589995 --output json` (use a unique name, e.g. `cursor-$(date +%s)-$RANDOM` or similar)
+   - `pnpm exec neonctl branches create --name <git-branch-name> --parent dev --project-id ancient-cell-80589995 --output json` (use the current git branch name — this is required for `.github/workflows/neon-cleanup.yml` to auto-delete the branch when the PR closes)
    - From the JSON output, take `branch.id`
    - Run `pnpm exec neonctl connection-string <BRANCH_ID> --pooled --project-id ancient-cell-80589995` and capture the printed connection string
    - Write it to `.env` as `DATABASE_URL=<connection_string>` (overwrite any existing `DATABASE_URL` line)
