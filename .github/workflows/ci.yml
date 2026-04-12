@@ -31,6 +31,12 @@ jobs:
           branch_name: ci/${{ github.run_id }}
           api_key: ${{ secrets.NEON_DEV_API_KEY }}
 
+      - name: Run migrations
+        run: pnpm payload migrate
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+
       - name: Run integration tests
         run: pnpm test:int
         env:

@@ -6,6 +6,12 @@ export default defineConfig({
   test: {
     environment: 'node',
     hookTimeout: 60000,
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/int/**/*.int.spec.ts'],
     server: {
