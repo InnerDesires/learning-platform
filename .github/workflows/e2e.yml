@@ -73,12 +73,18 @@ jobs:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
+      - name: Prepare Pages deployment
+        if: failure() && hashFiles('playwright-report/index.html') != ''
+        run: |
+          mkdir -p /tmp/pages/reports/${{ github.run_id }}
+          cp -r playwright-report/. /tmp/pages/reports/${{ github.run_id }}/
+          touch /tmp/pages/.nojekyll
+
       - name: Deploy report to GitHub Pages
         if: failure() && hashFiles('playwright-report/index.html') != ''
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: playwright-report
-          target-folder: reports/${{ github.run_id }}
+          folder: /tmp/pages
           clean: false
 
       - name: Comment PR with report URL

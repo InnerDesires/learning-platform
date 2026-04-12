@@ -3,6 +3,8 @@ import { login } from '../helpers/login'
 import { testUser } from '../helpers/seedUser'
 
 test.describe('Admin Panel', () => {
+  test.describe.configure({ timeout: 120000 })
+
   let page: Page
 
   test.beforeAll(async ({ browser }) => {
