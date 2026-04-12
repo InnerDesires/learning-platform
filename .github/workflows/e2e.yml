@@ -38,6 +38,18 @@ jobs:
           branch_name: ci/${{ github.run_id }}
           api_key: ${{ secrets.NEON_DEV_API_KEY }}
 
+      - name: Run database migrations
+        run: pnpm payload migrate
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+
+      - name: Seed E2E test data
+        run: cross-env NODE_OPTIONS=--no-deprecation tsx tests/helpers/seedUser.ts
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+
       - name: Run E2E tests
         # Skip visual regression snapshot tests — baselines were taken on macOS
         # and will false-fail on Ubuntu due to font rendering differences.
@@ -51,6 +63,13 @@ jobs:
           NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3100
           CRON_SECRET: ci-cron-secret
           PREVIEW_SECRET: ci-preview-secret
+
+      - name: Cleanup E2E test data
+        if: always()
+        run: cross-env NODE_OPTIONS=--no-deprecation tsx tests/helpers/seedUser.ts cleanup
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
       - name: Deploy report to GitHub Pages
         if: failure()

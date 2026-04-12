@@ -59,3 +59,14 @@ export async function cleanupTestUser(): Promise<void> {
     },
   })
 }
+
+// CLI runner: pnpm exec cross-env NODE_OPTIONS=--no-deprecation tsx tests/helpers/seedUser.ts
+const isMain = process.argv[1]?.endsWith('seedUser.ts') || process.argv[1]?.endsWith('seedUser.js')
+if (isMain) {
+  const cmd = process.argv[2]
+  if (cmd === 'cleanup') {
+    cleanupTestUser().then(() => { console.log('Cleaned up test user'); process.exit(0) }).catch(err => { console.error(err); process.exit(1) })
+  } else {
+    seedTestUser().then(() => { console.log('Seeded test user'); process.exit(0) }).catch(err => { console.error(err); process.exit(1) })
+  }
+}
