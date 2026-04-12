@@ -157,6 +157,10 @@ async ({ doc, req, context }) => {
 - Branch naming: `feat/<slug>`, `fix/<slug>`, `test/<slug>`, `chore/<slug>`.
 - Keep the working tree clean at all times. Stash or commit before switching context.
 
+### Pull requests
+
+When adding commits on top of an existing PR branch, always update the PR description to reflect the full set of changes — not just the latest commit. Run `gh pr view <number>` to read the current description before editing.
+
 ### Commits
 
 Do not add Claude as a co-author in commit messages. No `Co-Authored-By: Claude` lines.
