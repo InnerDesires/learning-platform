@@ -19,7 +19,6 @@ type Props = {
   completeAndContinueLabel: string
   completeLabel: string
   nextLabel: string
-  optimisticStepIds?: string[]
 }
 
 export const CompleteStepButton: React.FC<Props> = ({
@@ -35,53 +34,27 @@ export const CompleteStepButton: React.FC<Props> = ({
   completeAndContinueLabel,
   completeLabel,
   nextLabel,
-  optimisticStepIds = [],
 }) => {
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
-  const lastStepTarget = isLastStep && quizEnabled
-    ? `/courses/${courseSlug}/quiz`
-    : `/courses/${courseSlug}`
-
-  const getNextStepUrl = (addStepId?: string) => {
-    if (isLastStep) return lastStepTarget
-    const basePath = `/courses/${courseSlug}/steps/${nextStepIndex}`
-    const ids = [...optimisticStepIds]
-    if (addStepId && !ids.includes(addStepId)) {
-      ids.push(addStepId)
-    }
-    if (ids.length === 0) return basePath
-    return `${basePath}?oc=${ids.join(',')}`
-  }
-
-  const navigateNext = () => {
-    startTransition(() => {
-      router.push(getNextStepUrl())
-    })
-  }
+  const nextUrl = isLastStep
+    ? (quizEnabled ? `/courses/${courseSlug}/quiz` : `/courses/${courseSlug}`)
+    : `/courses/${courseSlug}/steps/${nextStepIndex}`
 
   const handleComplete = () => {
-    if (!isCourseCompleted && !isAlreadyCompleted) {
-      if (isLastStep) {
-        startTransition(async () => {
-          await completeStep(enrollmentId, stepBlockId, courseId)
-          router.push(lastStepTarget)
-        })
-        return
+    startTransition(async () => {
+      if (!isCourseCompleted && !isAlreadyCompleted) {
+        await completeStep(enrollmentId, stepBlockId, courseId)
       }
-      completeStep(enrollmentId, stepBlockId, courseId)
-    }
-    const addId = (!isCourseCompleted && !isAlreadyCompleted) ? stepBlockId : undefined
-    startTransition(() => {
-      router.push(getNextStepUrl(addId))
+      router.push(nextUrl)
     })
   }
 
   if (isCourseCompleted || isAlreadyCompleted) {
     return (
       <Button
-        onClick={navigateNext}
+        onClick={handleComplete}
         disabled={isPending}
         variant={isLastStep ? 'outline' : 'default'}
         size="lg"
