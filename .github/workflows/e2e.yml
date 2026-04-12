@@ -45,8 +45,9 @@ jobs:
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
       - name: Seed E2E test data
-        run: cross-env NODE_OPTIONS=--no-deprecation tsx tests/helpers/seedUser.ts
+        run: pnpm exec tsx tests/helpers/seedUser.ts
         env:
+          NODE_OPTIONS: --no-deprecation
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
@@ -66,13 +67,14 @@ jobs:
 
       - name: Cleanup E2E test data
         if: always()
-        run: cross-env NODE_OPTIONS=--no-deprecation tsx tests/helpers/seedUser.ts cleanup
+        run: pnpm exec tsx tests/helpers/seedUser.ts cleanup
         env:
+          NODE_OPTIONS: --no-deprecation
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
       - name: Deploy report to GitHub Pages
-        if: failure()
+        if: failure() && hashFiles('playwright-report/index.html') != ''
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: playwright-report
@@ -80,7 +82,7 @@ jobs:
           clean: false
 
       - name: Comment PR with report URL
-        if: failure()
+        if: failure() && hashFiles('playwright-report/index.html') != ''
         uses: actions/github-script@v7
         with:
           script: |
