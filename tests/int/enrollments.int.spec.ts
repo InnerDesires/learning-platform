@@ -1,7 +1,7 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterEach, expect } from 'vitest'
-import { minimalRichTextStep } from '../helpers/factories'
+import { minimalCourseData, minimalRichTextStep } from '../helpers/factories'
 
 let payload: Payload
 let userId: number
@@ -24,14 +24,7 @@ describe('Enrollments', () => {
 
     const course = await payload.create({
       collection: 'courses',
-      data: {
-        title: 'Enrollment Test Course',
-        steps: [
-          {
-            ...minimalRichTextStep('Step 1'),
-          },
-        ],
-      },
+      data: minimalCourseData('Enrollment Test Course'),
     })
     courseId = course.id
   })
@@ -72,12 +65,7 @@ describe('Enrollments', () => {
   it('allows the same user to enroll in different courses', async () => {
     const course2 = await payload.create({
       collection: 'courses',
-      data: {
-        title: 'Enrollment Test Course 2',
-        steps: [
-          minimalRichTextStep('Step 1'),
-        ],
-      },
+      data: minimalCourseData('Enrollment Test Course 2'),
     })
 
     await payload.create({ collection: 'enrollments', data: { user: userId, course: courseId } })

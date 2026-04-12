@@ -31,3 +31,16 @@ export function minimalRichTextStep(title = 'Test Step') {
     content: minimalLexicalContent,
   }
 }
+
+/**
+ * Generates minimal course data with a unique slug to avoid DB unique constraint
+ * violations when multiple test suites create courses in the same database.
+ */
+export function minimalCourseData(titlePrefix: string, stepCount = 1) {
+  const uid = Date.now().toString(36)
+  return {
+    title: titlePrefix,
+    slug: `${titlePrefix.toLowerCase().replace(/\s+/g, '-')}-${uid}`,
+    steps: Array.from({ length: stepCount }, (_, i) => minimalRichTextStep(`Step ${i + 1}`)),
+  }
+}

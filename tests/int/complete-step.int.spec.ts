@@ -1,7 +1,7 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterEach, expect } from 'vitest'
-import { minimalRichTextStep } from '../helpers/factories'
+import { minimalCourseData } from '../helpers/factories'
 
 let payload: Payload
 let userId: number
@@ -26,10 +26,7 @@ describe('CompleteStep (enrollment step tracking)', () => {
     // Create course with 2 steps
     const course = await payload.create({
       collection: 'courses',
-      data: {
-        title: 'Step Test Course',
-        steps: [minimalRichTextStep('Step 1'), minimalRichTextStep('Step 2')],
-      },
+      data: minimalCourseData('Step Test Course', 2),
     })
     courseId = course.id
 

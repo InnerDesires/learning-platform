@@ -2,7 +2,7 @@ import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 import type { User } from '@/payload-types'
-import { minimalRichTextStep } from '../helpers/factories'
+import { minimalCourseData } from '../helpers/factories'
 
 let payload: Payload
 let regularUser: User
@@ -50,10 +50,7 @@ describe('Access Control', () => {
 
     const course = await payload.create({
       collection: 'courses',
-      data: {
-        title: 'Access Control Test Course',
-        steps: [minimalRichTextStep('Step 1')],
-      },
+      data: minimalCourseData('Access Control Test Course'),
     })
     courseId = course.id
 
