@@ -101,6 +101,8 @@ describe('Likes', () => {
 
     expect(secondLike.id).toBeDefined()
 
+    // Delete likes before user to avoid FK not-null constraint violation
+    await payload.delete({ collection: 'likes', where: { user: { equals: otherUser.id } } })
     await payload.delete({ collection: 'users', id: otherUser.id })
   })
 })

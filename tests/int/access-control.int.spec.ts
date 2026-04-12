@@ -2,6 +2,7 @@ import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 import type { User } from '@/payload-types'
+import { minimalRichTextStep } from '../helpers/factories'
 
 let payload: Payload
 let regularUser: User
@@ -51,22 +52,7 @@ describe('Access Control', () => {
       collection: 'courses',
       data: {
         title: 'Access Control Test Course',
-        steps: [
-          {
-            blockType: 'richTextStep',
-            title: 'Step 1',
-            content: {
-              root: {
-                children: [],
-                direction: null,
-                format: '',
-                indent: 0,
-                type: 'root',
-                version: 1,
-              },
-            },
-          },
-        ],
+        steps: [minimalRichTextStep('Step 1')],
       },
     })
     courseId = course.id

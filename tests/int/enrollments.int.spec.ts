@@ -1,6 +1,7 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterEach, expect } from 'vitest'
+import { minimalRichTextStep } from '../helpers/factories'
 
 let payload: Payload
 let userId: number
@@ -27,18 +28,7 @@ describe('Enrollments', () => {
         title: 'Enrollment Test Course',
         steps: [
           {
-            blockType: 'richTextStep',
-            title: 'Step 1',
-            content: {
-              root: {
-                children: [{ children: [], direction: null, format: '', indent: 0, type: 'paragraph', version: 1 }],
-                direction: null,
-                format: '',
-                indent: 0,
-                type: 'root',
-                version: 1,
-              },
-            },
+            ...minimalRichTextStep('Step 1'),
           },
         ],
       },
@@ -85,20 +75,7 @@ describe('Enrollments', () => {
       data: {
         title: 'Enrollment Test Course 2',
         steps: [
-          {
-            blockType: 'richTextStep',
-            title: 'Step 1',
-            content: {
-              root: {
-                children: [],
-                direction: null,
-                format: '',
-                indent: 0,
-                type: 'root',
-                version: 1,
-              },
-            },
-          },
+          minimalRichTextStep('Step 1'),
         ],
       },
     })
