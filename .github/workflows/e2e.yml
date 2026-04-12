@@ -38,7 +38,7 @@ jobs:
         # Skip visual regression snapshot tests — baselines were taken on macOS
         # and will false-fail on Ubuntu due to font rendering differences.
         # Run `pnpm test:e2e:snapshots` locally to update them.
-        run: pnpm test:e2e -- --grep-invert "visual regression"
+        run: pnpm test:e2e:ci
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
