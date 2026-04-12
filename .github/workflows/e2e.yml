@@ -1,0 +1,69 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  playwright:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Create Neon branch
+        id: neon
+        uses: neondatabase/create-branch-action@v5
+        with:
+          project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
+          parent: dev
+          branch_name: ci/${{ github.run_id }}
+          api_key: ${{ secrets.NEON_DEV_API_KEY }}
+
+      - name: Run E2E tests
+        # Skip visual regression snapshot tests — baselines were taken on macOS
+        # and will false-fail on Ubuntu due to font rendering differences.
+        # Run `pnpm test:e2e:snapshots` locally to update them.
+        run: >
+          cross-env
+          NODE_OPTIONS="--no-deprecation --import=tsx/esm"
+          pnpm exec playwright test
+          --config=playwright.config.ts
+          --grep-invert "visual regression"
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3100
+          NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3100
+          CRON_SECRET: ci-cron-secret
+          PREVIEW_SECRET: ci-preview-secret
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Delete Neon branch
+        if: always()
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
+          branch: ci/${{ github.run_id }}
+          api_key: ${{ secrets.NEON_DEV_API_KEY }}
