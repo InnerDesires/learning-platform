@@ -10,7 +10,7 @@ test.describe('Frontend', () => {
 
   test('can load homepage', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveTitle(/Payload Website Template/)
+    await expect(page).toHaveTitle(/Залізна Зміна/)
     await expect(page.getByTestId('header-logo-link')).toBeVisible()
     await expect(page.getByTestId('header-search-link')).toBeVisible()
   })
