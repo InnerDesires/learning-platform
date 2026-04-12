@@ -98,7 +98,7 @@ describe('Access Control', () => {
       expect(result.totalDocs).toBe(1)
     })
 
-    it('another regular user cannot read a different user's enrollment (overrideAccess: false)', async () => {
+    it("another regular user cannot read a different user's enrollment (overrideAccess: false)", async () => {
       const result = await payload.find({
         collection: 'enrollments',
         where: { id: { equals: regularUserEnrollmentId } },
