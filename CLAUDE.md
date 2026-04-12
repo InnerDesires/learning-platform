@@ -148,7 +148,16 @@ async ({ doc, req, context }) => {
 
 **Rule**: Use `req.context` flags to prevent hook loops.
 
-## Git Commits
+## Git Workflow
+
+### Branch hygiene
+
+- **Always run `git status` before starting any new work.** If the working tree is dirty or you're on an unrelated branch, stop and sort it out first — do not commit unrelated changes together.
+- **Each feature, fix, or task gets its own branch** cut from `main` (or the appropriate base). Never do new work directly on `main` or on a branch that belongs to a different task.
+- Branch naming: `feat/<slug>`, `fix/<slug>`, `test/<slug>`, `chore/<slug>`.
+- Keep the working tree clean at all times. Stash or commit before switching context.
+
+### Commits
 
 Do not add Claude as a co-author in commit messages. No `Co-Authored-By: Claude` lines.
 
