@@ -20,8 +20,9 @@ export async function login({
 }: LoginOptions): Promise<void> {
   await page.goto(`${serverURL}/admin/login`)
 
-  await page.fill('#field-email', user.email)
-  await page.fill('#field-password', user.password)
+  // payload-auth replaces Payload's default login form — selectors differ from standard Payload
+  await page.fill('input[autocomplete="email"]', user.email)
+  await page.fill('input[type="password"]', user.password)
   await page.click('button[type="submit"]')
 
   await page.waitForURL(/\/admin$/)
