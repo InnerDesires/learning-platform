@@ -1,6 +1,7 @@
 import { getPayloadAuth } from 'payload-auth/better-auth'
 import config from '../../src/payload.config.js'
 import type { ConstructedBetterAuthPluginOptions } from '../../src/lib/auth/options.js'
+import { markPreVerified } from '../../src/lib/auth/pre-verified.js'
 
 export const testUser = {
   email: 'dev@payloadcms.com',
@@ -24,6 +25,7 @@ export async function seedTestUser(): Promise<void> {
     },
   })
 
+  markPreVerified(testUser.email)
   await payload.betterAuth.api.signUpEmail({
     body: {
       email: testUser.email,
