@@ -59,7 +59,7 @@ async function registerViaBrowser(page: Page) {
   const otp = await getOtpForEmail(REG_EMAIL)
   await typeOtp(page, otp)
   await page.getByRole('button', { name: 'Підтвердити' }).click()
-  await expect(page).toHaveURL('/', { timeout: 15_000 })
+  await expect(page).toHaveURL('/profile', { timeout: 15_000 })
 }
 
 test.describe('Registration flow', () => {
@@ -98,14 +98,14 @@ test.describe('Registration flow', () => {
     await expect(page).toHaveURL(/\/register/)
   })
 
-  test('correct OTP creates account and redirects to home', async ({ page }) => {
+  test('correct OTP creates account and redirects to profile', async ({ page }) => {
     await fillCredentialsAndSubmit(page)
 
     const otp = await getOtpForEmail(REG_EMAIL)
     await typeOtp(page, otp)
     await page.getByRole('button', { name: 'Підтвердити' }).click()
 
-    await expect(page).toHaveURL('/', { timeout: 15_000 })
+    await expect(page).toHaveURL('/profile', { timeout: 15_000 })
     await expect(avatarButton(page)).toBeVisible()
   })
 

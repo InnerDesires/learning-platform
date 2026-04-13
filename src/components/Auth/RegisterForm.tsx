@@ -26,7 +26,7 @@ export const RegisterForm: React.FC<{
   const [loading, setLoading] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
 
-  const callbackURL = redirectTo || '/'
+  const callbackURL = redirectTo || `/${locale === 'uk' ? '' : locale + '/'}profile`
 
   // Resend cooldown timer
   useEffect(() => {
