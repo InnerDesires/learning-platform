@@ -37,5 +37,9 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 240 * 1000,
     url: 'http://localhost:3100',
+    env: {
+      NEXT_PUBLIC_BETTER_AUTH_URL: 'http://localhost:3100',
+      NEXT_PUBLIC_SERVER_URL: 'http://localhost:3100',
+    },
   },
 })

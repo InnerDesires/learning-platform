@@ -163,6 +163,20 @@ type FrontendMessages = {
   verifyLandingDescription: string
   verifyInputPlaceholder: string
   verifyInputSubmit: string
+  otpTitle: string
+  otpSentTo: string
+  otpEnterCode: string
+  otpVerify: string
+  otpVerifying: string
+  otpResend: string
+  otpResendIn: string
+  otpSeconds: string
+  otpChangeEmail: string
+  otpInvalid: string
+  otpExpired: string
+  otpTooManyAttempts: string
+  otpSendError: string
+  registerCreating: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -332,6 +346,20 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
       'Відскануйте QR-код на сертифікаті або вставте посилання для перевірки нижче.',
     verifyInputPlaceholder: 'Вставте посилання або код сертифікату',
     verifyInputSubmit: 'Перевірити',
+    otpTitle: 'Підтвердження email',
+    otpSentTo: 'Ми надіслали 6-значний код на',
+    otpEnterCode: 'Введіть код підтвердження',
+    otpVerify: 'Підтвердити',
+    otpVerifying: 'Перевіряємо…',
+    otpResend: 'Надіслати код повторно',
+    otpResendIn: 'Надіслати повторно через',
+    otpSeconds: 'с',
+    otpChangeEmail: 'Змінити email',
+    otpInvalid: 'Невірний код. Спробуйте ще раз.',
+    otpExpired: 'Код прострочено. Надішліть новий.',
+    otpTooManyAttempts: 'Забагато спроб. Надішліть новий код.',
+    otpSendError: 'Не вдалося надіслати код. Спробуйте пізніше.',
+    registerCreating: 'Створюємо акаунт…',
   },
   en: {
     searchTitle: 'Search',
@@ -499,6 +527,20 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
       'Scan the QR code on a certificate or paste the verification link below.',
     verifyInputPlaceholder: 'Paste a verification link or certificate code',
     verifyInputSubmit: 'Verify',
+    otpTitle: 'Verify your email',
+    otpSentTo: 'We sent a 6-digit code to',
+    otpEnterCode: 'Enter verification code',
+    otpVerify: 'Verify',
+    otpVerifying: 'Verifying…',
+    otpResend: 'Resend code',
+    otpResendIn: 'Resend in',
+    otpSeconds: 's',
+    otpChangeEmail: 'Change email',
+    otpInvalid: 'Invalid code. Please try again.',
+    otpExpired: 'Code expired. Please request a new one.',
+    otpTooManyAttempts: 'Too many attempts. Please request a new code.',
+    otpSendError: 'Could not send code. Please try later.',
+    registerCreating: 'Creating your account…',
   },
 }
 

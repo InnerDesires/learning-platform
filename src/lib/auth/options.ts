@@ -1,5 +1,9 @@
 import type { BetterAuthOptions, PayloadAuthOptions } from 'payload-auth/better-auth'
 import { nextCookies } from 'better-auth/next-js'
+import { emailOTP } from 'better-auth/plugins/email-otp'
+import { Resend } from 'resend'
+import { buildOtpEmailHtml } from '@/lib/email/verification-otp'
+import { consumePreVerified } from '@/lib/auth/pre-verified'
 
 function resolveBaseURL(): string {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
@@ -53,7 +57,36 @@ export const betterAuthOptions = {
       trustedProviders: ['google', 'email-password'],
     },
   },
-  plugins: [nextCookies()],
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          if (user.emailVerified) return
+          if (!consumePreVerified(user.email)) return false
+          return { data: { ...user, emailVerified: true } }
+        },
+      },
+    },
+  },
+  plugins: [
+    nextCookies(),
+    emailOTP({
+      otpLength: 6,
+      expiresIn: 300,
+      allowedAttempts: 3,
+      sendVerificationOnSignUp: false,
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type !== 'email-verification') return
+        const resend = new Resend(process.env.RESEND_API_KEY)
+        await resend.emails.send({
+          from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+          to: email,
+          subject: `Код підтвердження: ${otp}`,
+          html: buildOtpEmailHtml(otp),
+        })
+      },
+    }),
+  ],
 } satisfies BetterAuthOptions
 
 export const betterAuthPluginOptions = {

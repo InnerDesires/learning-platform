@@ -1,11 +1,14 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { getFrontendMessages } from '@/utilities/i18n'
 import type { SiteLocale } from '@/utilities/locales'
+import { OTPInput } from '@/components/Auth/OTPInput'
+
+type Step = 'credentials' | 'otp' | 'creating'
 
 export const RegisterForm: React.FC<{
   locale: SiteLocale
@@ -14,36 +17,113 @@ export const RegisterForm: React.FC<{
 }> = ({ locale, redirectTo, googleEnabled = true }) => {
   const t = getFrontendMessages(locale)
   const router = useRouter()
+  const [step, setStep] = useState<Step>('credentials')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [otp, setOtp] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0)
 
-  const callbackURL = redirectTo || '/'
+  const callbackURL = redirectTo || `/${locale === 'uk' ? '' : locale + '/'}profile`
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Resend cooldown timer
+  useEffect(() => {
+    if (resendCooldown <= 0) return
+    const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [resendCooldown])
+
+  const sendOtp = useCallback(
+    async (targetEmail: string) => {
+      const res = await fetch('/api/auth/verify-registration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'send-otp', email: targetEmail }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        if (res.status === 409) throw new Error(t.registerErrorEmailTaken)
+        if (res.status === 429) throw new Error(t.otpSendError)
+        throw new Error(t.otpSendError)
+      }
+      return data
+    },
+    [t],
+  )
+
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
-    const { error: signUpError } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-      callbackURL,
-    })
-
-    if (signUpError) {
-      if (signUpError.status === 422) {
-        setError(t.registerErrorEmailTaken)
-      } else {
-        setError(t.registerErrorGeneric)
-      }
+    try {
+      await sendOtp(email)
+      setStep('otp')
+      setResendCooldown(60)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.otpSendError)
+    } finally {
       setLoading(false)
-    } else {
-      router.push(callbackURL)
-      router.refresh()
+    }
+  }
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (otp.length < 6) return
+    setError(null)
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/verify-registration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'verify-otp', email, otp }),
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (data.error === 'OTP expired') setError(t.otpExpired)
+        else if (data.error === 'Too many attempts') setError(t.otpTooManyAttempts)
+        else setError(t.otpInvalid)
+        setLoading(false)
+        return
+      }
+
+      // OTP verified — create the account
+      setStep('creating')
+      const { error: signUpError } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+        callbackURL,
+      })
+
+      if (signUpError) {
+        setError(t.registerErrorGeneric)
+        setStep('otp')
+        setLoading(false)
+      } else {
+        router.push(callbackURL)
+        router.refresh()
+      }
+    } catch {
+      setError(t.registerErrorGeneric)
+      setStep('otp')
+      setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    if (resendCooldown > 0) return
+    setError(null)
+    try {
+      await sendOtp(email)
+      setOtp('')
+      setResendCooldown(60)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.otpSendError)
     }
   }
 
@@ -58,11 +138,76 @@ export const RegisterForm: React.FC<{
     ? `/${locale === 'uk' ? '' : locale + '/'}login?redirect=${encodeURIComponent(redirectTo)}`
     : `/${locale === 'uk' ? '' : locale + '/'}login`
 
+  // Step 3: Creating account (loading screen)
+  if (step === 'creating') {
+    return (
+      <div className="mx-auto w-full max-w-md text-center">
+        <p className="text-lg text-muted-foreground">{t.registerCreating}</p>
+      </div>
+    )
+  }
+
+  // Step 2: OTP verification
+  if (step === 'otp') {
+    return (
+      <div className="mx-auto w-full max-w-md">
+        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.otpTitle}</h1>
+        <p className="mb-6 text-center text-sm text-muted-foreground">
+          {t.otpSentTo} <span className="font-medium text-foreground">{email}</span>
+        </p>
+
+        <form onSubmit={handleOtpSubmit} className="space-y-6">
+          <OTPInput value={otp} onChange={setOtp} disabled={loading} />
+
+          {error && (
+            <p className="rounded-md bg-error/10 px-3 py-2 text-center text-sm text-error">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || otp.length < 6}
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+          >
+            {loading ? t.otpVerifying : t.otpVerify}
+          </button>
+        </form>
+
+        <div className="mt-4 flex items-center justify-between text-sm">
+          <button
+            type="button"
+            onClick={() => {
+              setStep('credentials')
+              setOtp('')
+              setError(null)
+            }}
+            className="text-primary hover:underline"
+          >
+            {t.otpChangeEmail}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={resendCooldown > 0}
+            className="text-primary hover:underline disabled:text-muted-foreground disabled:no-underline"
+          >
+            {resendCooldown > 0
+              ? `${t.otpResendIn} ${resendCooldown}${t.otpSeconds}`
+              : t.otpResend}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Step 1: Credentials form
   return (
     <div className="mx-auto w-full max-w-md">
       <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.registerTitle}</h1>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+      <form onSubmit={handleCredentialsSubmit} className="mt-8 space-y-4">
         <div>
           <label htmlFor="name" className="mb-1 block text-sm font-medium">
             {t.registerName}
