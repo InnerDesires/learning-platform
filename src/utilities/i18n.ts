@@ -177,6 +177,21 @@ type FrontendMessages = {
   otpTooManyAttempts: string
   otpSendError: string
   registerCreating: string
+  loginForgotPassword: string
+  forgotTitle: string
+  forgotDescription: string
+  forgotEmail: string
+  forgotSubmit: string
+  forgotSubmitting: string
+  forgotBackToLogin: string
+  forgotOtpTitle: string
+  forgotOtpDescription: string
+  forgotNewPassword: string
+  forgotNewPasswordHint: string
+  forgotReset: string
+  forgotResetting: string
+  forgotSuccess: string
+  forgotErrorGeneric: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -360,6 +375,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     otpTooManyAttempts: 'Забагато спроб. Надішліть новий код.',
     otpSendError: 'Не вдалося надіслати код. Спробуйте пізніше.',
     registerCreating: 'Створюємо акаунт…',
+    loginForgotPassword: 'Забули пароль?',
+    forgotTitle: 'Скидання пароля',
+    forgotDescription: 'Введіть свою електронну пошту, і ми надішлемо код для скидання пароля.',
+    forgotEmail: 'Електронна пошта',
+    forgotSubmit: 'Надіслати код',
+    forgotSubmitting: 'Надсилаємо…',
+    forgotBackToLogin: 'Повернутися до входу',
+    forgotOtpTitle: 'Введіть код і новий пароль',
+    forgotOtpDescription: 'Ми надіслали код на',
+    forgotNewPassword: 'Новий пароль',
+    forgotNewPasswordHint: 'Мінімум 8 символів',
+    forgotReset: 'Змінити пароль',
+    forgotResetting: 'Зберігаємо…',
+    forgotSuccess: 'Пароль змінено. Тепер ви можете увійти.',
+    forgotErrorGeneric: 'Не вдалося скинути пароль. Перевірте код і спробуйте ще раз.',
   },
   en: {
     searchTitle: 'Search',
@@ -541,6 +571,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     otpTooManyAttempts: 'Too many attempts. Please request a new code.',
     otpSendError: 'Could not send code. Please try later.',
     registerCreating: 'Creating your account…',
+    loginForgotPassword: 'Forgot password?',
+    forgotTitle: 'Reset password',
+    forgotDescription: 'Enter your email and we will send you a code to reset your password.',
+    forgotEmail: 'Email',
+    forgotSubmit: 'Send code',
+    forgotSubmitting: 'Sending…',
+    forgotBackToLogin: 'Back to log in',
+    forgotOtpTitle: 'Enter the code and a new password',
+    forgotOtpDescription: 'We sent a code to',
+    forgotNewPassword: 'New password',
+    forgotNewPasswordHint: 'Minimum 8 characters',
+    forgotReset: 'Change password',
+    forgotResetting: 'Saving…',
+    forgotSuccess: 'Password changed. You can now log in.',
+    forgotErrorGeneric: 'Could not reset password. Check the code and try again.',
   },
 }
 

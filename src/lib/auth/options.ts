@@ -76,13 +76,18 @@ export const betterAuthOptions = {
       allowedAttempts: 3,
       sendVerificationOnSignUp: false,
       async sendVerificationOTP({ email, otp, type }) {
-        if (type !== 'email-verification') return
+        if (type !== 'email-verification' && type !== 'forget-password') return
+        if (!process.env.RESEND_API_KEY) return
         const resend = new Resend(process.env.RESEND_API_KEY)
+        const subject =
+          type === 'forget-password'
+            ? `Код для скидання пароля: ${otp}`
+            : `Код підтвердження: ${otp}`
         await resend.emails.send({
           from: process.env.EMAIL_FROM || 'onboarding@resend.dev',
           to: email,
-          subject: `Код підтвердження: ${otp}`,
-          html: buildOtpEmailHtml(otp),
+          subject,
+          html: buildOtpEmailHtml(otp, type),
         })
       },
     }),

@@ -7,12 +7,12 @@ import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 
 type Args = {
   params: Promise<{ locale: SiteLocale }>
-  searchParams: Promise<{ redirect?: string }>
+  searchParams: Promise<{ redirect?: string; reset?: string }>
 }
 
 export default async function LoginPage({ params, searchParams }: Args) {
   const { locale } = await params
-  const { redirect: redirectTo } = await searchParams
+  const { redirect: redirectTo, reset } = await searchParams
 
   const session = await getSession()
   if (session?.user) {
@@ -24,7 +24,12 @@ export default async function LoginPage({ params, searchParams }: Args) {
 
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
-      <LoginForm locale={locale} redirectTo={redirectTo} googleEnabled={googleEnabled} />
+      <LoginForm
+        locale={locale}
+        redirectTo={redirectTo}
+        googleEnabled={googleEnabled}
+        resetSuccess={reset === 'success'}
+      />
     </div>
   )
 }

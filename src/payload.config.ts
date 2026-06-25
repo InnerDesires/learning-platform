@@ -27,7 +27,17 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * `pg-connection-string` currently treats sslmode `prefer`/`require`/`verify-ca`
+ * as aliases for `verify-full`, but warns that this changes in pg v9. Make the
+ * current (stronger) behavior explicit so we keep full verification and silence
+ * the deprecation warning. Neon serves a publicly-trusted cert, so verify-full works.
+ */
+const normalizeDatabaseURL = (url: string): string =>
+  url.replace(/([?&]sslmode=)(prefer|require|verify-ca)\b/i, '$1verify-full')
+
 export default buildConfig({
+  serverURL: getServerSideURL(),
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -68,7 +78,7 @@ export default buildConfig({
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: normalizeDatabaseURL(process.env.DATABASE_URL || ''),
     },
     push: !process.env.CI,
   }),
