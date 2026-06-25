@@ -11,7 +11,8 @@ export const LoginForm: React.FC<{
   locale: SiteLocale
   redirectTo?: string
   googleEnabled?: boolean
-}> = ({ locale, redirectTo, googleEnabled = true }) => {
+  resetSuccess?: boolean
+}> = ({ locale, redirectTo, googleEnabled = true, resetSuccess = false }) => {
   const t = getFrontendMessages(locale)
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -52,11 +53,19 @@ export const LoginForm: React.FC<{
     ? `/${locale === 'uk' ? '' : locale + '/'}register?redirect=${encodeURIComponent(redirectTo)}`
     : `/${locale === 'uk' ? '' : locale + '/'}register`
 
+  const forgotPasswordHref = `/${locale === 'uk' ? '' : locale + '/'}forgot-password`
+
   return (
     <div className="mx-auto w-full max-w-md">
       <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">
         {redirectTo ? t.loginContinueTo : t.loginTitle}
       </h1>
+
+      {resetSuccess && (
+        <p className="mt-6 rounded-md bg-primary/10 px-3 py-2 text-center text-sm text-primary">
+          {t.forgotSuccess}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
@@ -75,9 +84,17 @@ export const LoginForm: React.FC<{
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium">
-            {t.loginPassword}
-          </label>
+          <div className="mb-1 flex items-center justify-between">
+            <label htmlFor="password" className="block text-sm font-medium">
+              {t.loginPassword}
+            </label>
+            <Link
+              href={forgotPasswordHref}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              {t.loginForgotPassword}
+            </Link>
+          </div>
           <input
             id="password"
             type="password"
