@@ -7,6 +7,7 @@ import RichText from '@/components/RichText'
 import type { MediaBlock as MediaBlockProps } from '@/payload-types'
 
 import { Media } from '../../components/Media'
+import { YouTubeEmbed } from '@/components/YouTubeEmbed'
 
 type Props = MediaBlockProps & {
   breakout?: boolean
@@ -25,12 +26,16 @@ export const MediaBlock: React.FC<Props> = (props) => {
     enableGutter = true,
     imgClassName,
     media,
+    mediaType,
+    youtubeUrl,
     staticImage,
     disableInnerContainer,
   } = props
 
+  const embedUrl = mediaType === 'youtube' && youtubeUrl ? youtubeUrl : undefined
+
   let caption
-  if (media && typeof media === 'object') caption = media.caption
+  if (!embedUrl && media && typeof media === 'object') caption = media.caption
 
   return (
     <div
@@ -42,12 +47,16 @@ export const MediaBlock: React.FC<Props> = (props) => {
         className,
       )}
     >
-      {(media || staticImage) && (
-        <Media
-          imgClassName={cn('rounded-2xl', imgClassName)}
-          resource={media}
-          src={staticImage}
-        />
+      {embedUrl ? (
+        <YouTubeEmbed url={embedUrl} />
+      ) : (
+        (media || staticImage) && (
+          <Media
+            imgClassName={cn('rounded-2xl', imgClassName)}
+            resource={media}
+            src={staticImage}
+          />
+        )
       )}
       {caption && (
         <div
