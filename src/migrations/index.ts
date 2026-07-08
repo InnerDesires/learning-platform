@@ -4,9 +4,10 @@ import * as migration_20260227_181154_better_auth from './20260227_181154_better
 import * as migration_20260301_200000_mcp_plugin from './20260301_200000_mcp_plugin';
 import * as migration_20260301_205843 from './20260301_205843';
 import * as migration_20260302_010632 from './20260302_010632';
-import * as migration_20260302_161337 from './20260302_161337';
 import * as migration_20260302_124504 from './20260302_124504';
+import * as migration_20260302_161337 from './20260302_161337';
 import * as migration_20260303_120000_mcp_courses from './20260303_120000_mcp_courses';
+import * as migration_20260708_121614_add_youtube_to_media_block from './20260708_121614_add_youtube_to_media_block';
 
 export const migrations = [
   {
@@ -40,17 +41,23 @@ export const migrations = [
     name: '20260302_010632',
   },
   {
-    up: migration_20260302_161337.up,
-    down: migration_20260302_161337.down,
-    name: '20260302_161337'
-  },{
     up: migration_20260302_124504.up,
     down: migration_20260302_124504.down,
     name: '20260302_124504',
   },
   {
+    up: migration_20260302_161337.up,
+    down: migration_20260302_161337.down,
+    name: '20260302_161337',
+  },
+  {
     up: migration_20260303_120000_mcp_courses.up,
     down: migration_20260303_120000_mcp_courses.down,
     name: '20260303_120000_mcp_courses',
+  },
+  {
+    up: migration_20260708_121614_add_youtube_to_media_block.up,
+    down: migration_20260708_121614_add_youtube_to_media_block.down,
+    name: '20260708_121614_add_youtube_to_media_block'
   },
 ];

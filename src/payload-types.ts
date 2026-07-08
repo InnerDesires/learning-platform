@@ -409,7 +409,9 @@ export interface Page {
     | CallToActionBlock
     | ContentBlock
     | {
-        media: number | Media;
+        mediaType?: ('upload' | 'youtube') | null;
+        media?: (number | null) | Media;
+        youtubeUrl?: string | null;
         id?: string | null;
         blockName?: string | null;
         blockType: 'mediaBlock';
@@ -1801,7 +1803,9 @@ export interface ContentBlockSelect<T extends boolean = true> {
  * via the `definition` "MediaBlock_select".
  */
 export interface MediaBlockSelect<T extends boolean = true> {
+  mediaType?: T;
   media?: T;
+  youtubeUrl?: T;
   id?: T;
   blockName?: T;
 }
@@ -2638,7 +2642,9 @@ export interface TaskSchedulePublish {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  media: number | Media;
+  mediaType?: ('upload' | 'youtube') | null;
+  media?: (number | null) | Media;
+  youtubeUrl?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
