@@ -8,12 +8,19 @@ function slugify(value: string | undefined) {
 }
 
 describe('cyrillicSlugify', () => {
-  it('returns empty string for empty input', () => {
-    expect(slugify('')).toBe('')
+  // Empty input must yield `undefined` (stored as NULL), not `''`. Payload's slug
+  // generator writes the returned value on autosaved draft creation; an empty string
+  // collides on the unique `slug` index (valueMustBeUnique) whereas NULL does not.
+  it('returns undefined for empty input', () => {
+    expect(slugify('')).toBeUndefined()
   })
 
-  it('returns empty string when valueToSlugify is undefined', () => {
-    expect(slugify(undefined)).toBe('')
+  it('returns undefined when valueToSlugify is undefined', () => {
+    expect(slugify(undefined)).toBeUndefined()
+  })
+
+  it('returns undefined for whitespace-only input', () => {
+    expect(slugify('   ')).toBeUndefined()
   })
 
   it('lowercases ASCII text', () => {
