@@ -81,13 +81,28 @@ jobs:
           folder: /tmp/pages
           clean: false
 
-      - name: Comment PR with report URL
-        if: failure() && hashFiles('playwright-report/index.html') != ''
+      # Upsert the status comment on every run (including re-runs) so it never
+      # points at a stale failed report after a later attempt passes. Only
+      # failures create the comment; successes update an existing one.
+      - name: Comment PR with E2E status
+        if: ${{ !cancelled() }}
         uses: actions/github-script@v7
         with:
           script: |
             const marker = '<!-- playwright-report -->'
-            const body = `${marker}\n### Playwright Report\n\n[View failed E2E report](https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${{ github.run_id }}/)`
+            const failed = '${{ job.status }}' === 'failure'
+            const hasReport = ${{ hashFiles('playwright-report/index.html') != '' }}
+            const attempt = process.env.GITHUB_RUN_ATTEMPT
+            const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`
+            let status
+            if (failed && hasReport) {
+              status = `❌ E2E failed — [view report](https://${context.repo.owner}.github.io/${context.repo.repo}/reports/${context.runId}/) · [job logs](${runUrl})`
+            } else if (failed) {
+              status = `❌ E2E failed before any test ran (no report generated) — [job logs](${runUrl})`
+            } else {
+              status = `✅ E2E passed — [job logs](${runUrl})`
+            }
+            const body = `${marker}\n### Playwright Report\n\n${status} (run attempt ${attempt})`
             const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -101,7 +116,7 @@ jobs:
                 repo: context.repo.repo,
                 body,
               })
-            } else {
+            } else if (failed) {
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
