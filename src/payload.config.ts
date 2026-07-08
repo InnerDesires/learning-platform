@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { uk } from '@payloadcms/translations/languages/uk'
 import { en } from '@payloadcms/translations/languages/en'
 import sharp from 'sharp'
@@ -114,6 +115,15 @@ export default buildConfig({
     fallback: true,
   },
   plugins,
+  // Same Resend account Better Auth uses for OTP emails (src/lib/auth/options.ts).
+  // Without the key (CI), Payload falls back to logging emails to console.
+  email: process.env.RESEND_API_KEY
+    ? resendAdapter({
+        defaultFromAddress: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+        defaultFromName: 'Learning Platform',
+        apiKey: process.env.RESEND_API_KEY,
+      })
+    : undefined,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {
