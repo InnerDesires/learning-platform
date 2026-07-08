@@ -96,7 +96,6 @@ export const betterAuthOptions = {
 
 export const betterAuthPluginOptions = {
   disabled: false,
-  disableDefaultPayloadAuth: true,
   hidePluginCollections: true,
   users: {
     slug: 'users',
