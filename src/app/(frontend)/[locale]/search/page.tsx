@@ -8,6 +8,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
+import { Rails } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
@@ -85,15 +86,18 @@ export default async function Page({ params: paramsPromise, searchParams: search
   }
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pb-24 pt-14 md:pt-16">
       <PageClient />
-      <div data-testid="search-page-content" className="container mb-16">
-        <div className="prose max-w-none text-center">
-          <h1 data-testid="search-page-title" className="mb-8 lg:mb-16">
+      <div data-testid="search-page-content" className="container mb-12">
+        <div className="flex flex-col items-center text-center">
+          <h1
+            data-testid="search-page-title"
+            className="heading-display mt-2 text-[clamp(38px,5vw,60px)] font-bold leading-none"
+          >
             {t.searchTitle}
           </h1>
-
-          <div className="max-w-[50rem] mx-auto">
+          <Rails className="mx-auto mt-4" />
+          <div className="mt-8 w-full max-w-[50rem]">
             <Search />
           </div>
         </div>
@@ -102,7 +106,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
       {posts.totalDocs > 0 ? (
         <CollectionArchive posts={posts.docs as CardPostData[]} likesCountMap={likesCountMap} />
       ) : (
-        <div className="container">{t.searchNoResults}</div>
+        <div className="container text-center text-fog">{t.searchNoResults}</div>
       )}
     </div>
   )

@@ -91,7 +91,7 @@ export const ForgotPasswordForm: React.FC<{
   if (step === 'reset') {
     return (
       <div className="mx-auto w-full max-w-md">
-        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.forgotOtpTitle}</h1>
+        <h1 className="heading-display mb-2 text-center text-3xl">{t.forgotOtpTitle}</h1>
         <p className="mb-6 text-center text-sm text-muted-foreground">
           {t.forgotOtpDescription} <span className="font-medium text-foreground">{email}</span>
         </p>
@@ -161,7 +161,7 @@ export const ForgotPasswordForm: React.FC<{
   // Step 1: Email entry
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.forgotTitle}</h1>
+      <h1 className="heading-display mb-2 text-center text-3xl">{t.forgotTitle}</h1>
       <p className="mb-6 text-center text-sm text-muted-foreground">{t.forgotDescription}</p>
 
       <form onSubmit={handleEmailSubmit} className="space-y-4">

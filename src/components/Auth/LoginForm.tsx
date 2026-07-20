@@ -57,7 +57,7 @@ export const LoginForm: React.FC<{
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">
+      <h1 className="heading-display mb-2 text-center text-3xl">
         {redirectTo ? t.loginContinueTo : t.loginTitle}
       </h1>
 

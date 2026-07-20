@@ -29,7 +29,7 @@ export default async function VerifyLandingPage({ params }: Args) {
           <rect x="14" y="18" width="3" height="3" />
           <rect x="18" y="18" width="3" height="3" />
         </svg>
-        <h1 className="text-2xl font-bold tracking-tight mb-3">{t.verifyLandingTitle}</h1>
+        <h1 className="heading-display mb-3 text-2xl">{t.verifyLandingTitle}</h1>
         <p className="text-muted-foreground mb-8">{t.verifyLandingDescription}</p>
         <VerifyForm
           placeholder={t.verifyInputPlaceholder}

@@ -88,6 +88,11 @@ type FrontendMessages = {
   profileSignOut: string
   profileRoleAdmin: string
   profileRoleLearner: string
+  profileLevel: string
+  profileToNextLevel: string
+  profileStatsCourses: string
+  profileStatsSteps: string
+  profileStatsQuizzes: string
   coursesTitle: string
   coursesMetaTitle: string
   coursesAllCategories: string
@@ -302,6 +307,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Вийти з акаунту',
     profileRoleAdmin: 'Адміністратор',
     profileRoleLearner: 'Учень',
+    profileLevel: 'Рівень',
+    profileToNextLevel: 'До наступного рівня',
+    profileStatsCourses: 'Курсів завершено',
+    profileStatsSteps: 'Кроків пройдено',
+    profileStatsQuizzes: 'Тестів складено',
     coursesTitle: 'Курси',
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
@@ -517,6 +527,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Sign out',
     profileRoleAdmin: 'Admin',
     profileRoleLearner: 'Learner',
+    profileLevel: 'Level',
+    profileToNextLevel: 'To next level',
+    profileStatsCourses: 'Courses completed',
+    profileStatsSteps: 'Steps completed',
+    profileStatsQuizzes: 'Quizzes passed',
     coursesTitle: 'Courses',
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',

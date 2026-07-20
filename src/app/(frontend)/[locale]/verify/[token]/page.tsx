@@ -31,7 +31,7 @@ export default async function VerifyPage({ params }: Args) {
             <path d="M15 9l-6 6" />
             <path d="M9 9l6 6" />
           </svg>
-          <h1 className="text-2xl font-bold tracking-tight mb-3">{t.verifyInvalid}</h1>
+          <h1 className="heading-display mb-3 text-2xl">{t.verifyInvalid}</h1>
           <p className="text-muted-foreground">{t.verifyInvalidDescription}</p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export default async function VerifyPage({ params }: Args) {
             <path d="M15 9l-6 6" />
             <path d="M9 9l6 6" />
           </svg>
-          <h1 className="text-2xl font-bold tracking-tight mb-3">{t.verifyInvalid}</h1>
+          <h1 className="heading-display mb-3 text-2xl">{t.verifyInvalid}</h1>
           <p className="text-muted-foreground">{t.verifyInvalidDescription}</p>
         </div>
       </div>
@@ -131,7 +131,7 @@ export default async function VerifyPage({ params }: Args) {
           <circle cx="12" cy="12" r="10" />
           <path d="M9 12l2 2 4-4" />
         </svg>
-        <h1 className="text-2xl font-bold tracking-tight mb-2">{t.verifyValid}</h1>
+        <h1 className="heading-display mb-2 text-2xl">{t.verifyValid}</h1>
         <p className="text-muted-foreground mb-8">{t.verifyValidDescription}</p>
 
         <div className="text-left space-y-4 bg-background rounded-lg border p-6">

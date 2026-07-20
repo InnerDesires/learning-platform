@@ -151,7 +151,7 @@ export const RegisterForm: React.FC<{
   if (step === 'otp') {
     return (
       <div className="mx-auto w-full max-w-md">
-        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.otpTitle}</h1>
+        <h1 className="heading-display mb-2 text-center text-3xl">{t.otpTitle}</h1>
         <p className="mb-6 text-center text-sm text-muted-foreground">
           {t.otpSentTo} <span className="font-medium text-foreground">{email}</span>
         </p>
@@ -205,7 +205,7 @@ export const RegisterForm: React.FC<{
   // Step 1: Credentials form
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.registerTitle}</h1>
+      <h1 className="heading-display mb-2 text-center text-3xl">{t.registerTitle}</h1>
 
       <form onSubmit={handleCredentialsSubmit} className="mt-8 space-y-4">
         <div>

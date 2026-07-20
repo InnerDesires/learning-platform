@@ -3,11 +3,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LogOut, User as UserIcon } from 'lucide-react'
+import { LogOut, User as UserIcon, Zap } from 'lucide-react'
 import { useSession, signOut } from '@/lib/auth/client'
 import { cn } from '@/utilities/ui'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getMyXp, type MyXp } from '@/actions/xp'
 
 interface UserMenuProps {
   locale: SiteLocale
@@ -18,9 +19,26 @@ interface UserMenuProps {
 export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen, onToggle }) => {
   const { data: session, isPending } = useSession()
   const [internalOpen, setInternalOpen] = useState(false)
+  const [xp, setXp] = useState<MyXp | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const t = getFrontendMessages(locale)
+
+  useEffect(() => {
+    if (!session?.user) {
+      setXp(null)
+      return
+    }
+    let cancelled = false
+    getMyXp()
+      .then((result) => {
+        if (!cancelled) setXp(result)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [session?.user])
 
   const open = controlledOpen ?? internalOpen
   const setOpen = useCallback(
@@ -103,6 +121,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
           <div className="px-3 py-2 border-b mb-1">
             <p className="text-sm font-medium truncate">{user.name}</p>
             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            {xp && (
+              <p className="num mt-1.5 inline-flex items-center gap-1 font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-amber">
+                <Zap className="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
+                {t.profileLevel} {xp.level} · {xp.xp.toLocaleString('uk-UA')} XP
+              </p>
+            )}
           </div>
           <Link
             href={profilePath}
