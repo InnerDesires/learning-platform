@@ -1,0 +1,152 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Логотип Залізна Зміна Залізна Зміна Платформа" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img "Логотип Залізна Зміна" [ref=e5]
+        - generic [ref=e6]:
+          - text: Залізна
+          - emphasis [ref=e7]: Зміна
+          - generic [ref=e8]: Платформа
+      - navigation "Залізна Зміна. Платформа" [ref=e10]:
+        - link "Навчатись" [ref=e11] [cursor=pointer]:
+          - /url: /courses
+        - link "Публікації" [ref=e12] [cursor=pointer]:
+          - /url: /posts
+        - link "Про нас" [ref=e13] [cursor=pointer]:
+          - /url: /home
+        - link "Заповнити форму" [ref=e14] [cursor=pointer]:
+          - /url: /contact
+        - link "Пошук" [ref=e15] [cursor=pointer]:
+          - /url: /search
+          - generic [ref=e16]: Пошук
+          - img [ref=e17]
+        - generic [ref=e21]:
+          - link "UA" [ref=e22] [cursor=pointer]:
+            - /url: /search
+          - link "EN" [ref=e23] [cursor=pointer]:
+            - /url: /en/search
+        - link "Увійти" [ref=e24] [cursor=pointer]:
+          - /url: /login
+          - img [ref=e25]
+  - generic [ref=e28]:
+    - generic [ref=e30]:
+      - heading "Пошук" [level=1] [ref=e31]
+      - generic [ref=e36]:
+        - generic [ref=e37]: Пошук
+        - textbox "Пошук" [ref=e38]:
+          - /placeholder: Що ви хочете вивчити?
+        - button "Надіслати" [ref=e39]
+    - generic [ref=e41]:
+      - article [ref=e42] [cursor=pointer]:
+        - generic [ref=e44]:
+          - generic [ref=e46]: нова категорія
+          - heading "Курс з тестом без порогового балу" [level=3] [ref=e47]:
+            - link "Курс з тестом без порогового балу" [ref=e48]:
+              - /url: /courses/kurs-z-testom-bez-porohovoho-balu
+      - article [ref=e49] [cursor=pointer]:
+        - generic [ref=e51]:
+          - heading "Математика" [level=3] [ref=e52]:
+            - link "Математика" [ref=e53]:
+              - /url: /posts/matematyka
+          - paragraph [ref=e54]: курси про математику
+      - article [ref=e55] [cursor=pointer]:
+        - heading "Quiz Test Course" [level=3] [ref=e58]:
+          - link "Quiz Test Course" [ref=e59]:
+            - /url: /posts/quiz-test-course
+      - article [ref=e60] [cursor=pointer]:
+        - heading "Курс з тестом без порогового балу" [level=3] [ref=e63]:
+          - link "Курс з тестом без порогового балу" [ref=e64]:
+            - /url: /posts/kurs-z-testom-bez-porohovoho-balu
+      - article [ref=e65] [cursor=pointer]:
+        - img "Curving abstract shapes with an orange and blue gradient" [ref=e69]
+        - generic [ref=e70]:
+          - 'heading "Digital Horizons: A Glimpse into Tomorrow" [level=3] [ref=e71]':
+            - 'link "Digital Horizons: A Glimpse into Tomorrow" [ref=e72]':
+              - /url: /posts/digital-horizons
+          - paragraph [ref=e73]: Dive into the marvels of modern innovation, where the only constant is change. A journey where pixels and data converge to craft the future.
+      - article [ref=e74] [cursor=pointer]:
+        - img "Curving abstract shapes with an orange and blue gradient" [ref=e78]
+        - generic [ref=e79]:
+          - 'heading "Global Gaze: Beyond the Headlines" [level=3] [ref=e80]':
+            - 'link "Global Gaze: Beyond the Headlines" [ref=e81]':
+              - /url: /posts/global-gaze
+          - paragraph [ref=e82]: Explore the untold and overlooked. A magnified view into the corners of the world, where every story deserves its spotlight.
+      - article [ref=e83] [cursor=pointer]:
+        - img "Curving abstract shapes with an orange and blue gradient" [ref=e87]
+        - generic [ref=e88]:
+          - 'heading "Dollar and Sense: The Financial Forecast" [level=3] [ref=e89]':
+            - 'link "Dollar and Sense: The Financial Forecast" [ref=e90]':
+              - /url: /posts/dollar-and-sense-the-financial-forecast
+          - paragraph [ref=e91]: Money isn't just currency; it's a language. Dive deep into its nuances, where strategy meets intuition in the vast sea of finance.
+  - contentinfo [ref=e92]:
+    - generic [ref=e93]:
+      - generic [ref=e94]: Залізна Зміна
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - link "Логотип Залізна Зміна Залізна Зміна Платформа" [ref=e99] [cursor=pointer]:
+            - /url: /
+            - img "Логотип Залізна Зміна" [ref=e100]
+            - generic [ref=e101]:
+              - text: Залізна
+              - emphasis [ref=e102]: Зміна
+              - generic [ref=e103]: Платформа
+          - paragraph [ref=e104]: Проєкт розвитку талановитої молоді України. За підтримки Укрзалізниці та фонду Говарда Баффетта.
+        - generic [ref=e105]:
+          - heading "Платформа" [level=4] [ref=e106]
+          - list [ref=e107]:
+            - listitem [ref=e108]:
+              - link "Admin" [ref=e109] [cursor=pointer]:
+                - /url: /admin
+            - listitem [ref=e110]:
+              - link "Залізна Зміна" [ref=e111] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e112]:
+              - link "Сертифікати" [ref=e113] [cursor=pointer]:
+                - /url: /certificates
+            - listitem [ref=e114]:
+              - link "Пошук" [ref=e115] [cursor=pointer]:
+                - /url: /search
+        - generic [ref=e116]:
+          - heading "Проєкт" [level=4] [ref=e117]
+          - list [ref=e118]:
+            - listitem [ref=e119]:
+              - link "Про нас" [ref=e120] [cursor=pointer]:
+                - /url: /#about
+            - listitem [ref=e121]:
+              - link "Календар" [ref=e122] [cursor=pointer]:
+                - /url: /#calendar
+            - listitem [ref=e123]:
+              - link "Партнери" [ref=e124] [cursor=pointer]:
+                - /url: /#partners
+            - listitem [ref=e125]:
+              - link "Контакти" [ref=e126] [cursor=pointer]:
+                - /url: /#contact
+        - generic [ref=e127]:
+          - heading "Контакти" [level=4] [ref=e128]
+          - list [ref=e129]:
+            - listitem [ref=e130]:
+              - link "+380 67 305 67 67" [ref=e131] [cursor=pointer]:
+                - /url: tel:+380673056767
+            - listitem [ref=e132]:
+              - link "zaliznazmina@gmail.com" [ref=e133] [cursor=pointer]:
+                - /url: mailto:zaliznazmina@gmail.com
+            - listitem [ref=e134]:
+              - link "Telegram" [ref=e135] [cursor=pointer]:
+                - /url: https://t.me/Zalizna_zmina
+              - text: ·
+              - link "Instagram" [ref=e136] [cursor=pointer]:
+                - /url: https://www.instagram.com/zaliznazmina.ua
+            - listitem [ref=e137]: Стадіонний пров., 7/2, Київ, 03049
+      - generic [ref=e138]:
+        - generic [ref=e139]: © 2022–2026 «Залізна Зміна». Всі права захищені.
+        - generic [ref=e140]:
+          - link "UA" [ref=e141] [cursor=pointer]:
+            - /url: /search
+          - link "EN" [ref=e142] [cursor=pointer]:
+            - /url: /en/search
+  - alert [ref=e143]
+```
