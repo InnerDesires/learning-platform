@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { Media } from '@/components/Media'
 import type { Media as MediaType } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
 import { SectionHead } from '@/components/brand'
 
 type NewsItem = {
@@ -83,7 +84,7 @@ export function NewsSection({ tag, title, cta, items, locale }: Props) {
                 <div className="flex flex-1 flex-col gap-2 p-5">
                   {item.date && (
                     <div className="flex gap-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-ember">
-                      {formatDateTime(item.date)}
+                      {formatDateTime(item.date, locale as SiteLocale)}
                     </div>
                   )}
                   <h3 className="text-[15.5px] font-bold leading-[1.35] transition-colors group-hover:text-ember">

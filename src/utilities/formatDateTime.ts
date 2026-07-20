@@ -1,20 +1,12 @@
-export const formatDateTime = (timestamp: string): string => {
-  const now = new Date()
-  let date = now
-  if (timestamp) date = new Date(timestamp)
-  const months = date.getMonth()
-  const days = date.getDate()
-  // const hours = date.getHours();
-  // const minutes = date.getMinutes();
-  // const seconds = date.getSeconds();
+import type { SiteLocale } from '@/utilities/locales'
 
-  const MM = months + 1 < 10 ? `0${months + 1}` : months + 1
-  const DD = days < 10 ? `0${days}` : days
-  const YYYY = date.getFullYear()
-  // const AMPM = hours < 12 ? 'AM' : 'PM';
-  // const HH = hours > 12 ? hours - 12 : hours;
-  // const MinMin = (minutes < 10) ? `0${minutes}` : minutes;
-  // const SS = (seconds < 10) ? `0${seconds}` : seconds;
+const formatters: Record<SiteLocale, Intl.DateTimeFormat> = {
+  uk: new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' }),
+  en: new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+}
 
-  return `${MM}/${DD}/${YYYY}`
+/** «28 чер 2026» (uk) / "28 Jun 2026" (en). */
+export const formatDateTime = (timestamp: string, locale: SiteLocale = 'uk'): string => {
+  const date = timestamp ? new Date(timestamp) : new Date()
+  return formatters[locale].format(date)
 }

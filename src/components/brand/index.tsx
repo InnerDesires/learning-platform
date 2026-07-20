@@ -34,6 +34,27 @@ export const RewardPill: React.FC<{ children: React.ReactNode; className?: strin
 )
 
 /**
+ * Standard page header: eyebrow + big Oswald h1 + rails + optional sub line.
+ */
+export const PageHead: React.FC<{
+  eyebrow?: React.ReactNode
+  title: React.ReactNode
+  sub?: React.ReactNode
+  className?: string
+  children?: React.ReactNode
+}> = ({ eyebrow, title, sub, className, children }) => (
+  <div className={cn('container pb-10 pt-14 md:pt-16', className)}>
+    {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
+    <h1 className="heading-display mt-2 text-[clamp(38px,5vw,60px)] font-bold leading-none">
+      {title}
+    </h1>
+    <Rails className="mt-4" />
+    {sub ? <div className="mt-3 text-sm text-fog">{sub}</div> : null}
+    {children}
+  </div>
+)
+
+/**
  * Standard section header: eyebrow + Oswald heading + rails, with an
  * optional action slot on the right.
  */

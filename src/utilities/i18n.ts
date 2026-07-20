@@ -2,6 +2,9 @@ import type { SiteLocale } from '@/utilities/locales'
 
 type FrontendMessages = {
   searchTitle: string
+  postsEyebrow: string
+  coursesEyebrow: string
+  coursesSub: string
   searchNoResults: string
   searchLabel: string
   searchPlaceholder: string
@@ -211,6 +214,9 @@ type FrontendMessages = {
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   uk: {
     searchTitle: 'Пошук',
+    postsEyebrow: 'Блог проєкту',
+    coursesEyebrow: 'Каталог',
+    coursesSub: 'Обирай курс, проходь кроки, складай фінальний тест — збирай XP і отримуй сертифікат.',
     searchNoResults: 'Нічого не знайдено.',
     searchLabel: 'Пошук',
     searchPlaceholder: 'Що ви хочете вивчити?',
@@ -422,6 +428,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   },
   en: {
     searchTitle: 'Search',
+    postsEyebrow: 'Project blog',
+    coursesEyebrow: 'Catalog',
+    coursesSub: 'Pick a course, complete the steps, pass the final quiz — earn XP and get a certificate.',
     searchNoResults: 'No results found.',
     searchLabel: 'Search',
     searchPlaceholder: 'What do you want to learn?',
