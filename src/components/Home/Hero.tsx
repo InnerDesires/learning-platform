@@ -1,85 +1,123 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { FadeIn } from './FadeIn'
+import { StatCounter } from './Stats'
 
 type Props = {
-  title: string
+  kick: string
+  title1: string
+  title2: string
   subtitle: string
   cta: string
   ctaSecondary: string
+  supportLabel: string
+  supportName: string
+  stats: { value: number; label: string; suffix?: string }[]
   locale: string
 }
 
-export function HeroSection({ title, subtitle, cta, ctaSecondary, locale }: Props) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
+export function HeroSection({
+  kick,
+  title1,
+  title2,
+  subtitle,
+  cta,
+  ctaSecondary,
+  supportLabel,
+  supportName,
+  stats,
+  locale,
+}: Props) {
+  const prefix = locale === 'en' ? '/en' : ''
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a1228] via-[#1e3b8a] to-[#0f1d45]">
+    <section className="relative overflow-hidden pb-24 pt-20 md:pb-28 md:pt-24">
+      {/* brand-blue glow + orange ember */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(880px 500px at 80% 14%, rgb(4 40 113 / 0.62), transparent 60%), radial-gradient(680px 440px at 8% 92%, rgb(249 140 31 / 0.10), transparent 62%)',
+        }}
+        aria-hidden="true"
+      />
+      {/* landing echo: orange diagonal sliver on the right edge */}
+      <div
+        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] md:block"
+        style={{
+          background:
+            'linear-gradient(118deg, transparent 46%, rgb(249 140 31 / 0.14) 66%, rgb(4 40 113 / 0.34))',
+          clipPath: 'polygon(34% 0, 100% 0, 100% 100%, 0 100%)',
+        }}
+        aria-hidden="true"
+      />
       <img
-        src="/static/zz/zz-32.png"
+        src="/illustrations/hero-rails.svg"
         alt=""
-        className="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-luminosity"
-        loading="eager"
+        className="pointer-events-none absolute -bottom-8 -right-32 w-[640px] max-w-none opacity-60"
         aria-hidden="true"
       />
 
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a1228]/80 via-[#1e3b8a]/30 to-[#0a1228]/60" />
-
-      <div className="container relative z-10 text-center py-20">
-        <div
-          className={`mb-6 transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-          style={{ transitionDelay: '200ms' }}
-        >
-          <span className="inline-block px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/60 text-sm font-medium tracking-widest uppercase backdrop-blur-sm">
-            {locale === 'uk' ? 'Платформа' : 'Platform'} {new Date().getFullYear()}
-          </span>
+      <div className="container relative grid items-center gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div>
+          <FadeIn>
+            <span className="inline-flex items-center gap-2.5 text-[11.5px] font-bold uppercase tracking-[0.24em] text-fog before:h-0.5 before:w-8 before:bg-orange">
+              {kick}
+            </span>
+          </FadeIn>
+          <FadeIn delay={100}>
+            <h1 className="my-5 font-display text-[clamp(52px,7.6vw,96px)] font-bold uppercase leading-[0.98] tracking-[0.01em]">
+              {title1}{' '}
+              <em className="block not-italic text-orange [text-shadow:0_0_40px_rgb(249_140_31/0.35)]">
+                {title2}
+              </em>
+            </h1>
+          </FadeIn>
+          <FadeIn delay={200}>
+            <p className="max-w-[46ch] text-[17px] text-fog">{subtitle}</p>
+          </FadeIn>
+          <FadeIn delay={300}>
+            <div className="mt-8 flex flex-wrap gap-3.5">
+              <Link
+                href={`${prefix}/courses`}
+                className="inline-flex items-center gap-2 rounded-full bg-orange px-7 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#1B1204] shadow-[0_6px_20px_-8px_rgb(249_140_31/0.6)] transition-all hover:-translate-y-px hover:bg-amber hover:shadow-[0_10px_26px_-8px_rgb(249_140_31/0.7)]"
+              >
+                {cta}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a
+                href="#about"
+                className="inline-flex items-center rounded-full border-[1.5px] border-line-2 px-7 py-3.5 font-display text-sm font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+              >
+                {ctaSecondary}
+              </a>
+            </div>
+          </FadeIn>
+          <FadeIn delay={400}>
+            <span className="mt-9 inline-flex items-center gap-3 rounded-full border border-blue-line bg-brand-blue/30 px-4.5 py-2.5 text-[11.5px] tracking-[0.06em] text-fog">
+              {supportLabel}{' '}
+              <b className="font-bold tracking-[0.14em] text-cloud">{supportName}</b>
+            </span>
+          </FadeIn>
         </div>
 
-        <h1
-          className={`text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-white/90 to-white/50 mb-6 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-          style={{ transitionDelay: '400ms' }}
-        >
-          {title}
-        </h1>
-
-        <p
-          className={`text-lg md:text-xl lg:text-2xl text-white/60 max-w-2xl mx-auto mb-12 leading-relaxed transition-all duration-800 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-          style={{ transitionDelay: '700ms' }}
-        >
-          {subtitle}
-        </p>
-
-        <div
-          className={`flex flex-col sm:flex-row items-center justify-center gap-4 transition-all duration-800 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
-          style={{ transitionDelay: '900ms' }}
-        >
-          <Link
-            href={`/${locale}/anketa`}
-            className="group relative inline-flex items-center justify-center h-14 px-8 rounded-full bg-[#F99E2D] text-white font-semibold text-base shadow-lg shadow-[#F99E2D]/25 hover:shadow-xl hover:shadow-[#F99E2D]/30 transition-all duration-300 hover:scale-105 active:scale-[0.98] whitespace-nowrap"
-          >
-            <span className="relative z-10">{cta}</span>
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#F99E2D] to-[#e88a1a] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          </Link>
-
-          <Link
-            href={`/${locale}/pro-nas`}
-            className="inline-flex items-center justify-center h-14 px-8 rounded-full border-2 border-white/15 text-white/80 font-semibold text-base hover:bg-white/5 hover:border-white/25 transition-all duration-300 backdrop-blur-sm hover:scale-105 active:scale-[0.98] whitespace-nowrap"
-          >
-            {ctaSecondary}
-          </Link>
-        </div>
-      </div>
-
-      <div
-        className={`absolute bottom-8 left-1/2 -translate-x-1/2 transition-opacity duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`}
-        style={{ transitionDelay: '1500ms' }}
-      >
-        <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5 animate-bounce">
-          <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
+        {/* stats scoreboard */}
+        <div className="grid gap-3.5">
+          {stats.map((stat, i) => (
+            <FadeIn key={stat.label} delay={300 + i * 120}>
+              <div className="flex items-baseline gap-4 rounded-[14px] border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.62),var(--navy))] px-6 py-5 transition-all duration-200 hover:translate-x-1 hover:border-orange/55">
+                <b className="num min-w-[120px] font-display text-[44px] font-bold leading-none text-orange">
+                  <StatCounter value={stat.value} />
+                  {stat.suffix ?? ''}
+                </b>
+                <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fog">
+                  {stat.label}
+                </span>
+              </div>
+            </FadeIn>
+          ))}
         </div>
       </div>
     </section>

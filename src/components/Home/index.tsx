@@ -4,39 +4,45 @@ import type { ReactNode } from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent } from './content'
 import { HeroSection } from './Hero'
-import { StatsSection } from './Stats'
 import { AboutSection } from './About'
-import { TeamSection } from './Team'
 import { CoursesSection } from './Courses'
 import { PartnersSection } from './Partners'
 import { CalendarSection } from './Calendar'
 import { VideoSection } from './Video'
-import { GallerySection } from './Gallery'
 import { FAQSection } from './FAQ'
 import { ContactSection } from './Contact'
 
 type Props = {
   locale: SiteLocale
   newsSlot: ReactNode
+  coursesSlot: ReactNode
 }
 
-export function HomePage({ locale, newsSlot }: Props) {
+export function HomePage({ locale, newsSlot, coursesSlot }: Props) {
   const c = getHomeContent(locale)
 
   return (
-    <main>
-      <HeroSection {...c.hero} locale={locale} />
-      <StatsSection items={c.stats.children} />
-      <CoursesSection {...c.courses} locale={locale} />
-      <AboutSection {...c.about} locale={locale} />
-      {newsSlot}
-      <VideoSection locale={locale} />
-      <TeamSection {...c.team} />
+    <main className="overflow-x-clip">
+      <HeroSection {...c.hero} stats={c.stats.children} locale={locale} />
+      <CoursesSection {...c.courses} locale={locale}>
+        {coursesSlot}
+      </CoursesSection>
+      <AboutSection {...c.about} />
+
+      {/* warm diagonal band: news + shifts calendar */}
+      <div id="news" className="band on-paper mt-14 scroll-mt-24">
+        <div className="container">
+          {newsSlot}
+          <div id="calendar" className="scroll-mt-24">
+            <CalendarSection {...c.calendar} />
+          </div>
+        </div>
+      </div>
+
+      <VideoSection {...c.video} />
       <PartnersSection {...c.partners} />
-      <CalendarSection {...c.calendar} locale={locale} />
-      <GallerySection {...c.gallery} />
-      <FAQSection {...c.faq} />
-      <ContactSection {...c.contact} locale={locale} />
+      <FAQSection {...c.faq} telegramUrl={c.contact.telegramManager} />
+      <ContactSection {...c.contact} />
     </main>
   )
 }

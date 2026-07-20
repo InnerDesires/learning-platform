@@ -1,82 +1,53 @@
 'use client'
 
 import { FadeIn } from './FadeIn'
+import { Eyebrow } from '@/components/brand'
 
-type Logo = {
+type Partner = {
   name: string
-  image: string
+  url: string
 }
 
 type Props = {
   tag: string
   title: string
   description: string
-  logos: Logo[]
+  names: Partner[]
 }
 
-function MarqueeRow({ logos, reverse = false }: { logos: Logo[]; reverse?: boolean }) {
-  const doubled = [...logos, ...logos]
+export function PartnersSection({ tag, title, description, names }: Props) {
+  const doubled = [...names, ...names]
 
   return (
-    <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-      <div
-        className={`flex gap-6 ${reverse ? 'animate-marquee-reverse' : 'animate-marquee'} shrink-0`}
-      >
-        {doubled.map((logo, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-center w-48 h-24 rounded-xl bg-[#0f1d45] px-6 hover:bg-[#1e3b8a] transition-all duration-300 shrink-0"
-          >
-            <img
-              src={logo.image}
-              alt={logo.name}
-              className="max-h-14 max-w-[140px] w-auto object-contain brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
-              loading="lazy"
-            />
-          </div>
-        ))}
+    <section id="partners" className="scroll-mt-24 overflow-hidden pt-16">
+      <div className="container text-center">
+        <FadeIn>
+          <Eyebrow className="justify-center">{tag}</Eyebrow>
+          <h2 className="heading-display mt-2.5 text-[clamp(26px,3.4vw,38px)]">{title}</h2>
+        </FadeIn>
+        <FadeIn delay={100}>
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-fog">{description}</p>
+        </FadeIn>
       </div>
-      <div
-        className={`flex gap-6 ${reverse ? 'animate-marquee-reverse' : 'animate-marquee'} shrink-0`}
-        aria-hidden="true"
-      >
-        {doubled.map((logo, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-center w-48 h-24 rounded-xl bg-[#0f1d45] px-6 hover:bg-[#1e3b8a] transition-all duration-300 shrink-0"
-          >
-            <img
-              src={logo.image}
-              alt={logo.name}
-              className="max-h-14 max-w-[140px] w-auto object-contain brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
-export function PartnersSection({ tag, title, description, logos }: Props) {
-  return (
-    <section className="py-32 overflow-hidden">
-      <div className="container">
-        <div className="text-center mb-16">
-          <FadeIn className="inline-block px-4 py-1.5 rounded-full bg-[#F99E2D]/10 text-[#F99E2D] text-sm font-semibold tracking-wider uppercase mb-6">
-            {tag}
-          </FadeIn>
-          <FadeIn delay={100} className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-            {title}
-          </FadeIn>
-          <FadeIn delay={200} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            {description}
-          </FadeIn>
+      <FadeIn delay={200}>
+        <div className="relative mt-8 overflow-hidden border-y border-line py-5 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          <div className="flex w-max animate-marquee gap-16 pr-16">
+            {doubled.map((partner, i) => (
+              <a
+                key={`${partner.name}-${i}`}
+                href={partner.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-hidden={i >= names.length || undefined}
+                tabIndex={i >= names.length ? -1 : undefined}
+                className="whitespace-nowrap font-display text-[19px] font-semibold uppercase tracking-[0.14em] text-steel-dim transition-colors duration-200 hover:text-cloud"
+              >
+                {partner.name}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <FadeIn delay={300}>
-        <MarqueeRow logos={logos} />
       </FadeIn>
     </section>
   )
