@@ -16,6 +16,7 @@ import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 import { ArrowLeft, Check, Heart, Rows3, Users } from 'lucide-react'
 import { RewardPill } from '@/components/brand'
 import { courseXp } from '@/utilities/xp'
+import { plural } from '@/utilities/plural'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -111,12 +112,12 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12.5px] font-semibold text-fog">
             <span className="num flex items-center gap-2">
               <Rows3 className="h-[15px] w-[15px] text-orange" />
-              {steps.length} {t.courseStepsCount}
+              {steps.length} {plural(locale, steps.length, t.courseStepsPlural)}
             </span>
             {enrolledCount > 0 && (
               <span className="num flex items-center gap-2">
                 <Users className="h-[15px] w-[15px] text-orange" />
-                {enrolledCount} {t.courseEnrolledCount}
+                {enrolledCount} {plural(locale, enrolledCount, t.courseEnrolledPlural)}
               </span>
             )}
             {completedCount > 0 && (

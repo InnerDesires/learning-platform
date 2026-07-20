@@ -98,6 +98,8 @@ type FrontendMessages = {
   coursesAllCategories: string
   courseSteps: string
   courseStepsCount: string
+  courseStepsPlural: string
+  courseEnrolledPlural: string
   courseEnroll: string
   courseStartLearning: string
   courseContinueLearning: string
@@ -317,6 +319,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     coursesAllCategories: 'Усі категорії',
     courseSteps: 'Кроки',
     courseStepsCount: 'кроків',
+    courseStepsPlural: 'крок|кроки|кроків',
+    courseEnrolledPlural: 'учень|учні|учнів',
     courseEnroll: 'Записатися на курс',
     courseStartLearning: 'Почати навчання',
     courseContinueLearning: 'Продовжити навчання',
@@ -537,6 +541,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     coursesAllCategories: 'All categories',
     courseSteps: 'Steps',
     courseStepsCount: 'steps',
+    courseStepsPlural: 'step|steps',
+    courseEnrolledPlural: 'learner|learners',
     courseEnroll: 'Enroll in course',
     courseStartLearning: 'Start learning',
     courseContinueLearning: 'Continue learning',

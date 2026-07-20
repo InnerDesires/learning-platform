@@ -9,6 +9,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { XpChip } from '@/components/brand'
 import { courseXp } from '@/utilities/xp'
+import { plural } from '@/utilities/plural'
 
 export type CourseCardData = Pick<
   Course,
@@ -105,7 +106,7 @@ export const CourseCard: React.FC<Props> = ({
           <div className="mt-auto flex items-center gap-3.5 border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
             <span className="num flex items-center gap-1.5">
               <Rows3 className="h-3.5 w-3.5 flex-none" />
-              {stepsCount} {t.courseStepsCount}
+              {stepsCount} {plural(locale, stepsCount, t.courseStepsPlural)}
             </span>
             {stats && stats.enrolledCount > 0 && (
               <span className="num flex items-center gap-1.5">
