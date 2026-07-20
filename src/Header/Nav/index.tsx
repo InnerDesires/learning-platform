@@ -60,7 +60,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
         <button
           type="button"
           onClick={toggleMobile}
-          className="rounded-full p-2 text-fog transition-colors hover:bg-navy hover:text-cloud md:hidden"
+          className="rounded-full p-2 text-fog transition-colors hover:bg-navy hover:text-cloud lg:hidden"
           aria-label={mobileOpen ? t.menuClose : t.menuOpen}
           aria-expanded={mobileOpen}
         >
@@ -73,7 +73,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
             {...link}
             appearance="link"
             className={
-              'relative hidden rounded-full px-3.5 py-2 font-display text-[13.5px] font-medium uppercase tracking-[0.12em] no-underline transition-colors hover:no-underline md:inline-flex ' +
+              'relative hidden rounded-full px-3.5 py-2 font-display text-[13.5px] font-medium uppercase tracking-[0.12em] no-underline transition-colors hover:no-underline lg:inline-flex ' +
               (isActive(link)
                 ? 'text-orange after:absolute after:inset-x-3.5 after:bottom-0.5 after:h-0.5 after:rounded-full after:bg-orange'
                 : 'text-fog hover:text-cloud')
@@ -83,7 +83,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
 
         <Link
           href={locale === 'en' ? '/en/search' : '/search'}
-          className="grid h-[34px] w-[34px] place-items-center rounded-full border border-transparent text-fog transition-colors hover:border-line-2 hover:bg-navy hover:text-cloud md:ml-1"
+          className="grid h-[34px] w-[34px] place-items-center rounded-full border border-transparent text-fog transition-colors hover:border-line-2 hover:bg-navy hover:text-cloud lg:ml-1"
           data-testid="header-search-link"
         >
           <span className="sr-only">{t.searchLabel}</span>
@@ -96,7 +96,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
       </nav>
 
       {mobileOpen && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-60 rounded-xl border border-line-2 bg-popover p-2 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)] animate-in fade-in-0 slide-in-from-top-2 md:hidden">
+        <div className="absolute right-0 top-full z-50 mt-2 w-60 rounded-xl border border-line-2 bg-popover p-2 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)] animate-in fade-in-0 slide-in-from-top-2 lg:hidden">
           {navItems.map(({ link }, i) => (
             <CMSLink
               key={i}
