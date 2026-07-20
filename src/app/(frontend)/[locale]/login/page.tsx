@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { LoginForm } from '@/components/Auth/LoginForm'
 import { getSession } from '@/lib/auth/getSession'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 
 type Args = {
   params: Promise<{ locale: SiteLocale }>
@@ -12,11 +13,13 @@ type Args = {
 
 export default async function LoginPage({ params, searchParams }: Args) {
   const { locale } = await params
-  const { redirect: redirectTo, reset } = await searchParams
+  const { redirect: redirectParam, reset } = await searchParams
+  const home = locale === defaultLocale ? '/' : `/${locale}`
+  const redirectTo = safeRedirectPath(redirectParam, home)
 
   const session = await getSession()
   if (session?.user) {
-    redirect(redirectTo || '/')
+    redirect(redirectTo)
   }
 
   const isProduction = process.env.VERCEL_ENV === 'production' || !process.env.VERCEL

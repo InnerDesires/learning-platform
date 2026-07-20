@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { PasswordInput } from './PasswordInput'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 import { getFrontendMessages } from '@/utilities/i18n'
 import type { SiteLocale } from '@/utilities/locales'
 
@@ -20,7 +22,7 @@ export const LoginForm: React.FC<{
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const callbackURL = redirectTo || '/'
+  const callbackURL = safeRedirectPath(redirectTo, locale === 'uk' ? '/' : `/${locale}`)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -95,14 +97,14 @@ export const LoginForm: React.FC<{
               {t.loginForgotPassword}
             </Link>
           </div>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             required
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            showLabel={t.passwordShow}
+            hideLabel={t.passwordHide}
           />
         </div>
 

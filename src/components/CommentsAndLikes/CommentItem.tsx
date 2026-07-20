@@ -41,7 +41,7 @@ function formatRelativeTime(dateStr: string): string {
   if (minutes < 60) return `${minutes}m`
   if (hours < 24) return `${hours}h`
   if (days < 30) return `${days}d`
-  return new Date(dateStr).toLocaleDateString()
+  return new Date(dateStr).toLocaleDateString('uk-UA')
 }
 
 function UserAvatar({ name, image }: { name: string; image?: string | null }) {

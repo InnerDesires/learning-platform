@@ -70,6 +70,7 @@ export function NewsSection({ tag, title, cta, items, locale }: Props) {
                     <Media
                       resource={item.image}
                       fill
+                      size="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       imgClassName="object-cover transition-transform duration-300 group-hover:scale-[1.045]"
                     />
                   ) : (

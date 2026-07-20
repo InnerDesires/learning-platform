@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { LogOut, User as UserIcon, Zap } from 'lucide-react'
 import { useSession, signOut } from '@/lib/auth/client'
 import { cn } from '@/utilities/ui'
@@ -54,8 +54,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
   )
 
   const isEn = locale === 'en'
-  const loginPath = isEn ? '/en/login' : '/login'
   const profilePath = isEn ? '/en/profile' : '/profile'
+  const pathname = usePathname()
+  // send the visitor back to where they were after signing in
+  const loginPath = `${isEn ? '/en' : ''}/login?redirect=${encodeURIComponent(pathname)}`
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

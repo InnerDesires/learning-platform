@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { PasswordInput } from './PasswordInput'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 import type { SiteLocale } from '@/utilities/locales'
 import { OTPInput } from '@/components/Auth/OTPInput'
 
@@ -26,7 +28,7 @@ export const RegisterForm: React.FC<{
   const [loading, setLoading] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
 
-  const callbackURL = redirectTo || `/${locale === 'uk' ? '' : locale + '/'}profile`
+  const callbackURL = safeRedirectPath(redirectTo, `/${locale === 'uk' ? '' : locale + '/'}profile`)
 
   // Resend cooldown timer
   useEffect(() => {
@@ -241,15 +243,15 @@ export const RegisterForm: React.FC<{
           <label htmlFor="password" className="mb-1 block text-sm font-medium">
             {t.registerPassword}
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            showLabel={t.passwordShow}
+            hideLabel={t.passwordHide}
           />
           <p className="mt-1 text-xs text-muted-foreground">{t.registerPasswordHint}</p>
         </div>

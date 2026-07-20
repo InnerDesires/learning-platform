@@ -136,6 +136,7 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
           <div className="mt-10 border-t border-line pt-8">
             <QuizAttemptHistory
               attempts={attempts}
+              locale={locale}
               labels={{
                 quizAttemptHistory: t.quizAttemptHistory,
                 quizAttemptNumber: t.quizAttemptNumber,

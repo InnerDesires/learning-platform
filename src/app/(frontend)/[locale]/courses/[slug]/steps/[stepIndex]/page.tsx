@@ -101,7 +101,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
         {/* Two-column layout on desktop */}
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
-          <div className="flex-1 min-w-0 order-2 lg:order-1">
+          <div className="order-1 min-w-0 flex-1">
             <h1 className="heading-display mb-5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
 
             <div className="mb-8">
@@ -169,7 +169,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
           </div>
 
           {/* Sidebar steps list — visible on desktop */}
-          <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 order-1 lg:order-2">
+          <aside className="order-2 w-full flex-shrink-0 lg:w-72 xl:w-80">
             <div className="rounded-2xl border border-line bg-card p-4 lg:sticky lg:top-24">
               <h3 className="mb-3.5 px-1 font-display text-xs font-semibold uppercase tracking-[0.2em] text-fog">
                 {t.courseSteps}

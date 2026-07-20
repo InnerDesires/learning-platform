@@ -1,11 +1,14 @@
 import type { Metadata } from 'next'
-import { LogOut, Mail, Shield, Calendar, Zap } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, Award, Calendar, Download, LogOut, Mail, Shield, Zap } from 'lucide-react'
 
 import { getPayload } from '@/lib/payload'
 import { requireSession } from '@/lib/auth/requireSession'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import type { Course } from '@/payload-types'
 import { SignOutButton } from './SignOutButton'
 
 type Args = {
@@ -18,9 +21,10 @@ export default async function ProfilePage({ params }: Args) {
   const session = await requireSession(locale, profilePath)
   const user = session.user
   const t = getFrontendMessages(locale)
+  const prefix = locale === defaultLocale ? '' : `/${locale}`
 
   const payload = await getPayload()
-  const [userDoc, enrollments] = await Promise.all([
+  const [userDoc, enrollments, recentAttempts] = await Promise.all([
     payload.findByID({
       collection: 'users',
       id: Number(user.id),
@@ -28,21 +32,32 @@ export default async function ProfilePage({ params }: Args) {
     payload.find({
       collection: 'enrollments',
       where: { user: { equals: Number(user.id) } },
-      limit: 1000,
-      depth: 0,
-      select: { completedSteps: true, status: true, quizPassed: true },
+      sort: '-updatedAt',
+      limit: 100,
+      depth: 1,
+    }),
+    payload.find({
+      collection: 'quiz-attempts',
+      where: { user: { equals: Number(user.id) } },
+      sort: '-createdAt',
+      limit: 5,
+      depth: 1,
     }),
   ])
 
   // XP scoreboard: 30 XP per completed step, 100 XP per passed final quiz.
   let stepsDone = 0
   let quizzesPassed = 0
-  let coursesCompleted = 0
   for (const enrollment of enrollments.docs) {
     stepsDone += Array.isArray(enrollment.completedSteps) ? enrollment.completedSteps.length : 0
     if (enrollment.quizPassed) quizzesPassed += 1
-    if (enrollment.status === 'completed') coursesCompleted += 1
   }
+  const completed = enrollments.docs.filter(
+    (e) => e.status === 'completed' && typeof e.course === 'object' && e.course,
+  )
+  const inProgress = enrollments.docs.filter(
+    (e) => e.status !== 'completed' && typeof e.course === 'object' && e.course,
+  )
   const totalXp = stepsDone * STEP_XP + quizzesPassed * QUIZ_XP
   const { level, intoLevel, span } = levelForXp(totalXp)
   const levelPct = Math.round((intoLevel / span) * 100)
@@ -56,6 +71,8 @@ export default async function ProfilePage({ params }: Args) {
           day: 'numeric',
         })
       : null
+
+  const sectionHeading = 'heading-display mb-4 mt-10 text-xl tracking-[0.06em]'
 
   return (
     <div className="container max-w-2xl py-16">
@@ -102,7 +119,7 @@ export default async function ProfilePage({ params }: Args) {
         </div>
         <div className="mt-5 grid grid-cols-3 gap-3 text-center">
           <div>
-            <p className="num font-display text-3xl font-bold text-orange">{coursesCompleted}</p>
+            <p className="num font-display text-3xl font-bold text-orange">{completed.length}</p>
             <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
               {t.profileStatsCourses}
             </p>
@@ -122,7 +139,152 @@ export default async function ProfilePage({ params }: Args) {
         </div>
       </div>
 
-      <div className="mt-5 space-y-5 rounded-2xl border border-line bg-card p-6">
+      {/* courses in progress */}
+      <h2 className={sectionHeading}>{t.profileMyCourses}</h2>
+      {inProgress.length === 0 && completed.length === 0 ? (
+        <div className="rounded-2xl border border-line bg-card p-8 text-center">
+          <p className="text-sm text-fog">{t.profileNoCourses}</p>
+          <Link
+            href={`${prefix}/courses`}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            {t.profileBrowseCourses}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-2.5">
+          {inProgress.map((enrollment) => {
+            const course = enrollment.course as Course
+            const stepsTotal = course.steps?.length ?? 0
+            const done = Array.isArray(enrollment.completedSteps)
+              ? enrollment.completedSteps.length
+              : 0
+            const pct = stepsTotal > 0 ? Math.round((done / stepsTotal) * 100) : 0
+            const nextStep = Math.min(done + 1, Math.max(stepsTotal, 1))
+            return (
+              <Link
+                key={enrollment.id}
+                href={`${prefix}/courses/${course.slug}/steps/${nextStep}`}
+                className="group rounded-xl border border-line bg-card px-5 py-4 transition-colors hover:border-orange/55"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="truncate text-sm font-bold transition-colors group-hover:text-amber">
+                    {course.title}
+                  </span>
+                  <span className="num flex-none text-[11px] font-bold uppercase tracking-[0.1em] text-amber">
+                    {done}/{stepsTotal} · {pct}%
+                  </span>
+                </div>
+                <div className="pbar mt-2.5">
+                  <i style={{ width: `${pct}%` }} />
+                </div>
+              </Link>
+            )
+          })}
+          {inProgress.length === 0 && (
+            <p className="rounded-xl border border-line bg-card px-5 py-4 text-sm text-fog">
+              {t.profileNoCourses}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* certificates */}
+      {completed.length > 0 && (
+        <>
+          <h2 className={sectionHeading}>{t.profileCertificates}</h2>
+          <div className="grid gap-2.5">
+            {completed.map((enrollment) => {
+              const course = enrollment.course as Course
+              const completedAt = enrollment.completedAt ?? enrollment.updatedAt
+              return (
+                <div
+                  key={enrollment.id}
+                  className="flex items-center gap-4 rounded-xl border border-line bg-card px-5 py-3.5 transition-colors hover:border-orange/55"
+                >
+                  <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-orange/14">
+                    <Award className="h-4 w-4 text-orange" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`${prefix}/courses/${course.slug}`}
+                      className="block truncate text-sm font-bold transition-colors hover:text-amber"
+                    >
+                      {course.title}
+                    </Link>
+                    <p className="num mt-0.5 text-[11px] text-steel">
+                      {t.certificateCompletedOn} {formatDateTime(completedAt, locale)}
+                      {enrollment.bestQuizScore != null && (
+                        <span className="text-success"> · {enrollment.bestQuizScore}%</span>
+                      )}
+                    </p>
+                  </div>
+                  <a
+                    href={`/courses/${course.slug}/certificate`}
+                    download
+                    className="grid h-9 w-9 flex-none place-items-center rounded-full border border-line-2 text-fog transition-colors hover:border-orange hover:text-orange"
+                    aria-label={t.certificateDownload}
+                    title={t.certificateDownload}
+                  >
+                    <Download className="h-4 w-4" />
+                  </a>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* recent quiz attempts */}
+      {recentAttempts.docs.length > 0 && (
+        <>
+          <h2 className={sectionHeading}>{t.profileRecentQuizzes}</h2>
+          <div className="grid gap-2.5">
+            {recentAttempts.docs.map((attempt) => {
+              const course =
+                typeof attempt.course === 'object' && attempt.course
+                  ? (attempt.course as Course)
+                  : null
+              return (
+                <div
+                  key={attempt.id}
+                  className="flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-line bg-card px-5 py-3 text-[13px] font-semibold"
+                >
+                  <b
+                    className={`num min-w-[52px] font-display text-[17px] font-semibold ${
+                      attempt.passed ? 'text-success' : 'text-cloud'
+                    }`}
+                  >
+                    {attempt.score}%
+                  </b>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 font-display text-[10.5px] font-semibold uppercase tracking-[0.1em] ${
+                      attempt.passed ? 'bg-success/18 text-success' : 'bg-error/16 text-error'
+                    }`}
+                  >
+                    {attempt.passed ? t.quizPassed : t.quizFailed}
+                  </span>
+                  {course && (
+                    <Link
+                      href={`${prefix}/courses/${course.slug}/quiz`}
+                      className="min-w-0 flex-1 truncate text-fog transition-colors hover:text-cloud"
+                    >
+                      {course.title}
+                    </Link>
+                  )}
+                  <span className="num ml-auto text-xs font-medium text-steel-dim">
+                    {formatDateTime(attempt.createdAt, locale)}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* account info */}
+      <div className="mt-10 space-y-5 rounded-2xl border border-line bg-card p-6">
         <div className="flex items-center gap-3">
           <Mail className="h-5 w-5 shrink-0 text-orange" />
           <div>

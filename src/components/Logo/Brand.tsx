@@ -14,14 +14,15 @@ export const Brand: React.FC<{
   locale: SiteLocale
   size?: 'md' | 'lg'
   className?: string
-}> = ({ locale, size = 'md', className }) => {
+  testId?: string
+}> = ({ locale, size = 'md', className, testId }) => {
   const t = getFrontendMessages(locale)
 
   return (
     <Link
       href={locale === 'en' ? '/en' : '/'}
       className={cn('flex min-w-0 items-center gap-2.5', className)}
-      data-testid="header-logo-link"
+      data-testid={testId}
     >
       <Logo
         alt={t.logoAlt}

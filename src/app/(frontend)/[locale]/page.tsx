@@ -7,6 +7,9 @@ import { Suspense } from 'react'
 import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsServer'
 import { CoursesGridServer, CoursesGridSkeleton } from '@/components/Home/CoursesServer'
 
+// Home has no per-request personalization on the server — safe to serve from ISR cache.
+export const revalidate = 300
+
 type Args = {
   params: Promise<{
     locale: SiteLocale

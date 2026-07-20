@@ -62,7 +62,7 @@ export function VideoSection({ tag, title, description }: Props) {
               controls={isPlaying}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
-              poster="/static/zz/hero.png"
+              poster="/static/zz/video-poster.jpg"
             >
               <source src="/static/zz/video.mp4" type="video/mp4" />
             </video>

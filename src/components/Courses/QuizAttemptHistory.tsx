@@ -1,7 +1,9 @@
 import React from 'react'
 import { Zap } from 'lucide-react'
 import type { QuizAttempt } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
 import { QUIZ_XP } from '@/utilities/xp'
+import { formatDateTime } from '@/utilities/formatDateTime'
 
 type Labels = {
   quizAttemptHistory: string
@@ -15,9 +17,10 @@ type Labels = {
 type Props = {
   attempts: QuizAttempt[]
   labels: Labels
+  locale?: SiteLocale
 }
 
-export const QuizAttemptHistory: React.FC<Props> = ({ attempts, labels }) => {
+export const QuizAttemptHistory: React.FC<Props> = ({ attempts, labels, locale = 'uk' }) => {
   if (attempts.length === 0) {
     return <p className="text-sm text-fog">{labels.quizNoAttempts}</p>
   }
@@ -51,7 +54,7 @@ export const QuizAttemptHistory: React.FC<Props> = ({ attempts, labels }) => {
               {labels.quizAttemptNumber} {attempt.attemptNumber}
             </span>
             <span className="num text-xs font-medium text-steel-dim">
-              {new Date(attempt.createdAt).toLocaleDateString('uk-UA')}
+              {formatDateTime(attempt.createdAt, locale)}
             </span>
             {attempt.passed && (
               <span className="num ml-auto inline-flex items-center gap-1 font-display text-[11.5px] font-semibold text-amber">

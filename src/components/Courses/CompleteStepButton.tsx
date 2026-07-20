@@ -46,6 +46,9 @@ export const CompleteStepButton: React.FC<Props> = ({
     startTransition(async () => {
       if (!isCourseCompleted && !isAlreadyCompleted) {
         await completeStep(enrollmentId, stepBlockId, courseId)
+        // Purge the client router cache so the next page shows fresh progress
+        // instead of a stale prefetched payload.
+        router.refresh()
       }
       router.push(nextUrl)
     })

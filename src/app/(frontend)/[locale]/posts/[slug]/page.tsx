@@ -17,6 +17,9 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
 import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { ShareButtons } from '@/components/ShareButtons'
+import { getServerSideURL } from '@/utilities/getURL'
+import { getFrontendMessages } from '@/utilities/i18n'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -57,6 +60,8 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   const postLikesCounts = await getLikesCountsBatch('posts', [post.id])
   const likesCount = postLikesCounts[post.id] ?? 0
+  const t = getFrontendMessages(locale)
+  const shareUrl = `${getServerSideURL()}${locale === 'en' ? '/en' : ''}/posts/${decodedSlug}`
 
   return (
     <article className="pb-16">
@@ -79,6 +84,15 @@ export default async function Post({ params: paramsPromise }: Args) {
             />
           )}
           <div className="max-w-4xl mx-auto">
+            <div className="mt-10 border-t border-line pt-6">
+              <ShareButtons
+                url={shareUrl}
+                title={post.title}
+                label={t.shareLabel}
+                copyLabel={t.shareCopyLink}
+                copiedLabel={t.copied}
+              />
+            </div>
             <InteractionSection
               targetCollection="posts"
               targetId={post.id}

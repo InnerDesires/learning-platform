@@ -36,6 +36,8 @@ type FrontendMessages = {
   formRequiredLabel: string
   copy: string
   copied: string
+  shareLabel: string
+  shareCopyLink: string
   logoAlt: string
   projectName: string
   brandName1: string
@@ -61,6 +63,8 @@ type FrontendMessages = {
   loginContinueTo: string
   loginEmail: string
   loginPassword: string
+  passwordShow: string
+  passwordHide: string
   loginSubmit: string
   loginSubmitting: string
   loginOr: string
@@ -93,6 +97,11 @@ type FrontendMessages = {
   profileStatsCourses: string
   profileStatsSteps: string
   profileStatsQuizzes: string
+  profileMyCourses: string
+  profileNoCourses: string
+  profileCertificates: string
+  profileRecentQuizzes: string
+  profileBrowseCourses: string
   coursesTitle: string
   coursesMetaTitle: string
   coursesAllCategories: string
@@ -255,6 +264,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formFieldRequired: "Це поле є обов'язковим",
     formRequiredLabel: "(обов'язково)",
     copy: 'Копіювати',
+    shareLabel: 'Поділитися',
+    shareCopyLink: 'Копіювати лінк',
     copied: 'Скопійовано!',
     logoAlt: 'Логотип Залізна Зміна',
     projectName: 'Залізна Зміна. Платформа',
@@ -282,6 +293,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     loginContinueTo: 'Увійдіть, щоб продовжити',
     loginEmail: 'Електронна пошта',
     loginPassword: 'Пароль',
+    passwordShow: 'Показати пароль',
+    passwordHide: 'Приховати пароль',
     loginSubmit: 'Увійти',
     loginSubmitting: 'Входимо…',
     loginOr: 'або',
@@ -314,6 +327,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileStatsCourses: 'Курсів завершено',
     profileStatsSteps: 'Кроків пройдено',
     profileStatsQuizzes: 'Тестів складено',
+    profileMyCourses: 'Мої курси',
+    profileNoCourses: 'Ви ще не записані на жоден курс.',
+    profileCertificates: 'Сертифікати',
+    profileRecentQuizzes: 'Останні спроби тестів',
+    profileBrowseCourses: 'До курсів',
     coursesTitle: 'Курси',
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
@@ -477,6 +495,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formFieldRequired: 'This field is required',
     formRequiredLabel: '(required)',
     copy: 'Copy',
+    shareLabel: 'Share',
+    shareCopyLink: 'Copy link',
     copied: 'Copied!',
     logoAlt: 'Iron Squad Logo',
     projectName: 'Iron Squad. Platform',
@@ -504,6 +524,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     loginContinueTo: 'Log in to continue',
     loginEmail: 'Email',
     loginPassword: 'Password',
+    passwordShow: 'Show password',
+    passwordHide: 'Hide password',
     loginSubmit: 'Log in',
     loginSubmitting: 'Logging in…',
     loginOr: 'or',
@@ -536,6 +558,11 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileStatsCourses: 'Courses completed',
     profileStatsSteps: 'Steps completed',
     profileStatsQuizzes: 'Quizzes passed',
+    profileMyCourses: 'My courses',
+    profileNoCourses: 'You are not enrolled in any course yet.',
+    profileCertificates: 'Certificates',
+    profileRecentQuizzes: 'Recent quiz attempts',
+    profileBrowseCourses: 'Browse courses',
     coursesTitle: 'Courses',
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',

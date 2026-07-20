@@ -12,7 +12,7 @@ import { Media } from '@/components/Media'
 import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
 import { usePathname } from 'next/navigation'
 
-export type CardRelationTo = 'posts' | 'courses' | 'course-categories'
+export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages'
 
 export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
@@ -55,7 +55,9 @@ export const Card: React.FC<{
   const href =
     effectiveRelationTo === 'course-categories'
       ? `${prefix}/courses`
-      : `${prefix}/${effectiveRelationTo}/${slug}`
+      : effectiveRelationTo === 'pages'
+        ? `${prefix}/${slug}`
+        : `${prefix}/${effectiveRelationTo}/${slug}`
   const fallbackCover = FALLBACK_COVERS[Math.abs(Number(id) || 0) % FALLBACK_COVERS.length]
 
   return (

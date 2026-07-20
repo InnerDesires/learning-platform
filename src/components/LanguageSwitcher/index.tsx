@@ -10,7 +10,7 @@ const locales = [
 ]
 const defaultLocale = 'uk'
 
-export const LanguageSwitcher: React.FC = () => {
+export const LanguageSwitcher: React.FC<{ withTestIds?: boolean }> = ({ withTestIds }) => {
   const pathname = usePathname()
 
   const isEnglish = pathname.startsWith('/en/') || pathname === '/en'
@@ -29,7 +29,7 @@ export const LanguageSwitcher: React.FC = () => {
         <Link
           key={code}
           href={getLocalePath(code)}
-          data-testid={`lang-switch-${code}`}
+          data-testid={withTestIds ? `lang-switch-${code}` : undefined}
           className={cn(
             'rounded-full px-2.5 py-1 transition-colors',
             currentLocale === code ? 'bg-orange text-ink' : 'text-fog hover:text-cloud',

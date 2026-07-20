@@ -90,7 +90,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
           <SearchIcon className="h-4 w-4" />
         </Link>
         <div className="mx-2 hidden sm:block">
-          <LanguageSwitcher />
+          <LanguageSwitcher withTestIds />
         </div>
         <UserMenu locale={locale} open={userMenuOpen} onToggle={handleUserMenuToggle} />
       </nav>

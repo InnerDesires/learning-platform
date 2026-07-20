@@ -77,9 +77,13 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
       )}
       <div className="flex gap-3 items-center flex-wrap">
         {!isLoggedIn && (
-          <Link href={`${localePrefix}/login`}>
-            <Button size="lg">{labels.loginToEnroll}</Button>
-          </Link>
+          <Button size="lg" asChild>
+            <Link
+              href={`${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${courseSlug}`)}`}
+            >
+              {labels.loginToEnroll}
+            </Link>
+          </Button>
         )}
         {isLoggedIn && !isEnrolled && (
           <EnrollButton
@@ -89,24 +93,26 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
           />
         )}
         {isEnrolled && !isCompleted && (
-          <Link href={`${localePrefix}/courses/${courseSlug}/steps/${continueStepIndex}`}>
-            <Button size="lg">{labels.continueLearning}</Button>
-          </Link>
+          <Button size="lg" asChild>
+            <Link href={`${localePrefix}/courses/${courseSlug}/steps/${continueStepIndex}`}>
+              {labels.continueLearning}
+            </Link>
+          </Button>
         )}
         {isCompleted && (
-          <Link href={`${localePrefix}/courses/${courseSlug}/steps/1`}>
-            <Button size="lg" variant="outline">{labels.reviewMaterials}</Button>
-          </Link>
+          <Button size="lg" variant="outline" asChild>
+            <Link href={`${localePrefix}/courses/${courseSlug}/steps/1`}>{labels.reviewMaterials}</Link>
+          </Button>
         )}
         {isCompleted && quizEnabled && !enrollmentQuizPassed && (
-          <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>
-            <Button size="lg">{labels.quizTakeQuiz}</Button>
-          </Link>
+          <Button size="lg" asChild>
+            <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>{labels.quizTakeQuiz}</Link>
+          </Button>
         )}
         {isCompleted && quizEnabled && enrollmentQuizPassed && (
-          <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>
-            <Button size="lg" variant="outline">{labels.quizRetakeQuiz}</Button>
-          </Link>
+          <Button size="lg" variant="outline" asChild>
+            <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>{labels.quizRetakeQuiz}</Link>
+          </Button>
         )}
         {isCompleted && (
           <a href={`/courses/${courseSlug}/certificate`} download>

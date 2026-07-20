@@ -1402,6 +1402,10 @@ export interface Search {
     | {
         relationTo: 'course-categories';
         value: number | CourseCategory;
+      }
+    | {
+        relationTo: 'pages';
+        value: number | Page;
       };
   slug?: string | null;
   collectionType?: string | null;
