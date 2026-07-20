@@ -15,11 +15,12 @@ export default async function LoginPage({ params, searchParams }: Args) {
   const { locale } = await params
   const { redirect: redirectParam, reset } = await searchParams
   const home = locale === defaultLocale ? '/' : `/${locale}`
-  const redirectTo = safeRedirectPath(redirectParam, home)
+  // sanitized return path; undefined keeps each form's own default
+  const redirectTo = redirectParam ? safeRedirectPath(redirectParam, home) : undefined
 
   const session = await getSession()
   if (session?.user) {
-    redirect(redirectTo)
+    redirect(redirectTo ?? home)
   }
 
   const isProduction = process.env.VERCEL_ENV === 'production' || !process.env.VERCEL

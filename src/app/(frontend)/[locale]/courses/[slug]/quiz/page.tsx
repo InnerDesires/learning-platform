@@ -38,7 +38,8 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
   ])
 
   if (!session?.user) {
-    redirect('/login')
+    const prefix = locale === 'en' ? '/en' : ''
+    redirect(`${prefix}/login?redirect=${encodeURIComponent(`${prefix}/courses/${slug}/quiz`)}`)
   }
 
   const course = result.docs[0] as Course | undefined
@@ -68,7 +69,6 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
   const passingScore = course.quiz.passingScore ?? 70
 
   const prefix = locale === 'en' ? '/en' : ''
-
   return (
     <div className="pt-10 pb-16">
       <div className="container max-w-3xl">

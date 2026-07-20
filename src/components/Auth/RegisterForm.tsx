@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { PasswordInput } from './PasswordInput'
@@ -18,7 +17,6 @@ export const RegisterForm: React.FC<{
   googleEnabled?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true }) => {
   const t = getFrontendMessages(locale)
-  const router = useRouter()
   const [step, setStep] = useState<Step>('credentials')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -107,8 +105,9 @@ export const RegisterForm: React.FC<{
         setStep('otp')
         setLoading(false)
       } else {
-        router.push(callbackURL)
-        router.refresh()
+        // Full navigation: avoids the client-router race with /register's
+        // authed-user redirect that could bounce the user to the home page.
+        window.location.assign(callbackURL)
       }
     } catch {
       setError(t.registerErrorGeneric)

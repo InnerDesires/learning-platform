@@ -42,7 +42,10 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   ])
 
   if (!session?.user) {
-    redirect('/login')
+    const localePrefix = locale === 'en' ? '/en' : ''
+    redirect(
+      `${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${slug}/steps/${stepIndexStr}`)}`,
+    )
   }
 
   const course = result.docs[0] as Course | undefined

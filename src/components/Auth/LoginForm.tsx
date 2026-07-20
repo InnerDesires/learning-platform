@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { PasswordInput } from './PasswordInput'
 import { safeRedirectPath } from '@/utilities/safeRedirect'
@@ -16,7 +15,6 @@ export const LoginForm: React.FC<{
   resetSuccess?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true, resetSuccess = false }) => {
   const t = getFrontendMessages(locale)
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -39,8 +37,9 @@ export const LoginForm: React.FC<{
       setError(t.loginErrorGeneric)
       setLoading(false)
     } else {
-      router.push(callbackURL)
-      router.refresh()
+      // Full navigation: the session cookie is already set, and a hard load
+      // avoids the client-router race with /login's authed-user redirect.
+      window.location.assign(callbackURL)
     }
   }
 
