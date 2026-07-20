@@ -35,6 +35,20 @@ type FrontendMessages = {
   copied: string
   logoAlt: string
   projectName: string
+  brandName1: string
+  brandName2: string
+  brandSub: string
+  footerMission: string
+  footerColPlatform: string
+  footerColProject: string
+  footerColContacts: string
+  footerAbout: string
+  footerCalendar: string
+  footerPartners: string
+  footerContact: string
+  footerCertificates: string
+  footerSearch: string
+  footerRights: string
   signIn: string
   profile: string
   signOut: string
@@ -230,6 +244,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copied: 'Скопійовано!',
     logoAlt: 'Логотип Залізна Зміна',
     projectName: 'Залізна Зміна. Платформа',
+    brandName1: 'Залізна',
+    brandName2: 'Зміна',
+    brandSub: 'Платформа',
+    footerMission:
+      'Проєкт розвитку талановитої молоді України. За підтримки Укрзалізниці та фонду Говарда Баффетта.',
+    footerColPlatform: 'Платформа',
+    footerColProject: 'Проєкт',
+    footerColContacts: 'Контакти',
+    footerAbout: 'Про нас',
+    footerCalendar: 'Календар',
+    footerPartners: 'Партнери',
+    footerContact: 'Контакти',
+    footerCertificates: 'Сертифікати',
+    footerSearch: 'Пошук',
+    footerRights: '© 2022–2026 «Залізна Зміна». Всі права захищені.',
     signIn: 'Увійти',
     profile: 'Профіль',
     signOut: 'Вийти',
@@ -426,6 +455,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     copied: 'Copied!',
     logoAlt: 'Iron Squad Logo',
     projectName: 'Iron Squad. Platform',
+    brandName1: 'Iron',
+    brandName2: 'Squad',
+    brandSub: 'Platform',
+    footerMission:
+      'A development project for talented Ukrainian youth. Supported by Ukrzaliznytsia and the Howard G. Buffett Foundation.',
+    footerColPlatform: 'Platform',
+    footerColProject: 'Project',
+    footerColContacts: 'Contacts',
+    footerAbout: 'About us',
+    footerCalendar: 'Calendar',
+    footerPartners: 'Partners',
+    footerContact: 'Contact',
+    footerCertificates: 'Certificates',
+    footerSearch: 'Search',
+    footerRights: '© 2022–2026 "Iron Squad". All rights reserved.',
     signIn: 'Sign in',
     profile: 'Profile',
     signOut: 'Sign out',

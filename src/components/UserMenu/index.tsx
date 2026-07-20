@@ -64,10 +64,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
     return (
       <Link
         href={loginPath}
-        className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary/10"
+        className="ml-1 flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-void/50 transition-colors hover:border-orange hover:shadow-[0_0_16px_rgb(249_140_31/0.22)]"
         aria-label={t.signIn}
       >
-        <UserIcon className="h-4 w-4 text-muted-foreground" />
+        <UserIcon className="h-4 w-4 text-fog" />
       </Link>
     )
   }
@@ -80,7 +80,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-full overflow-hidden border-2 border-transparent transition-colors hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow [background:conic-gradient(from_-90deg,var(--orange)_0_68%,var(--blue-line)_68%_100%)] hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -88,11 +88,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
           <img
             src={user.image}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full rounded-full object-cover"
             referrerPolicy="no-referrer"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center bg-primary text-primary-foreground text-sm font-semibold">
+          <span className="flex h-full w-full items-center justify-center rounded-full bg-navy-2 text-xs font-extrabold text-amber">
             {initials}
           </span>
         )}

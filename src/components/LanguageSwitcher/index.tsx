@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import React from 'react'
+import { cn } from '@/utilities/ui'
 
 const locales = [
   { code: 'uk', label: 'UA' },
@@ -23,22 +24,19 @@ export const LanguageSwitcher: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center gap-1">
-      {locales.map(({ code, label }, i) => (
-        <React.Fragment key={code}>
-          {i > 0 && <span className="text-muted-foreground text-sm">/</span>}
-          <Link
-            href={getLocalePath(code)}
-            data-testid={`lang-switch-${code}`}
-            className={
-              currentLocale === code
-                ? 'text-primary font-semibold text-sm'
-                : 'text-muted-foreground hover:text-primary transition-colors text-sm'
-            }
-          >
-            {label}
-          </Link>
-        </React.Fragment>
+    <div className="flex rounded-full border border-line-2 bg-void/50 p-0.5 text-[10.5px] font-bold">
+      {locales.map(({ code, label }) => (
+        <Link
+          key={code}
+          href={getLocalePath(code)}
+          data-testid={`lang-switch-${code}`}
+          className={cn(
+            'rounded-full px-2.5 py-1 transition-colors',
+            currentLocale === code ? 'bg-orange text-ink' : 'text-fog hover:text-cloud',
+          )}
+        >
+          {label}
+        </Link>
       ))}
     </div>
   )
