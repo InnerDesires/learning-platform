@@ -15,6 +15,7 @@ type Props = {
   courseSlug: string
   steps: Step[]
   quizEnabled?: boolean
+  localePrefix?: string
   quizPassed?: boolean
   bestQuizScore?: number | null
   labels: {
@@ -31,7 +32,7 @@ type Props = {
   }
 }
 
-export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, labels }: Props) {
+export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, localePrefix = '', labels }: Props) {
   const session = await getSession().catch(() => null)
   const isLoggedIn = !!session?.user
   const enrollment = isLoggedIn ? await getEnrollment(courseId) : null
@@ -54,7 +55,7 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
       {hasTags && (
         <div className="flex gap-2 items-center flex-wrap">
           {isCompleted && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-500 text-white">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-success text-[#08130C]">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
@@ -62,7 +63,7 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
             </span>
           )}
           {isCompleted && quizEnabled && enrollmentQuizPassed && (
-            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-green-500/10 text-green-600">
+            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-success/15 text-success">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
@@ -76,7 +77,7 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
       )}
       <div className="flex gap-3 items-center flex-wrap">
         {!isLoggedIn && (
-          <Link href="/login">
+          <Link href={`${localePrefix}/login`}>
             <Button size="lg">{labels.loginToEnroll}</Button>
           </Link>
         )}
@@ -88,22 +89,22 @@ export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled
           />
         )}
         {isEnrolled && !isCompleted && (
-          <Link href={`/courses/${courseSlug}/steps/${continueStepIndex}`}>
+          <Link href={`${localePrefix}/courses/${courseSlug}/steps/${continueStepIndex}`}>
             <Button size="lg">{labels.continueLearning}</Button>
           </Link>
         )}
         {isCompleted && (
-          <Link href={`/courses/${courseSlug}/steps/1`}>
+          <Link href={`${localePrefix}/courses/${courseSlug}/steps/1`}>
             <Button size="lg" variant="outline">{labels.reviewMaterials}</Button>
           </Link>
         )}
         {isCompleted && quizEnabled && !enrollmentQuizPassed && (
-          <Link href={`/courses/${courseSlug}/quiz`}>
+          <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>
             <Button size="lg">{labels.quizTakeQuiz}</Button>
           </Link>
         )}
         {isCompleted && quizEnabled && enrollmentQuizPassed && (
-          <Link href={`/courses/${courseSlug}/quiz`}>
+          <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>
             <Button size="lg" variant="outline">{labels.quizRetakeQuiz}</Button>
           </Link>
         )}

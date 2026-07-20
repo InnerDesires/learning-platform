@@ -14,16 +14,21 @@ export const ProgressBar: React.FC<Props> = ({ completed, total, label, classNam
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <div className="flex justify-between items-center mb-1.5 text-sm">
-          <span className="font-medium">{label}</span>
-          <span className="text-muted-foreground">{percentage}%</span>
+        <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.1em] text-fog">
+          <span>{label}</span>
+          <b className="num text-amber">
+            {completed}/{total} · {percentage}%
+          </b>
         </div>
       )}
-      <div className="w-full bg-secondary rounded-full h-2.5 overflow-hidden">
-        <div
-          className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${percentage}%` }}
-        />
+      <div
+        className="pbar"
+        role="progressbar"
+        aria-valuenow={percentage}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <i style={{ width: `${percentage}%` }} />
       </div>
     </div>
   )

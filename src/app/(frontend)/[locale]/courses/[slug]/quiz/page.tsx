@@ -10,6 +10,8 @@ import { getEnrollment, getQuizAttempts } from '../../actions'
 import { QuizForm } from '@/components/Courses/QuizForm'
 import { QuizAttemptHistory } from '@/components/Courses/QuizAttemptHistory'
 import type { Course } from '@/payload-types'
+import { ArrowLeft, Zap } from 'lucide-react'
+import { QUIZ_XP } from '@/utilities/xp'
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -65,29 +67,41 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
   const questions = course.quiz.questions ?? []
   const passingScore = course.quiz.passingScore ?? 70
 
+  const prefix = locale === 'en' ? '/en' : ''
+
   return (
-    <div className="pt-14 pb-16">
+    <div className="pt-10 pb-16">
       <div className="container max-w-3xl">
         <Link
-          href={`/courses/${slug}`}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5 mb-6"
+          href={`${prefix}/courses/${slug}`}
+          className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-fog transition-colors hover:text-orange"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <ArrowLeft className="h-3.5 w-3.5" />
           {t.quizBackToCourse}
         </Link>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="heading-display text-[clamp(32px,4vw,46px)] font-bold">
             {course.quiz.title || t.quizTitle}
           </h1>
           {course.quiz.description && (
-            <p className="mt-2 text-muted-foreground">{course.quiz.description}</p>
+            <p className="mt-2.5 text-fog">{course.quiz.description}</p>
           )}
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t.quizPassingScore}: {passingScore}%
-          </p>
+          <div className="mt-4.5 flex flex-wrap gap-2.5">
+            <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {t.quizPassingScore} <b className="text-amber">{passingScore}%</b>
+            </span>
+            <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {t.quizQuestion} <b className="text-amber">{questions.length}</b>
+            </span>
+            <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {t.quizAttemptNumber} <b className="text-amber">№{attempts.length + 1}</b>
+            </span>
+            <span className="num inline-flex items-center gap-1.5 rounded-full border border-orange/34 bg-orange/12 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-amber">
+              <Zap className="h-3 w-3" fill="currentColor" strokeWidth={0} />
+              {t.courseRewardLabel} <b>+{QUIZ_XP} XP</b>
+            </span>
+          </div>
         </div>
 
         <QuizForm
@@ -119,7 +133,7 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
         />
 
         {attempts.length > 0 && (
-          <div className="mt-10 pt-8 border-t">
+          <div className="mt-10 border-t border-line pt-8">
             <QuizAttemptHistory
               attempts={attempts}
               labels={{

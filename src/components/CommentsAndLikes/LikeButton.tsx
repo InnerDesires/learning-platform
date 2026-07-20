@@ -79,8 +79,8 @@ export function LikeButton({
       disabled={isPending || !isAuthenticated}
       className={`inline-flex items-center gap-1.5 ${textSize} transition-colors duration-200 ${
         optimistic.liked
-          ? 'text-red-500 hover:text-red-600'
-          : 'text-muted-foreground hover:text-red-500'
+          ? 'text-orange hover:text-amber'
+          : 'text-muted-foreground hover:text-orange'
       } ${!isAuthenticated ? 'cursor-default opacity-70' : 'cursor-pointer'} disabled:opacity-50`}
       aria-label={optimistic.liked ? 'Unlike' : 'Like'}
     >

@@ -15,31 +15,22 @@ type Props = {
   allLabel: string
 }
 
+const pill = (active: boolean) =>
+  cn(
+    'rounded-full border px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] transition-colors',
+    active
+      ? 'border-orange bg-orange text-[#1B1204]'
+      : 'border-line-2 text-fog hover:border-steel hover:text-cloud',
+  )
+
 export const CategoryFilter: React.FC<Props> = ({ categories, selectedCategory, onSelect, allLabel }) => {
   return (
-    <div className="flex flex-wrap gap-2">
-      <button
-        onClick={() => onSelect(null)}
-        className={cn(
-          'px-4 py-2 rounded-full text-sm font-medium transition-colors',
-          selectedCategory === null
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        )}
-      >
+    <div className="flex flex-wrap gap-2" role="group">
+      <button onClick={() => onSelect(null)} className={pill(selectedCategory === null)}>
         {allLabel}
       </button>
       {categories.map((cat) => (
-        <button
-          key={cat.id}
-          onClick={() => onSelect(cat.id)}
-          className={cn(
-            'px-4 py-2 rounded-full text-sm font-medium transition-colors',
-            selectedCategory === cat.id
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-          )}
-        >
+        <button key={cat.id} onClick={() => onSelect(cat.id)} className={pill(selectedCategory === cat.id)}>
           {cat.title}
         </button>
       ))}

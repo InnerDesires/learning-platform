@@ -16,6 +16,8 @@ type Props = {
   courseSlug: string
   steps: Step[]
   quizEnabled?: boolean
+  localePrefix?: string
+  typeLabels?: { richTextStep: string; youtubeVideoStep: string; fileStep: string }
   labels: {
     stepProgress: string
     courseCompleted: string
@@ -26,7 +28,7 @@ type Props = {
   }
 }
 
-export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quizEnabled, labels }: Props) {
+export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quizEnabled, localePrefix, typeLabels, labels }: Props) {
   const session = await getSession().catch(() => null)
   const enrollment = session?.user ? await getEnrollment(courseId) : null
   const isEnrolled = !!enrollment
@@ -53,8 +55,8 @@ export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quiz
       )}
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-semibold mb-4">
-            {labels.courseSteps} ({steps.length})
+          <h2 className="heading-display mb-4 text-xl tracking-[0.06em]">
+            {labels.courseSteps} <span className="num text-fog">({steps.length})</span>
           </h2>
           <StepsList
             steps={steps}
@@ -63,6 +65,8 @@ export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quiz
             linked={isEnrolled}
             completedLabel={labels.courseCompleted}
             stepsLabel={labels.courseSteps}
+            localePrefix={localePrefix}
+            typeLabels={typeLabels}
             quiz={quizEnabled ? {
               enabled: true,
               passed: quizPassed,

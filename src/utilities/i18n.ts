@@ -112,6 +112,7 @@ type FrontendMessages = {
   stepDownloadFile: string
   stepOpenFile: string
   courseBackToCourses: string
+  courseRewardLabel: string
   courseBackToOverview: string
   courseEnrolledCount: string
   courseCompletedCount: string
@@ -325,6 +326,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepDownloadFile: 'Завантажити файл',
     stepOpenFile: 'Відкрити файл',
     courseBackToCourses: 'До курсів',
+    courseRewardLabel: 'Нагорода',
     courseBackToOverview: 'До огляду курсу',
     courseEnrolledCount: 'учнів',
     courseCompletedCount: 'завершили',
@@ -539,6 +541,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepDownloadFile: 'Download file',
     stepOpenFile: 'Open file',
     courseBackToCourses: 'Back to courses',
+    courseRewardLabel: 'Reward',
     courseBackToOverview: 'Back to overview',
     courseEnrolledCount: 'enrolled',
     courseCompletedCount: 'completed',
