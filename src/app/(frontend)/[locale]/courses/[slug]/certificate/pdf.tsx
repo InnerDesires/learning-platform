@@ -4,6 +4,7 @@ import {
   Page,
   Text,
   View,
+  Image,
   StyleSheet,
   Svg,
   Rect,
@@ -12,171 +13,138 @@ import {
   Link,
 } from '@react-pdf/renderer'
 import QRCode from 'qrcode'
+import { certificateBgDataUri } from './certificate-bg'
 
 Font.register({
-  family: 'Roboto',
+  family: 'PT Serif',
   fonts: [
     {
-      src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf',
+      src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/ptserif/PT_Serif-Web-Regular.ttf',
       fontWeight: 400,
     },
     {
-      src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf',
+      src: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/ptserif/PT_Serif-Web-Bold.ttf',
       fontWeight: 700,
     },
   ],
 })
 
+Font.registerHyphenationCallback((word) => [word])
+
+// Page geometry mirrors the mockup PDF (595.5 x 419.25 pt). All static artwork —
+// title, labels, tagline, partner logos — is baked into the background image;
+// only the dynamic values are overlaid at the coordinates measured from the mockup.
+const PAGE_WIDTH = 595.5
+const PAGE_HEIGHT = 419.25
+const NAVY = '#161271'
+
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    padding: 0,
-    fontFamily: 'Roboto',
+    fontFamily: 'PT Serif',
   },
-  outerBorder: {
-    margin: 30,
-    border: '3pt solid #1a365d',
-    padding: 8,
-    flex: 1,
+  background: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: PAGE_WIDTH,
+    height: PAGE_HEIGHT,
   },
-  innerBorder: {
-    border: '1pt solid #2a4a7f',
-    padding: 40,
-    flex: 1,
+  // White rounded field in the mockup: x 65.7-529.1, top 158.3-199.8
+  nameBox: {
+    position: 'absolute',
+    top: 158.3,
+    left: 65.7,
+    width: 463.4,
+    height: 41.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cornerDecoration: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-  },
-  topLeft: {
-    top: 0,
-    left: 0,
-    borderTop: '2pt solid #c9a84c',
-    borderLeft: '2pt solid #c9a84c',
-  },
-  topRight: {
-    top: 0,
-    right: 0,
-    borderTop: '2pt solid #c9a84c',
-    borderRight: '2pt solid #c9a84c',
-  },
-  bottomLeft: {
-    bottom: 0,
-    left: 0,
-    borderBottom: '2pt solid #c9a84c',
-    borderLeft: '2pt solid #c9a84c',
-  },
-  bottomRight: {
-    bottom: 0,
-    right: 0,
-    borderBottom: '2pt solid #c9a84c',
-    borderRight: '2pt solid #c9a84c',
-  },
-  platformName: {
-    fontSize: 14,
-    letterSpacing: 4,
-    color: '#1a365d',
-    textTransform: 'uppercase',
-    marginBottom: 20,
-  },
-  divider: {
-    width: 80,
-    height: 2,
-    backgroundColor: '#c9a84c',
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    color: '#1a365d',
-    marginBottom: 30,
-    letterSpacing: 1,
-  },
-  presented: {
-    fontSize: 12,
-    color: '#4a5568',
-    marginBottom: 12,
-  },
   userName: {
-    fontSize: 26,
-    color: '#1a365d',
-    marginBottom: 16,
-    paddingBottom: 8,
-    borderBottom: '1pt solid #c9a84c',
-    paddingHorizontal: 30,
+    fontWeight: 700,
+    color: NAVY,
+    textAlign: 'center',
   },
-  forText: {
-    fontSize: 12,
-    color: '#4a5568',
-    marginBottom: 12,
-    marginTop: 8,
+  // Free band between "УСПІШНО ЗАВЕРШИ(ЛА) КУРС" (ends 222.7) and the footer labels (290.2)
+  courseBox: {
+    position: 'absolute',
+    top: 234,
+    left: 60,
+    width: 475.5,
+    alignItems: 'center',
   },
   courseTitle: {
-    fontSize: 18,
-    color: '#2d3748',
-    marginBottom: 30,
+    fontWeight: 700,
+    color: '#FFFFFF',
     textAlign: 'center',
-    maxWidth: 400,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    width: '100%',
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  footerItem: {
-    alignItems: 'center',
-  },
-  footerLabel: {
-    fontSize: 9,
-    color: '#718096',
-    marginBottom: 4,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  footerValue: {
-    fontSize: 11,
-    color: '#2d3748',
+  // Centered under "ДАТА ЗАВЕРШЕННЯ:" (label center x 96.25, bottom 299.6)
+  dateValue: {
+    position: 'absolute',
+    top: 303.5,
+    left: 6,
+    width: 180,
+    fontSize: 10.5,
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
-  qrSection: {
+  // Centered under "НОМЕР СЕРТИФІКАТУ:" (label center x 493.65)
+  certIdValue: {
+    position: 'absolute',
+    top: 303.5,
+    left: 403.5,
+    width: 180,
+    fontSize: 10.5,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  // Free dark strip right of the partner logos: below the tagline (bottom 340.2)
+  // and above the bottom-edge ornament (starts at y ~402)
+  qrBox: {
+    position: 'absolute',
+    top: 346,
+    left: 526,
+    width: 52,
+    height: 52,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 4,
     alignItems: 'center',
+    paddingTop: 3.5,
   },
-  verifyLabel: {
-    fontSize: 7,
-    color: '#718096',
-    marginTop: 4,
+  qrLabel: {
+    fontSize: 4.5,
+    color: NAVY,
     textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  verifyUrl: {
-    fontSize: 7,
-    color: '#2a4a7f',
-    marginTop: 2,
-    textDecoration: 'none',
+    letterSpacing: 0.5,
+    marginTop: 1.5,
   },
 })
 
+// Shrink to fit the fixed boxes: PT Serif Bold Cyrillic averages ~0.62em per glyph
+// (~0.85em for uppercase with letter spacing).
+function fitFontSize(
+  text: string,
+  maxWidth: number,
+  maxSize: number,
+  minSize: number,
+  emFactor = 0.62,
+): number {
+  const estimated = maxWidth / (emFactor * Math.max(text.length, 1))
+  return Math.max(minSize, Math.min(maxSize, estimated))
+}
+
 type CertificateProps = {
-  platformName: string
-  title: string
-  presented: string
   userName: string
-  forText: string
   courseTitle: string
-  dateLabel: string
   formattedDate: string
-  certIdLabel: string
   certId: string
   verifyUrl?: string
   verifyLabel?: string
 }
 
-function QRCodeSvg({ url, size = 70 }: { url: string; size?: number }) {
+function QRCodeSvg({ url, size = 44 }: { url: string; size?: number }) {
   const qr = QRCode.create(url, { errorCorrectionLevel: 'M' })
   const modules = qr.modules
   const moduleCount = modules.size
@@ -193,7 +161,7 @@ function QRCodeSvg({ url, size = 70 }: { url: string; size?: number }) {
             y={row * cellSize}
             width={cellSize}
             height={cellSize}
-            fill="#1a365d"
+            fill={NAVY}
           />,
         )
       }
@@ -209,49 +177,37 @@ function QRCodeSvg({ url, size = 70 }: { url: string; size?: number }) {
 }
 
 function CertificateDocument(props: CertificateProps) {
+  const nameFontSize = fitFontSize(props.userName, 440, 20, 12)
+  // Course title may wrap to two lines inside the free band, hence double width
+  const courseFontSize = fitFontSize(props.courseTitle, 930, 14, 11, 0.85)
+
   return (
     <Document>
-      <Page size="A4" orientation="landscape" style={styles.page}>
-        <View style={styles.outerBorder}>
-          <View style={styles.innerBorder}>
-            <View style={[styles.cornerDecoration, styles.topLeft]} />
-            <View style={[styles.cornerDecoration, styles.topRight]} />
-            <View style={[styles.cornerDecoration, styles.bottomLeft]} />
-            <View style={[styles.cornerDecoration, styles.bottomRight]} />
+      <Page size={[PAGE_WIDTH, PAGE_HEIGHT]} style={styles.page}>
+        {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt prop */}
+        <Image src={certificateBgDataUri} style={styles.background} />
 
-            <Text style={styles.platformName}>{props.platformName}</Text>
-            <View style={styles.divider} />
-            <Text style={styles.title}>{props.title}</Text>
-            <Text style={styles.presented}>{props.presented}</Text>
-            <Text style={styles.userName}>{props.userName}</Text>
-            <Text style={styles.forText}>{props.forText}</Text>
-            <Text style={styles.courseTitle}>{props.courseTitle}</Text>
-
-            <View style={styles.footer}>
-              <View style={styles.footerItem}>
-                <Text style={styles.footerLabel}>{props.dateLabel}</Text>
-                <Text style={styles.footerValue}>{props.formattedDate}</Text>
-              </View>
-
-              {props.verifyUrl && (
-                <View style={styles.qrSection}>
-                  <QRCodeSvg url={props.verifyUrl} size={70} />
-                  {props.verifyLabel && (
-                    <Text style={styles.verifyLabel}>{props.verifyLabel}</Text>
-                  )}
-                  <Link src={props.verifyUrl} style={styles.verifyUrl}>
-                    <Text style={styles.verifyUrl}>{props.verifyUrl}</Text>
-                  </Link>
-                </View>
-              )}
-
-              <View style={styles.footerItem}>
-                <Text style={styles.footerLabel}>{props.certIdLabel}</Text>
-                <Text style={styles.footerValue}>{props.certId}</Text>
-              </View>
-            </View>
-          </View>
+        <View style={styles.nameBox}>
+          <Text style={[styles.userName, { fontSize: nameFontSize }]}>{props.userName}</Text>
         </View>
+
+        <View style={styles.courseBox}>
+          <Text style={[styles.courseTitle, { fontSize: courseFontSize }]}>
+            {props.courseTitle}
+          </Text>
+        </View>
+
+        <Text style={styles.dateValue}>{props.formattedDate}</Text>
+        <Text style={styles.certIdValue}>{props.certId}</Text>
+
+        {props.verifyUrl && (
+          <Link src={props.verifyUrl}>
+            <View style={styles.qrBox}>
+              <QRCodeSvg url={props.verifyUrl} size={37} />
+              {props.verifyLabel && <Text style={styles.qrLabel}>{props.verifyLabel}</Text>}
+            </View>
+          </Link>
+        )}
       </Page>
     </Document>
   )
