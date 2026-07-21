@@ -80,15 +80,9 @@ export async function GET(
   const verifyUrl = `${baseUrl}/verify/${token}`
 
   const pdfBuffer = await renderCertificatePdf({
-    platformName: t.certificatePlatformName,
-    title: t.certificateTitle,
-    presented: t.certificatePresented,
     userName,
-    forText: t.certificateFor,
     courseTitle: course.title,
-    dateLabel: t.certificateDateLabel,
     formattedDate,
-    certIdLabel: t.certificateCertId,
     certId: `CERT-${certId}`,
     verifyUrl,
     verifyLabel: t.certificateVerifyLabel,
