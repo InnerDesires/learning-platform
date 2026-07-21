@@ -44,7 +44,7 @@
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
   --font-sans: var(--font-montserrat);
-  --font-display: var(--font-oswald);
+  --font-display: var(--font-montserrat);
 }
 
 @layer utilities {
@@ -89,7 +89,8 @@
 /* ============ «Залізна енергія» — Iron Energy design system ============
    Brand-locked palette continuous with ironsquad.org.ua:
    orange hsl(30 95% 55%) #F98C1F · blue hsl(220 93% 23%) #042871
-   Dark 222° navy surfaces, near-white text, Oswald display + Montserrat body */
+   Dark 222° navy surfaces, near-white text, Montserrat throughout
+   (extrabold uppercase display, medium body) — same as ironsquad.org.ua */
 
 :root {
   /* surfaces */
@@ -246,11 +247,11 @@
     color: var(--ember);
   }
 
-  /* Oswald section heading */
+  /* Montserrat section heading — matches ironsquad.org.ua h1–h6 (800, spaced caps) */
   .heading-display {
-    @apply font-display font-semibold uppercase;
-    letter-spacing: 0.02em;
-    line-height: 1.08;
+    @apply font-display font-extrabold uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.12;
     text-wrap: balance;
   }
 
