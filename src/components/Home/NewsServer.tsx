@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent } from './content'
 import { NewsSection } from './News'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Props = {
   locale: SiteLocale
@@ -25,10 +25,11 @@ export async function NewsSectionServer({ locale }: Props) {
     },
   })
 
-  const likesCounts = await getLikesCountsBatch(
-    'posts',
-    docs.map((post) => post.id),
-  ).catch(() => ({}) as Record<number, number>)
+  const postIds = docs.map((post) => post.id)
+  const [likesCounts, commentsCounts] = await Promise.all([
+    getLikesCountsBatch('posts', postIds).catch(() => ({}) as Record<number, number>),
+    getCommentsCountsBatch('posts', postIds).catch(() => ({}) as Record<number, number>),
+  ])
 
   const items = docs.map((post) => {
     const image = post.meta?.image
@@ -39,6 +40,7 @@ export async function NewsSectionServer({ locale }: Props) {
       excerpt: post.meta?.description ?? '',
       image: typeof image === 'object' ? image : null,
       likes: likesCounts[post.id] ?? 0,
+      comments: commentsCounts[post.id] ?? 0,
     }
   })
 

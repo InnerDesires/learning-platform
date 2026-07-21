@@ -10,7 +10,7 @@ import React from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 export const revalidate = 600
 
@@ -42,7 +42,10 @@ export default async function Page({ params: paramsPromise }: Args) {
   })
 
   const postIds = posts.docs.map((p) => p.id)
-  const likesCountMap = await getLikesCountsBatch('posts', postIds)
+  const [likesCountMap, commentsCountMap] = await Promise.all([
+    getLikesCountsBatch('posts', postIds),
+    getCommentsCountsBatch('posts', postIds),
+  ])
 
   return (
     <div className="pb-24">
@@ -63,7 +66,12 @@ export default async function Page({ params: paramsPromise }: Args) {
         />
       </div>
 
-      <CollectionArchive locale={locale} posts={posts.docs} likesCountMap={likesCountMap} />
+      <CollectionArchive
+        locale={locale}
+        posts={posts.docs}
+        likesCountMap={likesCountMap}
+        commentsCountMap={commentsCountMap}
+      />
 
       <div className="container">
         {posts.totalPages > 1 && posts.page && (

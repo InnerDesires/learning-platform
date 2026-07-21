@@ -8,7 +8,7 @@ import { CourseCatalog } from '@/components/Courses/CourseCatalog'
 import { PageHead } from '@/components/brand'
 import { getSession } from '@/lib/auth/getSession'
 import type { CourseStats } from '@/components/Courses/CourseCard'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Args = {
   params: Promise<{ locale: SiteLocale }>
@@ -51,7 +51,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
   const courseIds = coursesResult.docs.map((c) => c.id)
   const courseStats: Record<number, CourseStats> = {}
 
-  const [allEnrollmentsResult, userCompletedResult, userInProgressResult, courseLikesCounts] = await Promise.all([
+  const [allEnrollmentsResult, userCompletedResult, userInProgressResult, courseLikesCounts, courseCommentsCounts] = await Promise.all([
     courseIds.length > 0
       ? payload.find({
           collection: 'enrollments',
@@ -88,6 +88,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
         })
       : Promise.resolve({ docs: [] }),
     getLikesCountsBatch('courses', courseIds),
+    getCommentsCountsBatch('courses', courseIds),
   ])
 
   for (const enrollment of allEnrollmentsResult.docs) {
@@ -101,6 +102,12 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
     const cid = Number(cidStr)
     if (!courseStats[cid]) courseStats[cid] = { enrolledCount: 0, completedCount: 0 }
     courseStats[cid].likesCount = count
+  }
+
+  for (const [cidStr, count] of Object.entries(courseCommentsCounts)) {
+    const cid = Number(cidStr)
+    if (!courseStats[cid]) courseStats[cid] = { enrolledCount: 0, completedCount: 0 }
+    courseStats[cid].commentsCount = count
   }
 
   const completedCourseIds = userCompletedResult.docs.map((e) =>

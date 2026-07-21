@@ -10,7 +10,7 @@ import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 import { Rails } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Args = {
   params: Promise<{
@@ -91,11 +91,16 @@ export default async function Page({ params: paramsPromise, searchParams: search
   }
 
   const postIds = searchDocToPostId.map((e) => e.postId)
-  const postLikesCounts = await getLikesCountsBatch('posts', postIds)
+  const [postLikesCounts, postCommentsCounts] = await Promise.all([
+    getLikesCountsBatch('posts', postIds),
+    getCommentsCountsBatch('posts', postIds),
+  ])
 
   const likesCountMap: Record<number, number> = {}
+  const commentsCountMap: Record<number, number> = {}
   for (const { searchId, postId } of searchDocToPostId) {
     if (postLikesCounts[postId] != null) likesCountMap[searchId] = postLikesCounts[postId]!
+    if (postCommentsCounts[postId] != null) commentsCountMap[searchId] = postCommentsCounts[postId]!
   }
 
   return (
@@ -120,6 +125,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
         <CollectionArchive
           posts={docs as CardPostData[]}
           likesCountMap={likesCountMap}
+          commentsCountMap={commentsCountMap}
           typeLabels={{
             posts: t.searchTypePost,
             courses: t.searchTypeCourse,

@@ -203,6 +203,36 @@ export type LikeInfo = {
   count: number
 }
 
+export async function getCommentsCountsBatch(
+  targetCollection: TargetCollection,
+  targetIds: number[],
+): Promise<Record<number, number>> {
+  if (targetIds.length === 0) return {}
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'comments',
+    where: {
+      and: [
+        { targetCollection: { equals: targetCollection } },
+        { targetId: { in: targetIds } },
+      ],
+    },
+    limit: 10000,
+    depth: 0,
+    select: { targetId: true },
+  })
+
+  const counts: Record<number, number> = {}
+  for (const comment of result.docs) {
+    const tid = Number(comment.targetId)
+    counts[tid] = (counts[tid] || 0) + 1
+  }
+
+  return counts
+}
+
 export async function getLikesCountsBatch(
   targetCollection: LikeTargetCollection,
   targetIds: number[],

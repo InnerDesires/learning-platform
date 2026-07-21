@@ -8,12 +8,13 @@ export type Props = {
   locale?: SiteLocale
   posts: CardPostData[]
   likesCountMap?: Record<number, number>
+  commentsCountMap?: Record<number, number>
   /** Optional label per collection type, shown as a chip on each card (used on search results). */
   typeLabels?: Partial<Record<CardRelationTo, string>>
 }
 
 export const CollectionArchive: React.FC<Props> = (props) => {
-  const { locale, posts, likesCountMap, typeLabels } = props
+  const { locale, posts, likesCountMap, commentsCountMap, typeLabels } = props
 
   return (
     <div className={cn('container')}>
@@ -30,6 +31,7 @@ export const CollectionArchive: React.FC<Props> = (props) => {
                 relationTo={relationTo}
                 showCategories
                 likesCount={likesCountMap?.[result.id]}
+                commentsCount={commentsCountMap?.[result.id]}
                 typeLabel={typeLabels?.[relationTo]}
               />
             )

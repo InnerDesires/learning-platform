@@ -3,7 +3,7 @@ import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
 import React from 'react'
-import { Heart } from 'lucide-react'
+import { Heart, MessageCircle } from 'lucide-react'
 
 import type { Post } from '@/payload-types'
 import type { SiteLocale } from '@/utilities/locales'
@@ -41,12 +41,13 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
   likesCount?: number
+  commentsCount?: number
   typeLabel?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const pathname = usePathname()
   const localeFromPath = getLocaleFromPathname(pathname)
-  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount, typeLabel } = props
+  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount, commentsCount, typeLabel } = props
   const effectiveLocale = locale || localeFromPath
   const t = getFrontendMessages(effectiveLocale)
 
@@ -132,12 +133,20 @@ export const Card: React.FC<{
             {sanitizedDescription}
           </p>
         )}
-        {likesCount != null && likesCount > 0 && (
+        {((likesCount ?? 0) > 0 || (commentsCount ?? 0) > 0) && (
           <div className="mt-auto flex items-center gap-3.5 border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
-            <span className="num flex items-center gap-1.5">
-              <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
-              {likesCount}
-            </span>
+            {likesCount != null && likesCount > 0 && (
+              <span className="num flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
+                {likesCount}
+              </span>
+            )}
+            {commentsCount != null && commentsCount > 0 && (
+              <span className="num flex items-center gap-1.5">
+                <MessageCircle className="h-3.5 w-3.5" />
+                {commentsCount}
+              </span>
+            )}
           </div>
         )}
       </div>

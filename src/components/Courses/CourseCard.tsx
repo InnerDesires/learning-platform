@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import { Check, Heart, Rows3, Users } from 'lucide-react'
+import { Check, Heart, MessageCircle, Rows3, Users } from 'lucide-react'
 
 import type { Course } from '@/payload-types'
 import { Media } from '@/components/Media'
@@ -21,6 +21,7 @@ export type CourseStats = {
   enrolledCount: number
   completedCount: number
   likesCount?: number
+  commentsCount?: number
 }
 
 type Props = {
@@ -118,6 +119,12 @@ export const CourseCard: React.FC<Props> = ({
               <span className="num flex items-center gap-1.5">
                 <Heart className="h-3.5 w-3.5 flex-none" fill="currentColor" strokeWidth={0} />
                 {stats.likesCount}
+              </span>
+            )}
+            {stats && stats.commentsCount != null && stats.commentsCount > 0 && (
+              <span className="num flex items-center gap-1.5">
+                <MessageCircle className="h-3.5 w-3.5 flex-none" />
+                {stats.commentsCount}
               </span>
             )}
             <XpChip xp={courseXp(stepsCount, !!course.quiz?.enabled)} className="ml-auto" />
