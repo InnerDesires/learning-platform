@@ -124,6 +124,12 @@ export default async function PublicProfilePage({ params }: Args) {
           </p>
         </div>
 
+        {user.about && (
+          <p className="max-w-prose whitespace-pre-line text-center text-sm leading-relaxed text-fog">
+            {user.about}
+          </p>
+        )}
+
         {(user.socialLinks?.length ?? 0) > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-2">
             {user.socialLinks!.map((link) => {

@@ -120,6 +120,9 @@ type FrontendMessages = {
   settingsAvatarHint: string
   settingsAvatarErrorType: string
   settingsAvatarErrorSize: string
+  settingsAboutSection: string
+  settingsAboutLabel: string
+  settingsAboutPlaceholder: string
   settingsSocialSection: string
   settingsSocialHint: string
   settingsSocialAdd: string
@@ -400,6 +403,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     settingsAvatarHint: 'JPG, PNG, WebP або GIF, до 5 МБ',
     settingsAvatarErrorType: 'Цей формат не підтримується. Оберіть JPG, PNG, WebP або GIF.',
     settingsAvatarErrorSize: 'Файл завеликий — максимум 5 МБ.',
+    settingsAboutSection: 'Про мене',
+    settingsAboutLabel: 'Кілька слів про себе',
+    settingsAboutPlaceholder: 'Розкажіть, хто ви і чим захоплюєтеся…',
     settingsSocialSection: 'Соціальні мережі',
     settingsSocialHint: 'Додайте посилання на свої профілі.',
     settingsSocialAdd: 'Додати посилання',
@@ -682,6 +688,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     settingsAvatarHint: 'JPG, PNG, WebP or GIF, up to 5 MB',
     settingsAvatarErrorType: 'This format is not supported. Choose JPG, PNG, WebP or GIF.',
     settingsAvatarErrorSize: 'The file is too large — 5 MB max.',
+    settingsAboutSection: 'About me',
+    settingsAboutLabel: 'A few words about yourself',
+    settingsAboutPlaceholder: 'Tell people who you are and what you love…',
     settingsSocialSection: 'Social links',
     settingsSocialHint: 'Add links to your profiles.',
     settingsSocialAdd: 'Add link',

@@ -6,6 +6,7 @@ import { getPayload } from '@/lib/payload'
 import { requireSession } from '@/lib/auth/requireSession'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
+import { AboutForm } from '@/components/AccountSettings/AboutForm'
 import { NameForm } from '@/components/AccountSettings/NameForm'
 import { AvatarForm } from '@/components/AccountSettings/AvatarForm'
 import { SocialLinksForm } from '@/components/AccountSettings/SocialLinksForm'
@@ -70,6 +71,9 @@ export default async function SettingsPage({ params }: Args) {
 
       <h2 className={sectionHeading}>{t.settingsNameSection}</h2>
       <NameForm locale={locale} initialName={displayName} />
+
+      <h2 className={sectionHeading}>{t.settingsAboutSection}</h2>
+      <AboutForm locale={locale} initialAbout={userDoc.about ?? ''} />
 
       <h2 className={sectionHeading}>{t.settingsSocialSection}</h2>
       <SocialLinksForm locale={locale} initialLinks={initialLinks} />

@@ -68,6 +68,26 @@ export async function removeAvatar(): Promise<SettingsResult> {
   return { success: true }
 }
 
+const MAX_ABOUT_LENGTH = 500
+
+export async function updateAbout(about: string): Promise<SettingsResult> {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: 'AUTH_REQUIRED' }
+
+  if (typeof about !== 'string') return { success: false, error: 'INVALID_ABOUT' }
+  const trimmed = about.trim()
+  if (trimmed.length > MAX_ABOUT_LENGTH) return { success: false, error: 'TOO_LONG' }
+
+  const payload = await getPayload()
+  await payload.update({
+    collection: 'users',
+    id: Number(session.user.id),
+    data: { about: trimmed || null },
+  })
+
+  return { success: true }
+}
+
 type SocialLink = NonNullable<User['socialLinks']>[number]
 
 const SOCIAL_PLATFORMS: SocialLink['platform'][] = [

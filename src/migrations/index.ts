@@ -11,6 +11,7 @@ import * as migration_20260708_121614_add_youtube_to_media_block from './2026070
 import * as migration_20260720_230559_search_pages from './20260720_230559_search_pages';
 import * as migration_20260721_120000_step_duration from './20260721_120000_step_duration';
 import * as migration_20260721_140000_add_user_social_links from './20260721_140000_add_user_social_links';
+import * as migration_20260721_150000_add_user_about from './20260721_150000_add_user_about';
 
 export const migrations = [
   {
@@ -71,11 +72,16 @@ export const migrations = [
   {
     up: migration_20260721_120000_step_duration.up,
     down: migration_20260721_120000_step_duration.down,
-    name: '20260721_120000_step_duration'
+    name: '20260721_120000_step_duration',
   },
   {
     up: migration_20260721_140000_add_user_social_links.up,
     down: migration_20260721_140000_add_user_social_links.down,
-    name: '20260721_140000_add_user_social_links',
+    name: '20260721_140000_add_user_social_links'
+  },
+  {
+    up: migration_20260721_150000_add_user_about.up,
+    down: migration_20260721_150000_add_user_about.down,
+    name: '20260721_150000_add_user_about',
   },
 ];

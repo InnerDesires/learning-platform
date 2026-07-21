@@ -20,6 +20,12 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
+      name: 'about',
+      type: 'textarea',
+      label: 'Про мене',
+      maxLength: 500,
+    },
+    {
       name: 'socialLinks',
       type: 'array',
       label: 'Соціальні мережі',
