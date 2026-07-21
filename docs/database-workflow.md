@@ -94,7 +94,7 @@ document's assumptions are noted inline.
 
 **Phase 0 — Reconcile drift and baseline prod** *(done)*
 - [x] Make the checked-in migrations reproduce the real schema. A three-way audit (from-scratch migration run vs push-managed `dev` vs prod) found far less drift than feared — comments/likes were already covered by the chain. The gaps: stale `DEFAULT 'uk'` on 19 `_locale` columns, a UNIQUE that should be a plain index on `admin_invitations.token`, and `payload_locked_documents_rels` columns for `lockDocuments: false` collections. All fixed in `src/migrations/20260721_233000_reconcile_schema_drift.ts`.
-- [x] Baseline prod's `payload_migrations` — **not needed**: the assumption that prod never ran migrations was wrong. Prod's `payload_migrations` already contains the full migration set in proper batches; the earlier guarded migrations were evidently applied over its originally push-created schema (which is exactly why the three cosmetic drifts above existed).
+- [x] Baseline prod's `payload_migrations` — **not needed**: the assumption that prod never ran migrations was wrong. Prod's `payload_migrations` already contains the full migration set in proper batches. Mechanism (discovered during Phase 2): the Vercel dashboard's Build Command was overridden to `payload migrate && pnpm build`, so every production deploy ran migrations — the guarded migrations were applied over prod's originally push-created schema (which is exactly why the three cosmetic drifts above existed).
 - [x] Verify on a prod fork: catch-up migration applies cleanly, a rerun is a clean no-op, `migrate:down` round-trips, and the resulting schema is byte-identical to the code-truth schema.
 
 **Phase 1 — CI applies migrations** *(done)*
@@ -105,7 +105,8 @@ document's assumptions are noted inline.
 **Phase 2 — Vercel wiring** *(done, one dashboard-only step remains)*
 - [x] `scripts/migrate-on-vercel.mjs` + `vercel-build` script (production-gated migrate; fails the build on migration failure).
 - [x] Production `DATABASE_URL` verified: Production-scoped (not "all environments"), points at the prod project's `production` branch endpoint.
-- [x] Preview **Option A** implemented via `ignoreCommand` in `vercel.json` (in-repo, overrides the dashboard setting) — non-production builds are skipped.
+- [x] Preview **Option A** implemented via `ignoreCommand` in `vercel.json` (in-repo, overrides the dashboard setting) — non-production builds are skipped. Verified live on PR #58: the preview deployment shows "Canceled by Ignored Build Step".
+- [x] Dashboard Build Command override (`payload migrate && pnpm build`) **cleared** via API — it ran migrations ungated on every environment that built, and it would have silently shadowed the `vercel-build` script. Build behavior is now fully repo-controlled.
 - [ ] **Manual (dashboard-only):** disconnect the Neon↔Vercel integration on the prod project (it creates `preview/<git-branch>` branches there on deployments — with previews skipped it wastes branches at best). While there, consider deleting the two stale `preview/*` branches in the prod project and their per-branch Preview env vars (`gh-pages`, `fix/neon-cleanup-production-project`).
 
 **Phase 3 — Local hygiene & docs** *(done)*
