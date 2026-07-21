@@ -37,6 +37,16 @@ const dirname = path.dirname(filename)
 const normalizeDatabaseURL = (url: string): string =>
   url.replace(/([?&]sslmode=)(prefer|require|verify-ca)\b/i, '$1verify-full')
 
+// Every Neon branch has its own endpoint host, so logging the host answers
+// "which database am I actually connected to?" at a glance (multiple env
+// files and per-session branches make this easy to get wrong silently).
+try {
+  const dbHost = new URL(process.env.DATABASE_URL || '').hostname
+  console.log(`[payload] DATABASE_URL host: ${dbHost}`)
+} catch {
+  console.warn('[payload] DATABASE_URL is not set or not a valid URL')
+}
+
 export default buildConfig({
   serverURL: getServerSideURL(),
   admin: {

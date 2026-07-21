@@ -64,10 +64,12 @@ Both `ci.yml` (Vitest integration) and `e2e.yml` (Playwright) follow the same sh
 
 Hobby auto-builds a preview for **every PR push**, with one concurrent build and shared build-minute quota. Two acceptable configurations — pick one and write it down in the Vercel dashboard:
 
-- **Option A — previews off (default recommendation).** Ignored Build Step: `bash -c '[ "$VERCEL_ENV" = "production" ]'`. GitHub Actions already tests every PR; the preview build is redundant CI that queues behind production deploys. Costs nothing to re-enable later.
+- **Option A — previews off (default recommendation, implemented).** `ignoreCommand` in `vercel.json`: `if [ "$VERCEL_ENV" = "production" ]; then exit 1; else exit 0; fi` (Vercel semantics: exit 0 skips the build, exit 1 proceeds — note an earlier draft of this doc had the test inverted). GitHub Actions already tests every PR; the preview build is redundant CI that queues behind production deploys. Costs nothing to re-enable later.
 - **Option B — previews on, sandboxed.** Preview-scoped `DATABASE_URL` (env scoping works on Hobby) pointing at the long-lived `preview` branch in the **dev** project — never the prod project. Previews must **never run migrations** (see Flow 4's gate); a schema-changing PR's preview may render errors against the older preview schema — that's accepted and expected. Periodically reset `preview` from `ci-base`.
 
 Either way, the invariant is the same: **no automatic Vercel behavior can reach the prod Neon project from a PR.**
+
+> **Current state (2026-07-21):** this invariant is violated today — a Neon↔Vercel integration on the prod project creates `preview/<git-branch>` branches there (forked from production data) for preview deployments; `neon-cleanup.yml` deletes them on PR close. Configuring Option A or B must include disconnecting that integration or repointing it at the dev project.
 
 ## Flow 4 — Production deployment
 
@@ -86,27 +88,32 @@ Either way, the invariant is the same: **no automatic Vercel behavior can reach 
 ## Implementation plan
 
 Ordered; each phase is independently shippable. Phase 0 blocks everything else.
+Status as of 2026-07-21: all phases implemented except the Vercel dashboard
+configuration (blocked on `vercel login`); findings that corrected this
+document's assumptions are noted inline.
 
-**Phase 0 — Reconcile drift and baseline prod** *(largest, riskiest, already scoped as a task)*
-- [ ] Make the checked-in migrations reproduce the real schema: audit prod + `dev` against `src/migrations/`, add a guarded catch-up migration for the gaps (comments/likes tables, document-locking removals, index changes).
-- [ ] Baseline prod's `payload_migrations`: mark the existing migration set as applied (prod has never run migrations — a from-scratch run would `CREATE TABLE` things that exist and fail).
-- [ ] Verify: fork a branch from prod, run `payload migrate` on it, confirm clean no-op.
+**Phase 0 — Reconcile drift and baseline prod** *(done)*
+- [x] Make the checked-in migrations reproduce the real schema. A three-way audit (from-scratch migration run vs push-managed `dev` vs prod) found far less drift than feared — comments/likes were already covered by the chain. The gaps: stale `DEFAULT 'uk'` on 19 `_locale` columns, a UNIQUE that should be a plain index on `admin_invitations.token`, and `payload_locked_documents_rels` columns for `lockDocuments: false` collections. All fixed in `src/migrations/20260721_233000_reconcile_schema_drift.ts`.
+- [x] Baseline prod's `payload_migrations` — **not needed**: the assumption that prod never ran migrations was wrong. Prod's `payload_migrations` already contains the full migration set in proper batches; the earlier guarded migrations were evidently applied over its originally push-created schema (which is exactly why the three cosmetic drifts above existed).
+- [x] Verify on a prod fork: catch-up migration applies cleanly, a rerun is a clean no-op, `migrate:down` round-trips, and the resulting schema is byte-identical to the code-truth schema.
 
-**Phase 1 — CI applies migrations**
-- [ ] Create `ci-base` in the dev project: fresh branch → run all migrations → run seed (extend the seed script to cover baseline content the E2E suite needs: home/contact pages, a sample course/post).
-- [ ] `ci.yml` + `e2e.yml`: parent `ci/*` off `ci-base`; add `pnpm payload migrate` before tests.
-- [ ] Add `.github/workflows/refresh-ci-base.yml`: on push to `main`, run `payload migrate` against `ci-base`.
+**Phase 1 — CI applies migrations** *(done)*
+- [x] `ci-base` created in the dev project (`br-calm-cherry-agtarah4`): forked from `dev`, `public` schema wiped, rebuilt purely from migrations. Seed decision: **no baseline content needed** — the full integration suite (60 tests) and E2E suite (14 tests) pass against an empty `ci-base` fork; tests create their own fixtures and the per-run `tests/helpers/seedUser.ts` covers users.
+- [x] `ci.yml` + `e2e.yml`: parent `ci/*` off `ci-base`; `pnpm payload migrate` runs before tests.
+- [x] `.github/workflows/refresh-ci-base.yml`: on push to `main`, applies merged migrations to `ci-base`.
 
-**Phase 2 — Vercel wiring**
-- [ ] Add `scripts/migrate-on-vercel.mjs` + `vercel-build` script (production-gated migrate).
-- [ ] Dashboard: Production `DATABASE_URL` → prod project (verify it's Production-scoped, not "all environments"); pick preview Option A or B and configure it.
+**Phase 2 — Vercel wiring** *(done, one dashboard-only step remains)*
+- [x] `scripts/migrate-on-vercel.mjs` + `vercel-build` script (production-gated migrate; fails the build on migration failure).
+- [x] Production `DATABASE_URL` verified: Production-scoped (not "all environments"), points at the prod project's `production` branch endpoint.
+- [x] Preview **Option A** implemented via `ignoreCommand` in `vercel.json` (in-repo, overrides the dashboard setting) — non-production builds are skipped.
+- [ ] **Manual (dashboard-only):** disconnect the Neon↔Vercel integration on the prod project (it creates `preview/<git-branch>` branches there on deployments — with previews skipped it wastes branches at best). While there, consider deleting the two stale `preview/*` branches in the prod project and their per-branch Preview env vars (`gh-pages`, `fix/neon-cleanup-production-project`).
 
-**Phase 3 — Local hygiene & docs**
-- [ ] Remove the `DATABASE_URL` override from `.env.local` (one-time, local machines).
-- [ ] Log the connected DB endpoint host at startup so the "which database am I actually on?" question is a glance, not an investigation.
-- [ ] Update `CLAUDE.md`: fix the incorrect "migrations run automatically on Vercel deploy" claim, document the two-project topology and this file.
+**Phase 3 — Local hygiene & docs** *(done)*
+- [x] `DATABASE_URL` override removed from `.env.local` (this machine; backup at `.env.local.bak-ci-flow`). Root cause documented: `vitest.setup.ts` loads `.env.local` with `override: true`, so a value there beats even explicitly passed env vars.
+- [x] `payload.config.ts` logs the `DATABASE_URL` host at config load.
+- [x] `CLAUDE.md` updated: migration flow corrected, `.env.local` rule added, this file linked.
 
-**Decisions needed before/while implementing:**
-- Prod Neon project ID (for Phase 0 auditing and the baseline script).
-- Preview deployments: Option A or B.
-- Seed content scope for `ci-base` / E2E.
+**Decisions:**
+- Prod Neon project ID: `sweet-night-33633526` (name `production-1`; default branch `production`).
+- Preview deployments: **pending** — Option A (previews off) remains the recommendation; either option requires dealing with the Neon↔Vercel integration noted in Phase 2.
+- Seed content scope for `ci-base` / E2E: **none** (see Phase 1).
