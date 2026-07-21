@@ -328,7 +328,7 @@
 
   /* XP scoreboard chip: ⚡ +NNN XP */
   .xp-chip {
-    @apply inline-flex items-center gap-1 font-display font-semibold text-amber;
+    @apply inline-flex items-center gap-1 whitespace-nowrap font-display font-semibold text-amber;
     font-size: 11.5px;
     letter-spacing: 0.05em;
   }

@@ -134,15 +134,15 @@ export const Card: React.FC<{
           </p>
         )}
         {((likesCount ?? 0) > 0 || (commentsCount ?? 0) > 0) && (
-          <div className="mt-auto flex items-center gap-3.5 border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
+          <div className="@container mt-auto flex flex-nowrap items-center gap-3.5 overflow-hidden whitespace-nowrap border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
             {likesCount != null && likesCount > 0 && (
-              <span className="num flex items-center gap-1.5">
+              <span className="num flex flex-none items-center gap-1.5">
                 <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
                 {likesCount}
               </span>
             )}
             {commentsCount != null && commentsCount > 0 && (
-              <span className="num flex items-center gap-1.5">
+              <span className="num flex flex-none items-center gap-1.5 @max-[160px]:hidden">
                 <MessageCircle className="h-3.5 w-3.5" />
                 {commentsCount}
               </span>

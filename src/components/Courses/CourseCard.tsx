@@ -104,30 +104,31 @@ export const CourseCard: React.FC<Props> = ({
           {description && (
             <p className="line-clamp-2 text-[12.5px] leading-relaxed text-fog">{description}</p>
           )}
-          <div className="mt-auto flex items-center gap-3.5 border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
-            <span className="num flex items-center gap-1.5">
+          {/* single line always: lower-priority chips hide as the card narrows */}
+          <div className="@container mt-auto flex flex-nowrap items-center gap-3.5 overflow-hidden whitespace-nowrap border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
+            <span className="num flex flex-none items-center gap-1.5">
               <Rows3 className="h-3.5 w-3.5 flex-none" />
               {stepsCount} {plural(locale, stepsCount, t.courseStepsPlural)}
             </span>
             {stats && stats.enrolledCount > 0 && (
-              <span className="num flex items-center gap-1.5">
+              <span className="num flex flex-none items-center gap-1.5 @max-[240px]:hidden">
                 <Users className="h-3.5 w-3.5 flex-none" />
                 {stats.enrolledCount}
               </span>
             )}
             {stats && stats.likesCount != null && stats.likesCount > 0 && (
-              <span className="num flex items-center gap-1.5">
+              <span className="num flex flex-none items-center gap-1.5 @max-[290px]:hidden">
                 <Heart className="h-3.5 w-3.5 flex-none" fill="currentColor" strokeWidth={0} />
                 {stats.likesCount}
               </span>
             )}
             {stats && stats.commentsCount != null && stats.commentsCount > 0 && (
-              <span className="num flex items-center gap-1.5">
+              <span className="num flex flex-none items-center gap-1.5 @max-[340px]:hidden">
                 <MessageCircle className="h-3.5 w-3.5 flex-none" />
                 {stats.commentsCount}
               </span>
             )}
-            <XpChip xp={courseXp(stepsCount, !!course.quiz?.enabled)} className="ml-auto" />
+            <XpChip xp={courseXp(stepsCount, !!course.quiz?.enabled)} className="ml-auto flex-none" />
           </div>
         </div>
       </Link>
