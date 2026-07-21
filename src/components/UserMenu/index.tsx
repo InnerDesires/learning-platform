@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LogOut, User as UserIcon, Zap } from 'lucide-react'
+import { LogOut, Settings, User as UserIcon, Zap } from 'lucide-react'
 import { useSession, signOut } from '@/lib/auth/client'
 import { cn } from '@/utilities/ui'
 import type { SiteLocale } from '@/utilities/locales'
@@ -93,6 +93,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
   }
 
   const user = session.user
+  // The session payload omits `image`, so the avatar comes from getMyXp (users doc).
+  const image = xp?.image ?? user.image
   const initials = (user.name || user.email)?.[0]?.toUpperCase() || '?'
 
   return (
@@ -110,9 +112,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
         aria-expanded={open}
         aria-haspopup="true"
       >
-        {user.image ? (
+        {image ? (
           <img
-            src={user.image}
+            src={image}
             alt=""
             className="h-full w-full rounded-full object-cover"
             referrerPolicy="no-referrer"
@@ -143,6 +145,14 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
           >
             <UserIcon className="h-4 w-4" />
             {t.profile}
+          </Link>
+          <Link
+            href={`${profilePath}/settings`}
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm no-underline text-popover-foreground transition-colors hover:bg-muted hover:text-foreground hover:no-underline"
+          >
+            <Settings className="h-4 w-4" />
+            {t.profileSettings}
           </Link>
           <button
             type="button"

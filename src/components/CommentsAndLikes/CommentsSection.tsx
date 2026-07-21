@@ -36,6 +36,8 @@ interface CommentsSectionProps {
   isAdmin: boolean
   labels: Labels
   loginUrl: string
+  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
+  userProfileBase: string
 }
 
 type OptimisticAction =
@@ -50,6 +52,7 @@ export function CommentsSection({
   isAdmin,
   labels,
   loginUrl,
+  userProfileBase,
 }: CommentsSectionProps) {
   const [comments, setComments] = useState<CommentWithMeta[]>([])
   const [loading, setLoading] = useState(true)
@@ -199,6 +202,7 @@ export function CommentsSection({
               onReply={handleReply}
               onDelete={handleDelete}
               loginUrl={loginUrl}
+              userProfileBase={userProfileBase}
             />
           ))}
         </div>

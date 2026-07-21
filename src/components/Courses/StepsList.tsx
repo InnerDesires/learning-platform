@@ -204,7 +204,7 @@ export const StepsList: React.FC<Props> = ({
                 </span>
               )}
               {isQuizLocked && !compact && (
-                <span className="hidden whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.1em] text-steel sm:inline">
+                <span className="hidden max-w-[240px] text-right text-[11px] font-bold uppercase tracking-[0.1em] text-steel sm:block">
                   {quiz.lockedLabel}
                 </span>
               )}

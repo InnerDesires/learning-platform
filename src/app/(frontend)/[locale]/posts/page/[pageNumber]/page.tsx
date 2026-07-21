@@ -11,6 +11,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 export const revalidate = 600
 
@@ -39,6 +40,12 @@ export default async function Page({ params: paramsPromise }: Args) {
     overrideAccess: false,
   })
 
+  const postIds = posts.docs.map((p) => p.id)
+  const [likesCountMap, commentsCountMap] = await Promise.all([
+    getLikesCountsBatch('posts', postIds),
+    getCommentsCountsBatch('posts', postIds),
+  ])
+
   return (
     <div className="pb-24">
       <PageClient />
@@ -56,7 +63,12 @@ export default async function Page({ params: paramsPromise }: Args) {
         }
       />
 
-      <CollectionArchive locale={locale} posts={posts.docs} />
+      <CollectionArchive
+        locale={locale}
+        posts={posts.docs}
+        likesCountMap={likesCountMap}
+        commentsCountMap={commentsCountMap}
+      />
 
       <div className="container">
         {posts?.page && posts?.totalPages > 1 && (

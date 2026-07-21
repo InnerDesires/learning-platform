@@ -34,7 +34,7 @@ export const RewardPill: React.FC<{ children: React.ReactNode; className?: strin
 )
 
 /**
- * Standard page header: eyebrow + big Oswald h1 + rails + optional sub line.
+ * Standard page header: eyebrow + big display h1 + rails + optional sub line.
  */
 export const PageHead: React.FC<{
   eyebrow?: React.ReactNode
@@ -55,7 +55,7 @@ export const PageHead: React.FC<{
 )
 
 /**
- * Standard section header: eyebrow + Oswald heading + rails, with an
+ * Standard section header: eyebrow + display heading + rails, with an
  * optional action slot on the right.
  */
 export const SectionHead: React.FC<{

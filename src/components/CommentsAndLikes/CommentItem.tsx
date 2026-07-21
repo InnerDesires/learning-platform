@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import type { CommentWithMeta } from '@/actions/commentsAndLikes'
 import { LikeButton } from './LikeButton'
 import { CommentForm } from './CommentForm'
@@ -29,6 +30,8 @@ interface CommentItemProps {
   onDelete: (commentId: number) => Promise<boolean>
   depth?: number
   loginUrl?: string
+  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
+  userProfileBase?: string
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -76,6 +79,7 @@ export function CommentItem({
   onDelete,
   depth = 0,
   loginUrl,
+  userProfileBase,
 }: CommentItemProps) {
   const replies = repliesByParent[comment.id] ?? []
   const [showReplyForm, setShowReplyForm] = useState(false)
@@ -105,10 +109,25 @@ export function CommentItem({
         } ${depth > 0 ? 'bg-muted/30' : 'bg-muted/50'}`}
       >
         <div className="flex items-start gap-3">
-          <UserAvatar name={comment.author.name} image={comment.author.image} />
+          {userProfileBase && comment.author.id > 0 ? (
+            <Link href={`${userProfileBase}/${comment.author.id}`} className="flex-shrink-0">
+              <UserAvatar name={comment.author.name} image={comment.author.image} />
+            </Link>
+          ) : (
+            <UserAvatar name={comment.author.name} image={comment.author.image} />
+          )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-semibold text-foreground">{comment.author.name}</span>
+              {userProfileBase && comment.author.id > 0 ? (
+                <Link
+                  href={`${userProfileBase}/${comment.author.id}`}
+                  className="text-sm font-semibold text-foreground hover:text-amber transition-colors"
+                >
+                  {comment.author.name}
+                </Link>
+              ) : (
+                <span className="text-sm font-semibold text-foreground">{comment.author.name}</span>
+              )}
               <span className="text-xs text-muted-foreground">
                 {formatRelativeTime(comment.createdAt)}
               </span>
@@ -192,6 +211,7 @@ export function CommentItem({
                   onDelete={onDelete}
                   depth={depth + 1}
                   loginUrl={loginUrl}
+                  userProfileBase={userProfileBase}
                 />
               ))}
             </div>

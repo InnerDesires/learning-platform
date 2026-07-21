@@ -2,10 +2,9 @@ import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
-import { Montserrat, Oswald } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 
 const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], variable: '--font-montserrat', display: 'swap' })
-const oswald = Oswald({ subsets: ['latin', 'cyrillic'], variable: '--font-oswald', display: 'swap' })
 import React from 'react'
 import NextTopLoader from 'nextjs-toploader'
 
@@ -18,7 +17,7 @@ import './globals.css'
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
-      className={cn(montserrat.variable, oswald.variable, GeistMono.variable)}
+      className={cn(montserrat.variable, GeistMono.variable)}
       lang={defaultLocale}
       data-theme="dark"
       suppressHydrationWarning

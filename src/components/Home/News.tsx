@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Heart } from 'lucide-react'
+import { ArrowRight, Heart, MessageCircle } from 'lucide-react'
 import { FadeIn } from './FadeIn'
 import Link from 'next/link'
 import { formatDateTime } from '@/utilities/formatDateTime'
@@ -16,6 +16,7 @@ type NewsItem = {
   slug: string
   image?: MediaType | null
   likes?: number
+  comments?: number
 }
 
 type Props = {
@@ -96,12 +97,20 @@ export function NewsSection({ tag, title, cta, items, locale }: Props) {
                       {item.excerpt}
                     </p>
                   )}
-                  {item.likes != null && item.likes > 0 && (
-                    <div className="mt-auto flex items-center gap-3.5 border-t border-[#EBE6D9] pt-3 text-[11.5px] font-semibold text-[#7C7768]">
-                      <span className="num flex items-center gap-1.5">
-                        <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
-                        {item.likes}
-                      </span>
+                  {((item.likes ?? 0) > 0 || (item.comments ?? 0) > 0) && (
+                    <div className="@container mt-auto flex flex-nowrap items-center gap-3.5 overflow-hidden whitespace-nowrap border-t border-[#EBE6D9] pt-3 text-[11.5px] font-semibold text-[#7C7768]">
+                      {item.likes != null && item.likes > 0 && (
+                        <span className="num flex flex-none items-center gap-1.5">
+                          <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
+                          {item.likes}
+                        </span>
+                      )}
+                      {item.comments != null && item.comments > 0 && (
+                        <span className="num flex flex-none items-center gap-1.5 @max-[160px]:hidden">
+                          <MessageCircle className="h-3.5 w-3.5" />
+                          {item.comments}
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>

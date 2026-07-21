@@ -18,6 +18,44 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
   },
-  fields: [],
+  fields: [
+    {
+      name: 'about',
+      type: 'textarea',
+      label: 'Про мене',
+      maxLength: 500,
+    },
+    {
+      name: 'socialLinks',
+      type: 'array',
+      label: 'Соціальні мережі',
+      labels: { singular: 'Посилання', plural: 'Посилання' },
+      maxRows: 8,
+      fields: [
+        {
+          name: 'platform',
+          type: 'select',
+          label: 'Платформа',
+          required: true,
+          options: [
+            { label: 'Instagram', value: 'instagram' },
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'Telegram', value: 'telegram' },
+            { label: 'YouTube', value: 'youtube' },
+            { label: 'TikTok', value: 'tiktok' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'X (Twitter)', value: 'x' },
+            { label: 'Вебсайт', value: 'website' },
+          ],
+        },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'URL',
+          required: true,
+        },
+      ],
+    },
+  ],
   timestamps: true,
 }

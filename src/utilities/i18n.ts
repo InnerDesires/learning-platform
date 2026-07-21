@@ -107,6 +107,49 @@ type FrontendMessages = {
   profileCertificates: string
   profileRecentQuizzes: string
   profileBrowseCourses: string
+  profileSettings: string
+  profileViewPublic: string
+  publicProfileCompleted: string
+  settingsTitle: string
+  settingsBack: string
+  settingsNameSection: string
+  settingsNameLabel: string
+  settingsAvatarSection: string
+  settingsAvatarChange: string
+  settingsAvatarRemove: string
+  settingsAvatarHint: string
+  settingsAvatarErrorType: string
+  settingsAvatarErrorSize: string
+  settingsAboutSection: string
+  settingsAboutLabel: string
+  settingsAboutPlaceholder: string
+  settingsSocialSection: string
+  settingsSocialHint: string
+  settingsSocialAdd: string
+  settingsSocialRemove: string
+  settingsSocialErrorUrl: string
+  settingsProvidersSection: string
+  settingsProviderPassword: string
+  settingsProviderConnected: string
+  settingsProviderNotConnected: string
+  settingsProviderConnect: string
+  settingsProviderDisconnect: string
+  settingsProviderLastMethod: string
+  settingsProviderPasswordHint: string
+  settingsPasswordSection: string
+  settingsPasswordCurrent: string
+  settingsPasswordNew: string
+  settingsPasswordConfirm: string
+  settingsPasswordChange: string
+  settingsPasswordSet: string
+  settingsPasswordSetHint: string
+  settingsPasswordMismatch: string
+  settingsPasswordWrongCurrent: string
+  settingsPasswordChanged: string
+  settingsSave: string
+  settingsSaving: string
+  settingsSaved: string
+  settingsErrorGeneric: string
   coursesTitle: string
   coursesMetaTitle: string
   coursesAllCategories: string
@@ -347,6 +390,50 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileCertificates: 'Сертифікати',
     profileRecentQuizzes: 'Останні спроби тестів',
     profileBrowseCourses: 'До курсів',
+    profileSettings: 'Налаштування',
+    profileViewPublic: 'Публічний профіль',
+    publicProfileCompleted: 'Завершені курси',
+    settingsTitle: 'Налаштування акаунту',
+    settingsBack: 'До профілю',
+    settingsNameSection: "Ім'я",
+    settingsNameLabel: "Ім'я для відображення",
+    settingsAvatarSection: 'Фото профілю',
+    settingsAvatarChange: 'Змінити фото',
+    settingsAvatarRemove: 'Видалити',
+    settingsAvatarHint: 'JPG, PNG, WebP або GIF, до 5 МБ',
+    settingsAvatarErrorType: 'Цей формат не підтримується. Оберіть JPG, PNG, WebP або GIF.',
+    settingsAvatarErrorSize: 'Файл завеликий — максимум 5 МБ.',
+    settingsAboutSection: 'Про мене',
+    settingsAboutLabel: 'Кілька слів про себе',
+    settingsAboutPlaceholder: 'Розкажіть, хто ви і чим захоплюєтеся…',
+    settingsSocialSection: 'Соціальні мережі',
+    settingsSocialHint: 'Додайте посилання на свої профілі.',
+    settingsSocialAdd: 'Додати посилання',
+    settingsSocialRemove: 'Прибрати',
+    settingsSocialErrorUrl: 'Перевірте посилання — воно має починатися з https://',
+    settingsProvidersSection: 'Способи входу',
+    settingsProviderPassword: 'Електронна пошта і пароль',
+    settingsProviderConnected: 'Підключено',
+    settingsProviderNotConnected: 'Не підключено',
+    settingsProviderConnect: 'Підключити',
+    settingsProviderDisconnect: 'Відключити',
+    settingsProviderLastMethod: 'Це єдиний спосіб входу — його не можна відключити.',
+    settingsProviderPasswordHint: 'Щоб додати цей спосіб, встановіть пароль нижче.',
+    settingsPasswordSection: 'Пароль',
+    settingsPasswordCurrent: 'Поточний пароль',
+    settingsPasswordNew: 'Новий пароль',
+    settingsPasswordConfirm: 'Підтвердіть новий пароль',
+    settingsPasswordChange: 'Змінити пароль',
+    settingsPasswordSet: 'Встановити пароль',
+    settingsPasswordSetHint:
+      'Ви входите через Google. Встановіть пароль, щоб також входити з електронною поштою.',
+    settingsPasswordMismatch: 'Паролі не збігаються.',
+    settingsPasswordWrongCurrent: 'Неправильний поточний пароль.',
+    settingsPasswordChanged: 'Пароль змінено.',
+    settingsSave: 'Зберегти',
+    settingsSaving: 'Збереження…',
+    settingsSaved: 'Збережено',
+    settingsErrorGeneric: 'Щось пішло не так. Спробуйте ще раз.',
     coursesTitle: 'Курси',
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
@@ -364,8 +451,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
     stepCompleteAndContinue: 'Завершити і продовжити',
     stepComplete: 'Завершити',
-    stepPrevious: 'Попередній',
-    stepNext: 'Наступний',
+    stepPrevious: 'Назад',
+    stepNext: 'Далі',
     stepProgress: 'Прогрес',
     stepOf: 'з',
     stepSingular: 'Крок',
@@ -588,6 +675,50 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileCertificates: 'Certificates',
     profileRecentQuizzes: 'Recent quiz attempts',
     profileBrowseCourses: 'Browse courses',
+    profileSettings: 'Settings',
+    profileViewPublic: 'Public profile',
+    publicProfileCompleted: 'Completed courses',
+    settingsTitle: 'Account settings',
+    settingsBack: 'Back to profile',
+    settingsNameSection: 'Name',
+    settingsNameLabel: 'Display name',
+    settingsAvatarSection: 'Profile photo',
+    settingsAvatarChange: 'Change photo',
+    settingsAvatarRemove: 'Remove',
+    settingsAvatarHint: 'JPG, PNG, WebP or GIF, up to 5 MB',
+    settingsAvatarErrorType: 'This format is not supported. Choose JPG, PNG, WebP or GIF.',
+    settingsAvatarErrorSize: 'The file is too large — 5 MB max.',
+    settingsAboutSection: 'About me',
+    settingsAboutLabel: 'A few words about yourself',
+    settingsAboutPlaceholder: 'Tell people who you are and what you love…',
+    settingsSocialSection: 'Social links',
+    settingsSocialHint: 'Add links to your profiles.',
+    settingsSocialAdd: 'Add link',
+    settingsSocialRemove: 'Remove',
+    settingsSocialErrorUrl: 'Check the link — it must start with https://',
+    settingsProvidersSection: 'Sign-in methods',
+    settingsProviderPassword: 'Email & password',
+    settingsProviderConnected: 'Connected',
+    settingsProviderNotConnected: 'Not connected',
+    settingsProviderConnect: 'Connect',
+    settingsProviderDisconnect: 'Disconnect',
+    settingsProviderLastMethod: 'This is your only sign-in method — it cannot be disconnected.',
+    settingsProviderPasswordHint: 'To add this method, set a password below.',
+    settingsPasswordSection: 'Password',
+    settingsPasswordCurrent: 'Current password',
+    settingsPasswordNew: 'New password',
+    settingsPasswordConfirm: 'Confirm new password',
+    settingsPasswordChange: 'Change password',
+    settingsPasswordSet: 'Set password',
+    settingsPasswordSetHint:
+      'You sign in with Google. Set a password to also sign in with your email.',
+    settingsPasswordMismatch: 'Passwords do not match.',
+    settingsPasswordWrongCurrent: 'The current password is incorrect.',
+    settingsPasswordChanged: 'Password changed.',
+    settingsSave: 'Save',
+    settingsSaving: 'Saving…',
+    settingsSaved: 'Saved',
+    settingsErrorGeneric: 'Something went wrong. Please try again.',
     coursesTitle: 'Courses',
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',
@@ -605,7 +736,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseLoginToEnroll: 'Log in to enroll in this course',
     stepCompleteAndContinue: 'Complete & Continue',
     stepComplete: 'Mark as complete',
-    stepPrevious: 'Previous',
+    stepPrevious: 'Back',
     stepNext: 'Next',
     stepProgress: 'Progress',
     stepOf: 'of',
