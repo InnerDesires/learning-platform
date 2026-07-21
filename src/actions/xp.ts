@@ -5,7 +5,7 @@ import configPromise from '@payload-config'
 import { getSession } from '@/lib/auth/getSession'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
 
-export type MyXp = { xp: number; level: number }
+export type MyXp = { xp: number; level: number; intoLevel: number; span: number }
 
 /** Total XP and level for the signed-in user (30 XP/step, 100 XP/passed quiz). */
 export async function getMyXp(): Promise<MyXp | null> {
@@ -29,5 +29,6 @@ export async function getMyXp(): Promise<MyXp | null> {
   }
 
   const xp = steps * STEP_XP + quizzes * QUIZ_XP
-  return { xp, level: levelForXp(xp).level }
+  const { level, intoLevel, span } = levelForXp(xp)
+  return { xp, level, intoLevel, span }
 }

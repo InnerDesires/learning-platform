@@ -100,7 +100,13 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow [background:conic-gradient(from_-90deg,var(--orange)_0_68%,var(--blue-line)_68%_100%)] hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        style={{
+          // ring mirrors real progress to the next level (same math as /profile)
+          background: `conic-gradient(from -90deg, var(--orange) 0 ${
+            xp ? Math.round((xp.intoLevel / xp.span) * 100) : 0
+          }%, var(--blue-line) 0 100%)`,
+        }}
         aria-expanded={open}
         aria-haspopup="true"
       >
