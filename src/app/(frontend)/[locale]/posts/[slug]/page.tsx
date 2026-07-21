@@ -97,6 +97,7 @@ export default async function Post({ params: paramsPromise }: Args) {
               targetCollection="posts"
               targetId={post.id}
               locale={locale}
+              redirectPath={`${locale === 'en' ? '/en' : ''}/posts/${decodedSlug}`}
             />
           </div>
         </div>

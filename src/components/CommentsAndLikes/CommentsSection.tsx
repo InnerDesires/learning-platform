@@ -19,6 +19,7 @@ interface Labels {
   submit: string
   submitting: string
   loginToComment: string
+  loginToLike?: string
   reply: string
   replying: string
   delete: string
@@ -193,9 +194,11 @@ export function CommentsSection({
                 placeholder: labels.placeholder,
                 submit: labels.submit,
                 submitting: labels.submitting,
+                loginToLike: labels.loginToLike,
               }}
               onReply={handleReply}
               onDelete={handleDelete}
+              loginUrl={loginUrl}
             />
           ))}
         </div>

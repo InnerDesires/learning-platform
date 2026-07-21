@@ -216,7 +216,12 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
           />
         </Suspense>
 
-        <InteractionSection targetCollection="courses" targetId={course.id} locale={locale} />
+        <InteractionSection
+          targetCollection="courses"
+          targetId={course.id}
+          locale={locale}
+          redirectPath={`${prefix}/courses/${course.slug}`}
+        />
       </div>
     </div>
   )

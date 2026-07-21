@@ -165,6 +165,7 @@ type FrontendMessages = {
   quizNotAvailable: string
   quizCompleteStepsFirst: string
   commentsTitle: string
+  likeLoginPrompt: string
   commentsEmpty: string
   commentsPlaceholder: string
   commentsSubmit: string
@@ -404,6 +405,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizNotAvailable: 'Тест недоступний',
     quizCompleteStepsFirst: 'Завершіть усі кроки курсу, щоб отримати доступ до тесту',
     commentsTitle: 'Коментарі',
+    likeLoginPrompt: 'Увійдіть, щоб вподобати',
     commentsEmpty: 'Поки що немає коментарів. Будьте першими!',
     commentsPlaceholder: 'Напишіть коментар…',
     commentsSubmit: 'Надіслати',
@@ -644,6 +646,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizNotAvailable: 'Quiz not available',
     quizCompleteStepsFirst: 'Complete all course steps to access the quiz',
     commentsTitle: 'Comments',
+    likeLoginPrompt: 'Sign in to like',
     commentsEmpty: 'No comments yet. Be the first!',
     commentsPlaceholder: 'Write a comment…',
     commentsSubmit: 'Submit',

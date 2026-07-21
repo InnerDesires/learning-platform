@@ -9,16 +9,22 @@ interface InteractionSectionProps {
   targetCollection: 'posts' | 'courses'
   targetId: number
   locale: SiteLocale
+  /** Path of the page hosting this section — guests return here (at #comments) after login. */
+  redirectPath?: string
 }
 
 async function InteractionContent({
   targetCollection,
   targetId,
   locale,
+  redirectPath,
 }: InteractionSectionProps) {
   const session = await getSession()
   const t = getFrontendMessages(locale)
-  const loginPath = locale === defaultLocale ? '/login' : `/${locale}/login`
+  const loginBase = locale === defaultLocale ? '/login' : `/${locale}/login`
+  const loginPath = redirectPath
+    ? `${loginBase}?redirect=${encodeURIComponent(`${redirectPath}#comments`)}`
+    : loginBase
 
   const isAuthenticated = Boolean(session?.user)
   const currentUserId = session?.user?.id ? Number(session.user.id) : null
@@ -41,6 +47,7 @@ async function InteractionContent({
         commentsSubmit: t.commentsSubmit,
         commentsSubmitting: t.commentsSubmitting,
         commentsLoginToComment: t.commentsLoginToComment,
+        likeLoginPrompt: t.likeLoginPrompt,
         commentsReply: t.commentsReply,
         commentsReplying: t.commentsReplying,
         commentsDelete: t.commentsDelete,
