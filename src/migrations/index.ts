@@ -12,6 +12,7 @@ import * as migration_20260720_230559_search_pages from './20260720_230559_searc
 import * as migration_20260721_120000_step_duration from './20260721_120000_step_duration';
 import * as migration_20260721_140000_add_user_social_links from './20260721_140000_add_user_social_links';
 import * as migration_20260721_150000_add_user_about from './20260721_150000_add_user_about';
+import * as migration_20260721_233000_reconcile_schema_drift from './20260721_233000_reconcile_schema_drift';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260721_150000_add_user_about.up,
     down: migration_20260721_150000_add_user_about.down,
     name: '20260721_150000_add_user_about',
+  },
+  {
+    up: migration_20260721_233000_reconcile_schema_drift.up,
+    down: migration_20260721_233000_reconcile_schema_drift.down,
+    name: '20260721_233000_reconcile_schema_drift',
   },
 ];
