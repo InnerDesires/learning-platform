@@ -15,6 +15,8 @@ import { StepsList } from '@/components/Courses/StepsList'
 import { Button } from '@/components/ui/button'
 import RichText from '@/components/RichText'
 import { ArrowLeft } from 'lucide-react'
+import { XpChip } from '@/components/brand'
+import { STEP_XP } from '@/utilities/xp'
 import type { Course, CourseFile } from '@/payload-types'
 
 type Args = {
@@ -75,6 +77,16 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   const file = step.blockType === 'fileStep' && step.file && typeof step.file === 'object'
     ? step.file as CourseFile
     : null
+  const stepTypeLabel =
+    step.blockType === 'richTextStep'
+      ? t.stepRichText
+      : step.blockType === 'youtubeVideoStep'
+        ? t.stepVideo
+        : t.stepFile
+  const stepDuration =
+    'duration' in step && typeof step.duration === 'number' && step.duration > 0
+      ? step.duration
+      : null
 
   const prefix = locale === 'en' ? '/en' : ''
 
@@ -91,7 +103,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             {t.courseBackToOverview}
           </Link>
           <span className="num font-display text-sm tracking-[0.14em] text-fog">
-            {t.courseSteps} <b className="font-semibold text-amber">{stepIndex + 1}</b> / {steps.length}
+            {t.stepSingular} <b className="font-semibold text-amber">{stepIndex + 1}</b> / {steps.length}
           </span>
         </div>
 
@@ -105,7 +117,20 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
           <div className="order-1 min-w-0 flex-1">
-            <h1 className="heading-display mb-5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
+            <h1 className="heading-display mb-2.5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
+
+            <div className="mb-5 flex flex-wrap items-center gap-2.5 text-[12px] font-semibold text-steel">
+              <span>
+                {stepTypeLabel}
+                {stepDuration && (
+                  <span className="num">
+                    {' '}
+                    · {stepDuration} {t.minutesShort}
+                  </span>
+                )}
+              </span>
+              {!isStepCompleted && <XpChip xp={STEP_XP} />}
+            </div>
 
             <div className="mb-8">
               {step.blockType === 'richTextStep' && step.content && (

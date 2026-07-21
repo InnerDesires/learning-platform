@@ -70,11 +70,24 @@ export default async function Page({ params: paramsPromise, searchParams: search
       : {}),
   })
 
-  const searchDocToPostId: Array<{ searchId: number; postId: number }> = []
+  // Dedupe by underlying document (stale index rows can point at the same doc)
+  // and carry the original doc id for category deep links.
+  const seenDocs = new Set<string>()
+  const docs: Array<(typeof posts.docs)[number] & { docId?: number | null }> = []
   for (const result of posts.docs) {
     const docValue = result.doc?.value
-    const postId = typeof docValue === 'object' && docValue !== null ? docValue.id : (docValue as number)
-    if (postId) searchDocToPostId.push({ searchId: result.id, postId })
+    const originalId =
+      typeof docValue === 'object' && docValue !== null ? docValue.id : (docValue as number)
+    const dedupeKey = `${result.collectionType ?? 'unknown'}:${originalId ?? result.id}`
+    if (seenDocs.has(dedupeKey)) continue
+    seenDocs.add(dedupeKey)
+    docs.push({ ...result, docId: originalId ?? null })
+  }
+
+  const searchDocToPostId: Array<{ searchId: number; postId: number }> = []
+  for (const result of docs) {
+    if (result.collectionType !== 'posts') continue
+    if (result.docId) searchDocToPostId.push({ searchId: result.id, postId: result.docId })
   }
 
   const postIds = searchDocToPostId.map((e) => e.postId)
@@ -103,8 +116,17 @@ export default async function Page({ params: paramsPromise, searchParams: search
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} likesCountMap={likesCountMap} />
+      {docs.length > 0 ? (
+        <CollectionArchive
+          posts={docs as CardPostData[]}
+          likesCountMap={likesCountMap}
+          typeLabels={{
+            posts: t.searchTypePost,
+            courses: t.searchTypeCourse,
+            'course-categories': t.searchTypeCategory,
+            pages: t.searchTypePage,
+          }}
+        />
       ) : (
         <div className="container text-center text-fog">{t.searchNoResults}</div>
       )}

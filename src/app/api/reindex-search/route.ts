@@ -22,17 +22,28 @@ export async function POST(req: NextRequest) {
     await payload.delete({ collection: 'search', id: doc.id, overrideAccess: true })
   }
 
-  const [posts, courses, courseCategories] = await Promise.all([
-    payload.find({ collection: 'posts', limit: 1000, depth: 0, overrideAccess: true }),
-    payload.find({ collection: 'courses', limit: 1000, depth: 0, overrideAccess: true }),
+  // Only published docs are re-saved, and always with draft: false — re-saving a
+  // doc that has a newer pending draft would otherwise promote that draft's
+  // status and silently unpublish the document.
+  const publishedOnly = {
+    limit: 1000,
+    depth: 0,
+    overrideAccess: true,
+    where: { _status: { equals: 'published' } },
+  } as const
+
+  const [posts, courses, courseCategories, pages] = await Promise.all([
+    payload.find({ collection: 'posts', ...publishedOnly }),
+    payload.find({ collection: 'courses', ...publishedOnly }),
     payload.find({ collection: 'course-categories', limit: 1000, depth: 0, overrideAccess: true }),
+    payload.find({ collection: 'pages', ...publishedOnly }),
   ])
 
   for (const doc of posts.docs) {
-    await payload.update({ collection: 'posts', id: doc.id, data: {}, overrideAccess: true })
+    await payload.update({ collection: 'posts', id: doc.id, data: {}, draft: false, overrideAccess: true })
   }
   for (const doc of courses.docs) {
-    await payload.update({ collection: 'courses', id: doc.id, data: {}, overrideAccess: true })
+    await payload.update({ collection: 'courses', id: doc.id, data: {}, draft: false, overrideAccess: true })
   }
   for (const doc of courseCategories.docs) {
     await payload.update({
@@ -42,6 +53,9 @@ export async function POST(req: NextRequest) {
       overrideAccess: true,
     })
   }
+  for (const doc of pages.docs) {
+    await payload.update({ collection: 'pages', id: doc.id, data: {}, draft: false, overrideAccess: true })
+  }
 
   return Response.json({
     ok: true,
@@ -50,6 +64,7 @@ export async function POST(req: NextRequest) {
       posts: posts.totalDocs,
       courses: courses.totalDocs,
       courseCategories: courseCategories.totalDocs,
+      pages: pages.totalDocs,
     },
   })
 }

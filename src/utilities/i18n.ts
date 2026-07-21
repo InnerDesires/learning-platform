@@ -2,6 +2,10 @@ import type { SiteLocale } from '@/utilities/locales'
 
 type FrontendMessages = {
   searchTitle: string
+  searchTypePost: string
+  searchTypeCourse: string
+  searchTypeCategory: string
+  searchTypePage: string
   postsEyebrow: string
   coursesEyebrow: string
   coursesSub: string
@@ -99,12 +103,14 @@ type FrontendMessages = {
   profileStatsQuizzes: string
   profileMyCourses: string
   profileNoCourses: string
+  profileAllCoursesDone: string
   profileCertificates: string
   profileRecentQuizzes: string
   profileBrowseCourses: string
   coursesTitle: string
   coursesMetaTitle: string
   coursesAllCategories: string
+  coursesResetFilter: string
   courseSteps: string
   courseStepsCount: string
   courseStepsPlural: string
@@ -122,6 +128,8 @@ type FrontendMessages = {
   stepNext: string
   stepProgress: string
   stepOf: string
+  stepSingular: string
+  minutesShort: string
   stepRichText: string
   stepVideo: string
   stepFile: string
@@ -145,6 +153,7 @@ type FrontendMessages = {
   quizScore: string
   quizCorrectAnswers: string
   quizAttemptNumber: string
+  quizAttemptsUsed: string
   quizAttemptHistory: string
   quizTakeQuiz: string
   quizRetakeQuiz: string
@@ -231,6 +240,10 @@ type FrontendMessages = {
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   uk: {
     searchTitle: 'Пошук',
+    searchTypePost: 'Публікація',
+    searchTypeCourse: 'Курс',
+    searchTypeCategory: 'Категорія',
+    searchTypePage: 'Сторінка',
     postsEyebrow: 'Блог проєкту',
     coursesEyebrow: 'Каталог',
     coursesSub: 'Обирай курс, проходь кроки, складай фінальний тест — збирай XP і отримуй сертифікат.',
@@ -324,17 +337,19 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileRoleLearner: 'Учень',
     profileLevel: 'Рівень',
     profileToNextLevel: 'До наступного рівня',
-    profileStatsCourses: 'Курсів завершено',
-    profileStatsSteps: 'Кроків пройдено',
-    profileStatsQuizzes: 'Тестів складено',
+    profileStatsCourses: 'курс завершено|курси завершено|курсів завершено',
+    profileStatsSteps: 'крок пройдено|кроки пройдено|кроків пройдено',
+    profileStatsQuizzes: 'тест складено|тести складено|тестів складено',
     profileMyCourses: 'Мої курси',
     profileNoCourses: 'Ви ще не записані на жоден курс.',
+    profileAllCoursesDone: 'Усі ваші курси завершено — час обрати новий!',
     profileCertificates: 'Сертифікати',
     profileRecentQuizzes: 'Останні спроби тестів',
     profileBrowseCourses: 'До курсів',
     coursesTitle: 'Курси',
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
+    coursesResetFilter: 'Показати всі курси',
     courseSteps: 'Кроки',
     courseStepsCount: 'кроків',
     courseStepsPlural: 'крок|кроки|кроків',
@@ -346,12 +361,14 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'Розпочато',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
-    stepCompleteAndContinue: 'Далі',
+    stepCompleteAndContinue: 'Завершити і продовжити',
     stepComplete: 'Завершити',
     stepPrevious: 'Попередній',
     stepNext: 'Наступний',
     stepProgress: 'Прогрес',
     stepOf: 'з',
+    stepSingular: 'Крок',
+    minutesShort: 'хв',
     stepRichText: 'Текст',
     stepVideo: 'Відео',
     stepFile: 'Файл',
@@ -375,6 +392,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizScore: 'Результат',
     quizCorrectAnswers: 'Правильних відповідей',
     quizAttemptNumber: 'Спроба',
+    quizAttemptsUsed: 'Спроб використано',
     quizAttemptHistory: 'Історія спроб',
     quizTakeQuiz: 'Пройти тест',
     quizRetakeQuiz: 'Перескласти тест',
@@ -462,6 +480,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   },
   en: {
     searchTitle: 'Search',
+    searchTypePost: 'Post',
+    searchTypeCourse: 'Course',
+    searchTypeCategory: 'Category',
+    searchTypePage: 'Page',
     postsEyebrow: 'Project blog',
     coursesEyebrow: 'Catalog',
     coursesSub: 'Pick a course, complete the steps, pass the final quiz — earn XP and get a certificate.',
@@ -555,17 +577,19 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileRoleLearner: 'Learner',
     profileLevel: 'Level',
     profileToNextLevel: 'To next level',
-    profileStatsCourses: 'Courses completed',
-    profileStatsSteps: 'Steps completed',
-    profileStatsQuizzes: 'Quizzes passed',
+    profileStatsCourses: 'course completed|courses completed',
+    profileStatsSteps: 'step completed|steps completed',
+    profileStatsQuizzes: 'quiz passed|quizzes passed',
     profileMyCourses: 'My courses',
     profileNoCourses: 'You are not enrolled in any course yet.',
+    profileAllCoursesDone: 'All your courses are completed — time to pick a new one!',
     profileCertificates: 'Certificates',
     profileRecentQuizzes: 'Recent quiz attempts',
     profileBrowseCourses: 'Browse courses',
     coursesTitle: 'Courses',
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',
+    coursesResetFilter: 'Show all courses',
     courseSteps: 'Steps',
     courseStepsCount: 'steps',
     courseStepsPlural: 'step|steps',
@@ -583,6 +607,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepNext: 'Next',
     stepProgress: 'Progress',
     stepOf: 'of',
+    stepSingular: 'Step',
+    minutesShort: 'min',
     stepRichText: 'Text',
     stepVideo: 'Video',
     stepFile: 'File',
@@ -606,6 +632,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizScore: 'Score',
     quizCorrectAnswers: 'Correct Answers',
     quizAttemptNumber: 'Attempt',
+    quizAttemptsUsed: 'Attempts used',
     quizAttemptHistory: 'Attempt History',
     quizTakeQuiz: 'Take Quiz',
     quizRetakeQuiz: 'Retake Quiz',

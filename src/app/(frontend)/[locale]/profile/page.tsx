@@ -8,6 +8,7 @@ import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
 import { formatDateTime } from '@/utilities/formatDateTime'
+import { plural } from '@/utilities/plural'
 import type { Course } from '@/payload-types'
 import { SignOutButton } from './SignOutButton'
 
@@ -121,19 +122,19 @@ export default async function ProfilePage({ params }: Args) {
           <div>
             <p className="num font-display text-3xl font-bold text-orange">{completed.length}</p>
             <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
-              {t.profileStatsCourses}
+              {plural(locale, completed.length, t.profileStatsCourses)}
             </p>
           </div>
           <div>
             <p className="num font-display text-3xl font-bold text-orange">{stepsDone}</p>
             <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
-              {t.profileStatsSteps}
+              {plural(locale, stepsDone, t.profileStatsSteps)}
             </p>
           </div>
           <div>
             <p className="num font-display text-3xl font-bold text-orange">{quizzesPassed}</p>
             <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
-              {t.profileStatsQuizzes}
+              {plural(locale, quizzesPassed, t.profileStatsQuizzes)}
             </p>
           </div>
         </div>
@@ -183,9 +184,16 @@ export default async function ProfilePage({ params }: Args) {
             )
           })}
           {inProgress.length === 0 && (
-            <p className="rounded-xl border border-line bg-card px-5 py-4 text-sm text-fog">
-              {t.profileNoCourses}
-            </p>
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-card px-5 py-4">
+              <p className="text-sm text-fog">{t.profileAllCoursesDone}</p>
+              <Link
+                href={`${prefix}/courses`}
+                className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+              >
+                {t.profileBrowseCourses}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
           )}
         </div>
       )}

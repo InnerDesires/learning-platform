@@ -94,9 +94,15 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
             <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
               {t.quizQuestion} <b className="text-amber">{questions.length}</b>
             </span>
-            <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
-              {t.quizAttemptNumber} <b className="text-amber">№{attempts.length + 1}</b>
-            </span>
+            {attempts.length > 0 ? (
+              <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
+                {t.quizAttemptsUsed} <b className="text-amber">{attempts.length}</b>
+              </span>
+            ) : (
+              <span className="num inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-fog">
+                {t.quizAttemptNumber} <b className="text-amber">№1</b>
+              </span>
+            )}
             <span className="num inline-flex items-center gap-1.5 rounded-full border border-orange/34 bg-orange/12 px-3.5 py-1.5 text-[11.5px] font-bold uppercase tracking-[0.08em] text-amber">
               <Zap className="h-3 w-3" fill="currentColor" strokeWidth={0} />
               {t.courseRewardLabel} <b>+{QUIZ_XP} XP</b>
@@ -129,6 +135,7 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
             quizQuestion: t.quizQuestion,
             quizSelectAnswer: t.quizSelectAnswer,
             quizAttemptWarning: t.quizAttemptWarning,
+            certificateDownload: t.certificateDownload,
           }}
         />
 
@@ -137,6 +144,7 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
             <QuizAttemptHistory
               attempts={attempts}
               locale={locale}
+              certificateHref={`/courses/${slug}/certificate`}
               labels={{
                 quizAttemptHistory: t.quizAttemptHistory,
                 quizAttemptNumber: t.quizAttemptNumber,
@@ -144,6 +152,7 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
                 quizPassed: t.quizPassed,
                 quizFailed: t.quizFailed,
                 quizNoAttempts: t.quizNoAttempts,
+                certificateDownload: t.certificateDownload,
               }}
             />
           </div>

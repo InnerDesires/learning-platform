@@ -37,6 +37,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       slug: true,
       categories: true,
       meta: true,
+      publishedAt: true,
     },
   })
 

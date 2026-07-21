@@ -1032,6 +1032,10 @@ export interface Course {
               };
               [k: string]: unknown;
             };
+            /**
+             * Орієнтовний час проходження кроку в хвилинах.
+             */
+            duration?: number | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'richTextStep';
@@ -1040,6 +1044,10 @@ export interface Course {
             title: string;
             description?: string | null;
             youtubeUrl: string;
+            /**
+             * Орієнтовний час проходження кроку в хвилинах.
+             */
+            duration?: number | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'youtubeVideoStep';
@@ -1048,6 +1056,10 @@ export interface Course {
             title: string;
             description?: string | null;
             file: number | CourseFile;
+            /**
+             * Орієнтовний час проходження кроку в хвилинах.
+             */
+            duration?: number | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'fileStep';
@@ -2033,6 +2045,7 @@ export interface CoursesSelect<T extends boolean = true> {
           | {
               title?: T;
               content?: T;
+              duration?: T;
               id?: T;
               blockName?: T;
             };
@@ -2042,6 +2055,7 @@ export interface CoursesSelect<T extends boolean = true> {
               title?: T;
               description?: T;
               youtubeUrl?: T;
+              duration?: T;
               id?: T;
               blockName?: T;
             };
@@ -2051,6 +2065,7 @@ export interface CoursesSelect<T extends boolean = true> {
               title?: T;
               description?: T;
               file?: T;
+              duration?: T;
               id?: T;
               blockName?: T;
             };

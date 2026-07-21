@@ -179,6 +179,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
                     youtubeVideoStep: t.stepVideo,
                     fileStep: t.stepFile,
                   }}
+                  minutesLabel={t.minutesShort}
                   quiz={course.quiz?.enabled ? {
                     enabled: true,
                     passed: false,
@@ -203,6 +204,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
               youtubeVideoStep: t.stepVideo,
               fileStep: t.stepFile,
             }}
+            minutesLabel={t.minutesShort}
             labels={{
               stepProgress: t.stepProgress,
               courseCompleted: t.courseCompleted,

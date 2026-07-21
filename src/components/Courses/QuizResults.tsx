@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CircleCheck, CircleX, Zap } from 'lucide-react'
+import { CircleCheck, CircleX, Download, Zap } from 'lucide-react'
 import { QUIZ_XP } from '@/utilities/xp'
 
 type Labels = {
@@ -13,6 +13,7 @@ type Labels = {
   quizAttemptNumber: string
   quizTryAgain: string
   quizBackToCourse: string
+  certificateDownload: string
 }
 
 type Props = {
@@ -82,18 +83,45 @@ export const QuizResults: React.FC<Props> = ({
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 pt-4">
-        <button
-          onClick={onTryAgain}
-          className="inline-flex h-11 items-center justify-center rounded-full bg-orange px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#1B1204] transition-all hover:-translate-y-px hover:bg-amber"
-        >
-          {labels.quizTryAgain}
-        </button>
-        <a
-          href={`/courses/${courseSlug}`}
-          className="inline-flex h-11 items-center justify-center rounded-full border-[1.5px] border-line-2 px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
-        >
-          {labels.quizBackToCourse}
-        </a>
+        {passed ? (
+          <>
+            <a
+              href={`/courses/${courseSlug}/certificate`}
+              download
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-orange px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#1B1204] transition-all hover:-translate-y-px hover:bg-amber"
+            >
+              <Download className="h-4 w-4" />
+              {labels.certificateDownload}
+            </a>
+            <a
+              href={`/courses/${courseSlug}`}
+              className="inline-flex h-11 items-center justify-center rounded-full border-[1.5px] border-line-2 px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+            >
+              {labels.quizBackToCourse}
+            </a>
+            <button
+              onClick={onTryAgain}
+              className="inline-flex h-11 items-center justify-center rounded-full border-[1.5px] border-line-2 px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-fog transition-colors hover:border-orange hover:text-orange"
+            >
+              {labels.quizTryAgain}
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={onTryAgain}
+              className="inline-flex h-11 items-center justify-center rounded-full bg-orange px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#1B1204] transition-all hover:-translate-y-px hover:bg-amber"
+            >
+              {labels.quizTryAgain}
+            </button>
+            <a
+              href={`/courses/${courseSlug}`}
+              className="inline-flex h-11 items-center justify-center rounded-full border-[1.5px] border-line-2 px-7 font-display text-sm font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+            >
+              {labels.quizBackToCourse}
+            </a>
+          </>
+        )}
       </div>
     </div>
   )

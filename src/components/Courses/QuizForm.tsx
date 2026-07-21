@@ -30,6 +30,7 @@ type Labels = {
   quizQuestion: string
   quizSelectAnswer: string
   quizAttemptWarning: string
+  certificateDownload: string
 }
 
 type Props = {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Zap } from 'lucide-react'
+import { Download, Zap } from 'lucide-react'
 import type { QuizAttempt } from '@/payload-types'
 import type { SiteLocale } from '@/utilities/locales'
 import { QUIZ_XP } from '@/utilities/xp'
@@ -12,15 +12,23 @@ type Labels = {
   quizPassed: string
   quizFailed: string
   quizNoAttempts: string
+  certificateDownload?: string
 }
 
 type Props = {
   attempts: QuizAttempt[]
   labels: Labels
   locale?: SiteLocale
+  /** When set, passed attempts get a certificate download link. */
+  certificateHref?: string
 }
 
-export const QuizAttemptHistory: React.FC<Props> = ({ attempts, labels, locale = 'uk' }) => {
+export const QuizAttemptHistory: React.FC<Props> = ({
+  attempts,
+  labels,
+  locale = 'uk',
+  certificateHref,
+}) => {
   if (attempts.length === 0) {
     return <p className="text-sm text-fog">{labels.quizNoAttempts}</p>
   }
@@ -57,8 +65,20 @@ export const QuizAttemptHistory: React.FC<Props> = ({ attempts, labels, locale =
               {formatDateTime(attempt.createdAt, locale)}
             </span>
             {attempt.passed && (
-              <span className="num ml-auto inline-flex items-center gap-1 font-display text-[11.5px] font-semibold text-amber">
-                <Zap className="h-3 w-3" fill="currentColor" strokeWidth={0} />+{QUIZ_XP} XP
+              <span className="num ml-auto inline-flex items-center gap-3 font-display text-[11.5px] font-semibold text-amber">
+                <span className="inline-flex items-center gap-1">
+                  <Zap className="h-3 w-3" fill="currentColor" strokeWidth={0} />+{QUIZ_XP} XP
+                </span>
+                {certificateHref && labels.certificateDownload && (
+                  <a
+                    href={certificateHref}
+                    download
+                    className="inline-flex items-center gap-1.5 rounded-full border border-line-2 px-3 py-1 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-fog transition-colors hover:border-orange hover:text-orange"
+                  >
+                    <Download className="h-3 w-3" />
+                    {labels.certificateDownload}
+                  </a>
+                )}
               </span>
             )}
           </div>

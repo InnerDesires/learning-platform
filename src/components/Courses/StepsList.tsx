@@ -36,6 +36,7 @@ type Props = {
   localePrefix?: string
   compact?: boolean
   typeLabels?: { richTextStep: string; youtubeVideoStep: string; fileStep: string }
+  minutesLabel?: string
   quiz?: {
     enabled: boolean
     passed: boolean
@@ -58,6 +59,7 @@ export const StepsList: React.FC<Props> = ({
   localePrefix = '',
   compact = false,
   typeLabels,
+  minutesLabel,
   quiz,
   className,
 }) => {
@@ -68,6 +70,7 @@ export const StepsList: React.FC<Props> = ({
         const isComplete = completedSteps.includes(step.id ?? '')
         const title = step.title || `${stepsLabel} ${i + 1}`
         const typeLabel = typeLabels?.[step.blockType as keyof typeof typeLabels]
+        const duration = typeof step.duration === 'number' && step.duration > 0 ? step.duration : null
 
         const rowClass = compact
           ? cn(
@@ -116,6 +119,11 @@ export const StepsList: React.FC<Props> = ({
                   <span className="flex items-center gap-1.5">
                     {getStepIcon(step.blockType)}
                     {typeLabel}
+                    {duration && minutesLabel && (
+                      <span className="num">
+                        · {duration} {minutesLabel}
+                      </span>
+                    )}
                   </span>
                   <XpChip xp={STEP_XP} className="!text-[10.5px]" />
                 </span>

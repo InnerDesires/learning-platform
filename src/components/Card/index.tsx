@@ -10,12 +10,16 @@ import type { SiteLocale } from '@/utilities/locales'
 
 import { Media } from '@/components/Media'
 import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
+import { formatDateTime } from '@/utilities/formatDateTime'
 import { usePathname } from 'next/navigation'
 
 export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages'
 
 export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
+  publishedAt?: string | null
+  /** Id of the underlying document (search results only) — used for category deep links. */
+  docId?: number | null
 }
 
 // Fallback covers extracted from the approved design prototype.
@@ -37,24 +41,26 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
   likesCount?: number
+  typeLabel?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const pathname = usePathname()
   const localeFromPath = getLocaleFromPathname(pathname)
-  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount } = props
-  const t = getFrontendMessages(locale || localeFromPath)
+  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount, typeLabel } = props
+  const effectiveLocale = locale || localeFromPath
+  const t = getFrontendMessages(effectiveLocale)
 
-  const { id, slug, categories, meta, title } = doc || {}
+  const { id, slug, categories, meta, title, publishedAt, docId } = doc || {}
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ')
   const effectiveRelationTo = (doc?.collectionType as CardRelationTo) || relationTo
-  const prefix = (locale || localeFromPath) === 'en' ? '/en' : ''
+  const prefix = effectiveLocale === 'en' ? '/en' : ''
   const href =
     effectiveRelationTo === 'course-categories'
-      ? `${prefix}/courses`
+      ? `${prefix}/courses${docId ? `?category=${docId}` : ''}`
       : effectiveRelationTo === 'pages'
         ? `${prefix}/${slug}`
         : `${prefix}/${effectiveRelationTo}/${slug}`
@@ -85,18 +91,29 @@ export const Card: React.FC<{
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
-        {showCategories && hasCategories && (
-          <div className="flex flex-wrap gap-1.5">
-            {categories?.map((category, index) => {
-              if (typeof category === 'object') {
-                return (
-                  <span key={index} className="chip">
-                    {category.title || t.untitledCategory}
-                  </span>
-                )
-              }
-              return null
-            })}
+        {(typeLabel || (showCategories && hasCategories) || publishedAt) && (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+            {typeLabel && <span className="chip border-orange/40 text-amber">{typeLabel}</span>}
+            {showCategories &&
+              hasCategories &&
+              categories?.map((category, index) => {
+                if (typeof category === 'object') {
+                  return (
+                    <span key={index} className="chip">
+                      {category.title || t.untitledCategory}
+                    </span>
+                  )
+                }
+                return null
+              })}
+            {publishedAt && (
+              <time
+                dateTime={publishedAt}
+                className="num text-[11px] font-semibold uppercase tracking-[0.08em] text-steel"
+              >
+                {formatDateTime(publishedAt, effectiveLocale)}
+              </time>
+            )}
           </div>
         )}
         {titleToUse && (
