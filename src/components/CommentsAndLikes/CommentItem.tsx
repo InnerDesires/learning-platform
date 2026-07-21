@@ -15,6 +15,7 @@ interface Labels {
   placeholder: string
   submit: string
   submitting: string
+  loginToLike?: string
 }
 
 interface CommentItemProps {
@@ -27,6 +28,7 @@ interface CommentItemProps {
   onReply: (parentId: number, body: string) => Promise<boolean>
   onDelete: (commentId: number) => Promise<boolean>
   depth?: number
+  loginUrl?: string
 }
 
 function formatRelativeTime(dateStr: string): string {
@@ -41,7 +43,7 @@ function formatRelativeTime(dateStr: string): string {
   if (minutes < 60) return `${minutes}m`
   if (hours < 24) return `${hours}h`
   if (days < 30) return `${days}d`
-  return new Date(dateStr).toLocaleDateString()
+  return new Date(dateStr).toLocaleDateString('uk-UA')
 }
 
 function UserAvatar({ name, image }: { name: string; image?: string | null }) {
@@ -73,6 +75,7 @@ export function CommentItem({
   onReply,
   onDelete,
   depth = 0,
+  loginUrl,
 }: CommentItemProps) {
   const replies = repliesByParent[comment.id] ?? []
   const [showReplyForm, setShowReplyForm] = useState(false)
@@ -121,6 +124,8 @@ export function CommentItem({
                 initialLiked={comment.userLiked}
                 initialCount={comment.likesCount}
                 size="sm"
+                loginUrl={loginUrl}
+                loginPromptLabel={labels.loginToLike}
               />
               {isAuthenticated && depth < 2 && (
                 <button
@@ -186,6 +191,7 @@ export function CommentItem({
                   onReply={onReply}
                   onDelete={onDelete}
                   depth={depth + 1}
+                  loginUrl={loginUrl}
                 />
               ))}
             </div>

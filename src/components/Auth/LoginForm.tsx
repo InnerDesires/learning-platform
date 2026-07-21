@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
+import { PasswordInput } from './PasswordInput'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 import { getFrontendMessages } from '@/utilities/i18n'
 import type { SiteLocale } from '@/utilities/locales'
 
@@ -14,13 +15,12 @@ export const LoginForm: React.FC<{
   resetSuccess?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true, resetSuccess = false }) => {
   const t = getFrontendMessages(locale)
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const callbackURL = redirectTo || '/'
+  const callbackURL = safeRedirectPath(redirectTo, locale === 'uk' ? '/' : `/${locale}`)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,8 +37,9 @@ export const LoginForm: React.FC<{
       setError(t.loginErrorGeneric)
       setLoading(false)
     } else {
-      router.push(callbackURL)
-      router.refresh()
+      // Full navigation: the session cookie is already set, and a hard load
+      // avoids the client-router race with /login's authed-user redirect.
+      window.location.assign(callbackURL)
     }
   }
 
@@ -57,7 +58,7 @@ export const LoginForm: React.FC<{
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">
+      <h1 className="heading-display mb-2 text-center text-3xl">
         {redirectTo ? t.loginContinueTo : t.loginTitle}
       </h1>
 
@@ -95,14 +96,14 @@ export const LoginForm: React.FC<{
               {t.loginForgotPassword}
             </Link>
           </div>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             required
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            showLabel={t.passwordShow}
+            hideLabel={t.passwordHide}
           />
         </div>
 

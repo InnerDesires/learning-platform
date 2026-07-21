@@ -2,20 +2,35 @@
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
 import Link from 'next/link'
-import React, { Fragment } from 'react'
+import React from 'react'
+import { Heart } from 'lucide-react'
 
 import type { Post } from '@/payload-types'
 import type { SiteLocale } from '@/utilities/locales'
 
 import { Media } from '@/components/Media'
 import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
+import { formatDateTime } from '@/utilities/formatDateTime'
 import { usePathname } from 'next/navigation'
 
-export type CardRelationTo = 'posts' | 'courses' | 'course-categories'
+export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages'
 
 export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
+  publishedAt?: string | null
+  /** Id of the underlying document (search results only) — used for category deep links. */
+  docId?: number | null
 }
+
+// Fallback covers extracted from the approved design prototype.
+const FALLBACK_COVERS = [
+  '/illustrations/post-shift-recap.svg',
+  '/illustrations/post-enrollment.svg',
+  '/illustrations/post-achievement.svg',
+  '/illustrations/post-first-aid-training.svg',
+  '/illustrations/post-depot-excursion.svg',
+  '/illustrations/post-story.svg',
+]
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -26,85 +41,103 @@ export const Card: React.FC<{
   showCategories?: boolean
   title?: string
   likesCount?: number
+  typeLabel?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
   const pathname = usePathname()
   const localeFromPath = getLocaleFromPathname(pathname)
-  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount } = props
-  const t = getFrontendMessages(locale || localeFromPath)
+  const { className, doc, locale, relationTo, showCategories, title: titleFromProps, likesCount, typeLabel } = props
+  const effectiveLocale = locale || localeFromPath
+  const t = getFrontendMessages(effectiveLocale)
 
-  const { slug, categories, meta, title } = doc || {}
+  const { id, slug, categories, meta, title, publishedAt, docId } = doc || {}
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ')
   const effectiveRelationTo = (doc?.collectionType as CardRelationTo) || relationTo
+  const prefix = effectiveLocale === 'en' ? '/en' : ''
   const href =
-    effectiveRelationTo === 'course-categories' ? '/courses' : `/${effectiveRelationTo}/${slug}`
+    effectiveRelationTo === 'course-categories'
+      ? `${prefix}/courses${docId ? `?category=${docId}` : ''}`
+      : effectiveRelationTo === 'pages'
+        ? `${prefix}/${slug}`
+        : `${prefix}/${effectiveRelationTo}/${slug}`
+  const fallbackCover = FALLBACK_COVERS[Math.abs(Number(id) || 0) % FALLBACK_COVERS.length]
 
   return (
     <article
       className={cn(
-        'group rounded-2xl overflow-hidden bg-card shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer',
+        'group flex cursor-pointer flex-col overflow-hidden rounded-[14px] border border-line bg-card transition-all duration-200 hover:-translate-y-1 hover:border-orange/60 hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]',
         className,
       )}
       ref={card.ref}
     >
-      <div className="relative w-full overflow-hidden">
-        {!metaImage && (
-          <div className="aspect-video bg-secondary flex items-center justify-center text-muted-foreground text-sm">
-            {t.cardNoImage}
-          </div>
-        )}
-        {metaImage && typeof metaImage !== 'string' && (
-          <div className="overflow-hidden">
-            <Media
-              resource={metaImage}
-              size="33vw"
-              imgClassName="transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
+      <div className="relative aspect-video w-full overflow-hidden bg-ink">
+        {metaImage && typeof metaImage !== 'string' ? (
+          <Media
+            resource={metaImage}
+            size="33vw"
+            imgClassName="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.045]"
+          />
+        ) : (
+          <img
+            src={fallbackCover}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.045]"
+            loading="lazy"
+          />
         )}
       </div>
-      <div className="p-5">
-        {showCategories && hasCategories && (
-          <div className="mb-3">
-            <div className="flex flex-wrap gap-2">
-              {categories?.map((category, index) => {
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        {(typeLabel || (showCategories && hasCategories) || publishedAt) && (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+            {typeLabel && <span className="chip border-orange/40 text-amber">{typeLabel}</span>}
+            {showCategories &&
+              hasCategories &&
+              categories?.map((category, index) => {
                 if (typeof category === 'object') {
-                  const { title: titleFromCategory } = category
-                  const categoryTitle = titleFromCategory || t.untitledCategory
                   return (
-                    <span
-                      key={index}
-                      className="inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary"
-                    >
-                      {categoryTitle}
+                    <span key={index} className="chip">
+                      {category.title || t.untitledCategory}
                     </span>
                   )
                 }
                 return null
               })}
-            </div>
+            {publishedAt && (
+              <time
+                dateTime={publishedAt}
+                className="num text-[11px] font-semibold uppercase tracking-[0.08em] text-steel"
+              >
+                {formatDateTime(publishedAt, effectiveLocale)}
+              </time>
+            )}
           </div>
         )}
         {titleToUse && (
-          <h3 className="text-lg font-semibold leading-snug">
-            <Link className="hover:text-primary transition-colors" href={href} ref={link.ref}>
+          <h3 className="text-[15.5px] font-bold leading-[1.35]">
+            <Link
+              className="transition-colors group-hover:text-amber"
+              href={href}
+              ref={link.ref}
+            >
               {titleToUse}
             </Link>
           </h3>
         )}
         {description && (
-          <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{sanitizedDescription}</p>
+          <p className="line-clamp-2 text-[12.5px] leading-relaxed text-fog">
+            {sanitizedDescription}
+          </p>
         )}
         {likesCount != null && likesCount > 0 && (
-          <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            {likesCount} {t.likesCount}
+          <div className="mt-auto flex items-center gap-3.5 border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
+            <span className="num flex items-center gap-1.5">
+              <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
+              {likesCount}
+            </span>
           </div>
         )}
       </div>

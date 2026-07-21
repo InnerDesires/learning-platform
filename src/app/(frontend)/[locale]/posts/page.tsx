@@ -3,6 +3,7 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { PageHead } from '@/components/brand'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -36,6 +37,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       slug: true,
       categories: true,
       meta: true,
+      publishedAt: true,
     },
   })
 
@@ -43,21 +45,21 @@ export default async function Page({ params: paramsPromise }: Args) {
   const likesCountMap = await getLikesCountsBatch('posts', postIds)
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pb-24">
       <PageClient />
-      <div data-testid="posts-page-content" className="container mb-16">
-        <div className="prose max-w-none">
-          <h1 data-testid="posts-page-title">{t.postsTitle}</h1>
-        </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          locale={locale}
-          currentPage={posts.page}
-          limit={12}
-          totalDocs={posts.totalDocs}
+      <div data-testid="posts-page-content">
+        <PageHead
+          eyebrow={t.postsEyebrow}
+          title={<span data-testid="posts-page-title">{t.postsTitle}</span>}
+          sub={
+            <PageRange
+              collection="posts"
+              locale={locale}
+              currentPage={posts.page}
+              limit={12}
+              totalDocs={posts.totalDocs}
+            />
+          }
         />
       </div>
 

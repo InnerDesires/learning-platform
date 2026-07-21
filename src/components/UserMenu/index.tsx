@@ -2,12 +2,13 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { LogOut, User as UserIcon } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { LogOut, User as UserIcon, Zap } from 'lucide-react'
 import { useSession, signOut } from '@/lib/auth/client'
 import { cn } from '@/utilities/ui'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getMyXp, type MyXp } from '@/actions/xp'
 
 interface UserMenuProps {
   locale: SiteLocale
@@ -18,9 +19,26 @@ interface UserMenuProps {
 export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen, onToggle }) => {
   const { data: session, isPending } = useSession()
   const [internalOpen, setInternalOpen] = useState(false)
+  const [xp, setXp] = useState<MyXp | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const t = getFrontendMessages(locale)
+
+  useEffect(() => {
+    if (!session?.user) {
+      setXp(null)
+      return
+    }
+    let cancelled = false
+    getMyXp()
+      .then((result) => {
+        if (!cancelled) setXp(result)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [session?.user])
 
   const open = controlledOpen ?? internalOpen
   const setOpen = useCallback(
@@ -36,8 +54,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
   )
 
   const isEn = locale === 'en'
-  const loginPath = isEn ? '/en/login' : '/login'
   const profilePath = isEn ? '/en/profile' : '/profile'
+  const pathname = usePathname()
+  // send the visitor back to where they were after signing in
+  const loginPath = `${isEn ? '/en' : ''}/login?redirect=${encodeURIComponent(pathname)}`
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -64,10 +84,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
     return (
       <Link
         href={loginPath}
-        className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary/10"
+        className="ml-1 flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-void/50 transition-colors hover:border-orange hover:shadow-[0_0_16px_rgb(249_140_31/0.22)]"
         aria-label={t.signIn}
       >
-        <UserIcon className="h-4 w-4 text-muted-foreground" />
+        <UserIcon className="h-4 w-4 text-fog" />
       </Link>
     )
   }
@@ -80,7 +100,13 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 items-center justify-center rounded-full overflow-hidden border-2 border-transparent transition-colors hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        style={{
+          // ring mirrors real progress to the next level (same math as /profile)
+          background: `conic-gradient(from -90deg, var(--orange) 0 ${
+            xp ? Math.round((xp.intoLevel / xp.span) * 100) : 0
+          }%, var(--blue-line) 0 100%)`,
+        }}
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -88,11 +114,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
           <img
             src={user.image}
             alt=""
-            className="h-full w-full object-cover"
+            className="h-full w-full rounded-full object-cover"
             referrerPolicy="no-referrer"
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center bg-primary text-primary-foreground text-sm font-semibold">
+          <span className="flex h-full w-full items-center justify-center rounded-full bg-navy-2 text-xs font-extrabold text-amber">
             {initials}
           </span>
         )}
@@ -103,6 +129,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
           <div className="px-3 py-2 border-b mb-1">
             <p className="text-sm font-medium truncate">{user.name}</p>
             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            {xp && (
+              <p className="num mt-1.5 inline-flex items-center gap-1 font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-amber">
+                <Zap className="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
+                {t.profileLevel} {xp.level} · {xp.xp.toLocaleString('uk-UA')} XP
+              </p>
+            )}
           </div>
           <Link
             href={profilePath}

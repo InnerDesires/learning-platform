@@ -1,13 +1,11 @@
 'use client'
-import Link from 'next/link'
 import React from 'react'
 
 import type { Header } from '@/payload-types'
 import type { SiteLocale } from '@/utilities/locales'
 
-import { Logo } from '@/components/Logo/Logo'
+import { Brand } from '@/components/Logo/Brand'
 import { HeaderNav } from './Nav'
-import { getFrontendMessages } from '@/utilities/i18n'
 
 interface HeaderClientProps {
   data: Header
@@ -15,19 +13,11 @@ interface HeaderClientProps {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, locale }) => {
-  const t = getFrontendMessages(locale)
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-border/40 bg-background/60 backdrop-blur-xl">
-      <div className="container py-3 flex justify-between items-center">
-        <Link
-          href={locale === 'en' ? '/en' : '/'}
-          className="flex items-center gap-3"
-          data-testid="header-logo-link"
-        >
-          <Logo alt={t?.logoAlt || ''} loading="eager" priority="high" className="h-20 w-auto -mb-9 drop-shadow-md" />
-          <span className="text-lg font-black uppercase leading-tight tracking-tight text-foreground">{t.projectName}</span>
-        </Link>
-        <div className="relative">
+    <header className="sticky top-0 z-40 w-full border-b border-line bg-void/85 shadow-[0_1px_0_rgb(42_84_176/0.25)] backdrop-blur-xl">
+      <div className="container flex h-16 items-center gap-7">
+        <Brand locale={locale} testId="header-logo-link" />
+        <div className="relative ml-auto flex items-center">
           <HeaderNav data={data} locale={locale} />
         </div>
       </div>

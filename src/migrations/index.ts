@@ -8,6 +8,8 @@ import * as migration_20260302_124504 from './20260302_124504';
 import * as migration_20260302_161337 from './20260302_161337';
 import * as migration_20260303_120000_mcp_courses from './20260303_120000_mcp_courses';
 import * as migration_20260708_121614_add_youtube_to_media_block from './20260708_121614_add_youtube_to_media_block';
+import * as migration_20260720_230559_search_pages from './20260720_230559_search_pages';
+import * as migration_20260721_120000_step_duration from './20260721_120000_step_duration';
 
 export const migrations = [
   {
@@ -58,6 +60,16 @@ export const migrations = [
   {
     up: migration_20260708_121614_add_youtube_to_media_block.up,
     down: migration_20260708_121614_add_youtube_to_media_block.down,
-    name: '20260708_121614_add_youtube_to_media_block'
+    name: '20260708_121614_add_youtube_to_media_block',
+  },
+  {
+    up: migration_20260720_230559_search_pages.up,
+    down: migration_20260720_230559_search_pages.down,
+    name: '20260720_230559_search_pages'
+  },
+  {
+    up: migration_20260721_120000_step_duration.up,
+    down: migration_20260721_120000_step_duration.down,
+    name: '20260721_120000_step_duration'
   },
 ];

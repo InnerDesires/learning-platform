@@ -8,6 +8,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
+import { Rails } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
@@ -69,11 +70,24 @@ export default async function Page({ params: paramsPromise, searchParams: search
       : {}),
   })
 
-  const searchDocToPostId: Array<{ searchId: number; postId: number }> = []
+  // Dedupe by underlying document (stale index rows can point at the same doc)
+  // and carry the original doc id for category deep links.
+  const seenDocs = new Set<string>()
+  const docs: Array<(typeof posts.docs)[number] & { docId?: number | null }> = []
   for (const result of posts.docs) {
     const docValue = result.doc?.value
-    const postId = typeof docValue === 'object' && docValue !== null ? docValue.id : (docValue as number)
-    if (postId) searchDocToPostId.push({ searchId: result.id, postId })
+    const originalId =
+      typeof docValue === 'object' && docValue !== null ? docValue.id : (docValue as number)
+    const dedupeKey = `${result.collectionType ?? 'unknown'}:${originalId ?? result.id}`
+    if (seenDocs.has(dedupeKey)) continue
+    seenDocs.add(dedupeKey)
+    docs.push({ ...result, docId: originalId ?? null })
+  }
+
+  const searchDocToPostId: Array<{ searchId: number; postId: number }> = []
+  for (const result of docs) {
+    if (result.collectionType !== 'posts') continue
+    if (result.docId) searchDocToPostId.push({ searchId: result.id, postId: result.docId })
   }
 
   const postIds = searchDocToPostId.map((e) => e.postId)
@@ -85,24 +99,36 @@ export default async function Page({ params: paramsPromise, searchParams: search
   }
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pb-24 pt-14 md:pt-16">
       <PageClient />
-      <div data-testid="search-page-content" className="container mb-16">
-        <div className="prose max-w-none text-center">
-          <h1 data-testid="search-page-title" className="mb-8 lg:mb-16">
+      <div data-testid="search-page-content" className="container mb-12">
+        <div className="flex flex-col items-center text-center">
+          <h1
+            data-testid="search-page-title"
+            className="heading-display mt-2 text-[clamp(38px,5vw,60px)] font-bold leading-none"
+          >
             {t.searchTitle}
           </h1>
-
-          <div className="max-w-[50rem] mx-auto">
+          <Rails className="mx-auto mt-4" />
+          <div className="mt-8 w-full max-w-[50rem]">
             <Search />
           </div>
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} likesCountMap={likesCountMap} />
+      {docs.length > 0 ? (
+        <CollectionArchive
+          posts={docs as CardPostData[]}
+          likesCountMap={likesCountMap}
+          typeLabels={{
+            posts: t.searchTypePost,
+            courses: t.searchTypeCourse,
+            'course-categories': t.searchTypeCategory,
+            pages: t.searchTypePage,
+          }}
+        />
       ) : (
-        <div className="container">{t.searchNoResults}</div>
+        <div className="container text-center text-fog">{t.searchNoResults}</div>
       )}
     </div>
   )

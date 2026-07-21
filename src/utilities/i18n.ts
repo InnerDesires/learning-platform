@@ -2,6 +2,13 @@ import type { SiteLocale } from '@/utilities/locales'
 
 type FrontendMessages = {
   searchTitle: string
+  searchTypePost: string
+  searchTypeCourse: string
+  searchTypeCategory: string
+  searchTypePage: string
+  postsEyebrow: string
+  coursesEyebrow: string
+  coursesSub: string
   searchNoResults: string
   searchLabel: string
   searchPlaceholder: string
@@ -33,8 +40,24 @@ type FrontendMessages = {
   formRequiredLabel: string
   copy: string
   copied: string
+  shareLabel: string
+  shareCopyLink: string
   logoAlt: string
   projectName: string
+  brandName1: string
+  brandName2: string
+  brandSub: string
+  footerMission: string
+  footerColPlatform: string
+  footerColProject: string
+  footerColContacts: string
+  footerAbout: string
+  footerCalendar: string
+  footerPartners: string
+  footerContact: string
+  footerCertificates: string
+  footerSearch: string
+  footerRights: string
   signIn: string
   profile: string
   signOut: string
@@ -44,6 +67,8 @@ type FrontendMessages = {
   loginContinueTo: string
   loginEmail: string
   loginPassword: string
+  passwordShow: string
+  passwordHide: string
   loginSubmit: string
   loginSubmitting: string
   loginOr: string
@@ -71,11 +96,25 @@ type FrontendMessages = {
   profileSignOut: string
   profileRoleAdmin: string
   profileRoleLearner: string
+  profileLevel: string
+  profileToNextLevel: string
+  profileStatsCourses: string
+  profileStatsSteps: string
+  profileStatsQuizzes: string
+  profileMyCourses: string
+  profileNoCourses: string
+  profileAllCoursesDone: string
+  profileCertificates: string
+  profileRecentQuizzes: string
+  profileBrowseCourses: string
   coursesTitle: string
   coursesMetaTitle: string
   coursesAllCategories: string
+  coursesResetFilter: string
   courseSteps: string
   courseStepsCount: string
+  courseStepsPlural: string
+  courseEnrolledPlural: string
   courseEnroll: string
   courseStartLearning: string
   courseContinueLearning: string
@@ -89,12 +128,15 @@ type FrontendMessages = {
   stepNext: string
   stepProgress: string
   stepOf: string
+  stepSingular: string
+  minutesShort: string
   stepRichText: string
   stepVideo: string
   stepFile: string
   stepDownloadFile: string
   stepOpenFile: string
   courseBackToCourses: string
+  courseRewardLabel: string
   courseBackToOverview: string
   courseEnrolledCount: string
   courseCompletedCount: string
@@ -111,6 +153,7 @@ type FrontendMessages = {
   quizScore: string
   quizCorrectAnswers: string
   quizAttemptNumber: string
+  quizAttemptsUsed: string
   quizAttemptHistory: string
   quizTakeQuiz: string
   quizRetakeQuiz: string
@@ -122,6 +165,7 @@ type FrontendMessages = {
   quizNotAvailable: string
   quizCompleteStepsFirst: string
   commentsTitle: string
+  likeLoginPrompt: string
   commentsEmpty: string
   commentsPlaceholder: string
   commentsSubmit: string
@@ -197,6 +241,13 @@ type FrontendMessages = {
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   uk: {
     searchTitle: 'Пошук',
+    searchTypePost: 'Публікація',
+    searchTypeCourse: 'Курс',
+    searchTypeCategory: 'Категорія',
+    searchTypePage: 'Сторінка',
+    postsEyebrow: 'Блог проєкту',
+    coursesEyebrow: 'Каталог',
+    coursesSub: 'Обирай курс, проходь кроки, складай фінальний тест — збирай XP і отримуй сертифікат.',
     searchNoResults: 'Нічого не знайдено.',
     searchLabel: 'Пошук',
     searchPlaceholder: 'Що ви хочете вивчити?',
@@ -227,9 +278,26 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formFieldRequired: "Це поле є обов'язковим",
     formRequiredLabel: "(обов'язково)",
     copy: 'Копіювати',
+    shareLabel: 'Поділитися',
+    shareCopyLink: 'Копіювати лінк',
     copied: 'Скопійовано!',
     logoAlt: 'Логотип Залізна Зміна',
     projectName: 'Залізна Зміна. Платформа',
+    brandName1: 'Залізна',
+    brandName2: 'Зміна',
+    brandSub: 'Платформа',
+    footerMission:
+      'Проєкт розвитку талановитої молоді України. За підтримки Укрзалізниці та фонду Говарда Баффетта.',
+    footerColPlatform: 'Платформа',
+    footerColProject: 'Проєкт',
+    footerColContacts: 'Контакти',
+    footerAbout: 'Про нас',
+    footerCalendar: 'Календар',
+    footerPartners: 'Партнери',
+    footerContact: 'Контакти',
+    footerCertificates: 'Сертифікати',
+    footerSearch: 'Пошук',
+    footerRights: '© 2022–2026 «Залізна Зміна». Всі права захищені.',
     signIn: 'Увійти',
     profile: 'Профіль',
     signOut: 'Вийти',
@@ -239,6 +307,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     loginContinueTo: 'Увійдіть, щоб продовжити',
     loginEmail: 'Електронна пошта',
     loginPassword: 'Пароль',
+    passwordShow: 'Показати пароль',
+    passwordHide: 'Приховати пароль',
     loginSubmit: 'Увійти',
     loginSubmitting: 'Входимо…',
     loginOr: 'або',
@@ -266,11 +336,25 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Вийти з акаунту',
     profileRoleAdmin: 'Адміністратор',
     profileRoleLearner: 'Учень',
+    profileLevel: 'Рівень',
+    profileToNextLevel: 'До наступного рівня',
+    profileStatsCourses: 'курс завершено|курси завершено|курсів завершено',
+    profileStatsSteps: 'крок пройдено|кроки пройдено|кроків пройдено',
+    profileStatsQuizzes: 'тест складено|тести складено|тестів складено',
+    profileMyCourses: 'Мої курси',
+    profileNoCourses: 'Ви ще не записані на жоден курс.',
+    profileAllCoursesDone: 'Усі ваші курси завершено — час обрати новий!',
+    profileCertificates: 'Сертифікати',
+    profileRecentQuizzes: 'Останні спроби тестів',
+    profileBrowseCourses: 'До курсів',
     coursesTitle: 'Курси',
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
+    coursesResetFilter: 'Показати всі курси',
     courseSteps: 'Кроки',
     courseStepsCount: 'кроків',
+    courseStepsPlural: 'крок|кроки|кроків',
+    courseEnrolledPlural: 'учень|учні|учнів',
     courseEnroll: 'Записатися на курс',
     courseStartLearning: 'Почати навчання',
     courseContinueLearning: 'Продовжити навчання',
@@ -278,18 +362,21 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'Розпочато',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
-    stepCompleteAndContinue: 'Далі',
+    stepCompleteAndContinue: 'Завершити і продовжити',
     stepComplete: 'Завершити',
     stepPrevious: 'Попередній',
     stepNext: 'Наступний',
     stepProgress: 'Прогрес',
     stepOf: 'з',
+    stepSingular: 'Крок',
+    minutesShort: 'хв',
     stepRichText: 'Текст',
     stepVideo: 'Відео',
     stepFile: 'Файл',
     stepDownloadFile: 'Завантажити файл',
     stepOpenFile: 'Відкрити файл',
     courseBackToCourses: 'До курсів',
+    courseRewardLabel: 'Нагорода',
     courseBackToOverview: 'До огляду курсу',
     courseEnrolledCount: 'учнів',
     courseCompletedCount: 'завершили',
@@ -306,6 +393,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizScore: 'Результат',
     quizCorrectAnswers: 'Правильних відповідей',
     quizAttemptNumber: 'Спроба',
+    quizAttemptsUsed: 'Спроб використано',
     quizAttemptHistory: 'Історія спроб',
     quizTakeQuiz: 'Пройти тест',
     quizRetakeQuiz: 'Перескласти тест',
@@ -317,6 +405,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizNotAvailable: 'Тест недоступний',
     quizCompleteStepsFirst: 'Завершіть усі кроки курсу, щоб отримати доступ до тесту',
     commentsTitle: 'Коментарі',
+    likeLoginPrompt: 'Увійдіть, щоб вподобати',
     commentsEmpty: 'Поки що немає коментарів. Будьте першими!',
     commentsPlaceholder: 'Напишіть коментар…',
     commentsSubmit: 'Надіслати',
@@ -393,6 +482,13 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
   },
   en: {
     searchTitle: 'Search',
+    searchTypePost: 'Post',
+    searchTypeCourse: 'Course',
+    searchTypeCategory: 'Category',
+    searchTypePage: 'Page',
+    postsEyebrow: 'Project blog',
+    coursesEyebrow: 'Catalog',
+    coursesSub: 'Pick a course, complete the steps, pass the final quiz — earn XP and get a certificate.',
     searchNoResults: 'No results found.',
     searchLabel: 'Search',
     searchPlaceholder: 'What do you want to learn?',
@@ -423,9 +519,26 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     formFieldRequired: 'This field is required',
     formRequiredLabel: '(required)',
     copy: 'Copy',
+    shareLabel: 'Share',
+    shareCopyLink: 'Copy link',
     copied: 'Copied!',
     logoAlt: 'Iron Squad Logo',
     projectName: 'Iron Squad. Platform',
+    brandName1: 'Iron',
+    brandName2: 'Squad',
+    brandSub: 'Platform',
+    footerMission:
+      'A development project for talented Ukrainian youth. Supported by Ukrzaliznytsia and the Howard G. Buffett Foundation.',
+    footerColPlatform: 'Platform',
+    footerColProject: 'Project',
+    footerColContacts: 'Contacts',
+    footerAbout: 'About us',
+    footerCalendar: 'Calendar',
+    footerPartners: 'Partners',
+    footerContact: 'Contact',
+    footerCertificates: 'Certificates',
+    footerSearch: 'Search',
+    footerRights: '© 2022–2026 "Iron Squad". All rights reserved.',
     signIn: 'Sign in',
     profile: 'Profile',
     signOut: 'Sign out',
@@ -435,6 +548,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     loginContinueTo: 'Log in to continue',
     loginEmail: 'Email',
     loginPassword: 'Password',
+    passwordShow: 'Show password',
+    passwordHide: 'Hide password',
     loginSubmit: 'Log in',
     loginSubmitting: 'Logging in…',
     loginOr: 'or',
@@ -462,11 +577,25 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSignOut: 'Sign out',
     profileRoleAdmin: 'Admin',
     profileRoleLearner: 'Learner',
+    profileLevel: 'Level',
+    profileToNextLevel: 'To next level',
+    profileStatsCourses: 'course completed|courses completed',
+    profileStatsSteps: 'step completed|steps completed',
+    profileStatsQuizzes: 'quiz passed|quizzes passed',
+    profileMyCourses: 'My courses',
+    profileNoCourses: 'You are not enrolled in any course yet.',
+    profileAllCoursesDone: 'All your courses are completed — time to pick a new one!',
+    profileCertificates: 'Certificates',
+    profileRecentQuizzes: 'Recent quiz attempts',
+    profileBrowseCourses: 'Browse courses',
     coursesTitle: 'Courses',
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',
+    coursesResetFilter: 'Show all courses',
     courseSteps: 'Steps',
     courseStepsCount: 'steps',
+    courseStepsPlural: 'step|steps',
+    courseEnrolledPlural: 'learner|learners',
     courseEnroll: 'Enroll in course',
     courseStartLearning: 'Start learning',
     courseContinueLearning: 'Continue learning',
@@ -480,12 +609,15 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     stepNext: 'Next',
     stepProgress: 'Progress',
     stepOf: 'of',
+    stepSingular: 'Step',
+    minutesShort: 'min',
     stepRichText: 'Text',
     stepVideo: 'Video',
     stepFile: 'File',
     stepDownloadFile: 'Download file',
     stepOpenFile: 'Open file',
     courseBackToCourses: 'Back to courses',
+    courseRewardLabel: 'Reward',
     courseBackToOverview: 'Back to overview',
     courseEnrolledCount: 'enrolled',
     courseCompletedCount: 'completed',
@@ -502,6 +634,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizScore: 'Score',
     quizCorrectAnswers: 'Correct Answers',
     quizAttemptNumber: 'Attempt',
+    quizAttemptsUsed: 'Attempts used',
     quizAttemptHistory: 'Attempt History',
     quizTakeQuiz: 'Take Quiz',
     quizRetakeQuiz: 'Retake Quiz',
@@ -513,6 +646,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     quizNotAvailable: 'Quiz not available',
     quizCompleteStepsFirst: 'Complete all course steps to access the quiz',
     commentsTitle: 'Comments',
+    likeLoginPrompt: 'Sign in to like',
     commentsEmpty: 'No comments yet. Be the first!',
     commentsPlaceholder: 'Write a comment…',
     commentsSubmit: 'Submit',

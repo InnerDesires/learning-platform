@@ -1,10 +1,13 @@
 'use client'
 
+import { ArrowRight, Heart } from 'lucide-react'
 import { FadeIn } from './FadeIn'
 import Link from 'next/link'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { Media } from '@/components/Media'
 import type { Media as MediaType } from '@/payload-types'
+import type { SiteLocale } from '@/utilities/locales'
+import { SectionHead } from '@/components/brand'
 
 type NewsItem = {
   title: string
@@ -12,6 +15,7 @@ type NewsItem = {
   excerpt: string
   slug: string
   image?: MediaType | null
+  likes?: number
 }
 
 type Props = {
@@ -23,71 +27,89 @@ type Props = {
   locale: string
 }
 
-export function NewsSection({ tag, title, description, cta, items, locale }: Props) {
+// Fallback covers extracted from the approved design prototype.
+export const POST_FALLBACK_COVERS = [
+  '/illustrations/post-shift-recap.svg',
+  '/illustrations/post-enrollment.svg',
+  '/illustrations/post-achievement.svg',
+  '/illustrations/post-first-aid-training.svg',
+  '/illustrations/post-depot-excursion.svg',
+  '/illustrations/post-story.svg',
+]
+
+export function NewsSection({ tag, title, cta, items, locale }: Props) {
+  const prefix = locale === 'en' ? '/en' : ''
+
+  if (items.length === 0) return null
+
   return (
-    <section className="py-32 bg-gradient-to-b from-secondary/30 to-background">
-      <div className="container">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16 gap-6">
-          <div>
-            <FadeIn>
-              <span className="inline-block px-4 py-1.5 rounded-full bg-[#F99E2D]/10 text-[#F99E2D] text-sm font-semibold tracking-wider uppercase mb-6">
-                {tag}
-              </span>
-            </FadeIn>
-            <FadeIn delay={100}>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-                {title}
-              </h2>
-            </FadeIn>
-            <FadeIn delay={200}>
-              <p className="text-muted-foreground text-lg mt-3">
-                {description}
-              </p>
-            </FadeIn>
-          </div>
-          <FadeIn delay={300}>
+    <>
+      <FadeIn>
+        <SectionHead
+          eyebrow={tag}
+          title={title}
+          action={
             <Link
-              href={`/${locale}/posts`}
-              className="inline-flex items-center gap-2 text-[#1e3b8a] font-semibold hover:gap-3 transition-all duration-300 whitespace-nowrap"
+              href={`${prefix}/posts`}
+              className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[#C9C2B2] px-4.5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-ink transition-colors hover:border-ember hover:text-ember"
             >
               {cta}
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-          </FadeIn>
-        </div>
+          }
+        />
+      </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {items.map((item, i) => (
-            <FadeIn key={i} delay={200 + i * 100}>
-              <article className="group hover:-translate-y-1.5 transition-transform">
-                <Link href={`/${locale}/posts/${item.slug}`} className="block">
-                  <div className="relative h-48 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border border-border/50 mb-5 overflow-hidden">
-                    {item.image && (
-                      <Media
-                        resource={item.image}
-                        fill
-                        imgClassName="object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-white/90 text-foreground text-xs font-medium shadow-sm">
-                        {item.date ? formatDateTime(item.date) : ''}
-                      </span>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item, i) => (
+          <FadeIn key={item.slug} delay={100 + i * 100}>
+            <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-[#E4DFD2] bg-white text-ink transition-all duration-200 hover:-translate-y-1 hover:border-orange hover:shadow-[0_14px_34px_-18px_rgb(14_27_58/0.4)]">
+              <Link href={`${prefix}/posts/${item.slug}`} className="flex flex-1 flex-col">
+                <div className="relative aspect-[16/9] overflow-hidden bg-ink">
+                  {item.image ? (
+                    <Media
+                      resource={item.image}
+                      fill
+                      size="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      imgClassName="object-cover transition-transform duration-300 group-hover:scale-[1.045]"
+                    />
+                  ) : (
+                    <img
+                      src={POST_FALLBACK_COVERS[i % POST_FALLBACK_COVERS.length]}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.045]"
+                      loading="lazy"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-2 p-5">
+                  {item.date && (
+                    <div className="flex gap-2.5 text-[11px] font-bold uppercase tracking-[0.1em] text-ember">
+                      {formatDateTime(item.date, locale as SiteLocale)}
                     </div>
-                  </div>
-                  <h3 className="font-semibold text-lg text-foreground group-hover:text-[#1e3b8a] transition-colors duration-300 mb-2 line-clamp-2">
+                  )}
+                  <h3 className="text-[15.5px] font-bold leading-[1.35] transition-colors group-hover:text-ember">
                     {item.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm line-clamp-2">{item.excerpt}</p>
-                </Link>
-              </article>
-            </FadeIn>
-          ))}
-        </div>
+                  {item.excerpt && (
+                    <p className="line-clamp-2 text-[12.5px] leading-relaxed text-paper-muted">
+                      {item.excerpt}
+                    </p>
+                  )}
+                  {item.likes != null && item.likes > 0 && (
+                    <div className="mt-auto flex items-center gap-3.5 border-t border-[#EBE6D9] pt-3 text-[11.5px] font-semibold text-[#7C7768]">
+                      <span className="num flex items-center gap-1.5">
+                        <Heart className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
+                        {item.likes}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </article>
+          </FadeIn>
+        ))}
       </div>
-    </section>
+    </>
   )
 }

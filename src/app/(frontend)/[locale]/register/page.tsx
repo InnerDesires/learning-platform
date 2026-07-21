@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { RegisterForm } from '@/components/Auth/RegisterForm'
 import { getSession } from '@/lib/auth/getSession'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 
 type Args = {
   params: Promise<{ locale: SiteLocale }>
@@ -12,11 +13,15 @@ type Args = {
 
 export default async function RegisterPage({ params, searchParams }: Args) {
   const { locale } = await params
-  const { redirect: redirectTo } = await searchParams
+  const { redirect: redirectParam } = await searchParams
+
+  const home = locale === defaultLocale ? '/' : `/${locale}`
+  // sanitized return path; undefined keeps each form's own default
+  const redirectTo = redirectParam ? safeRedirectPath(redirectParam, home) : undefined
 
   const session = await getSession()
   if (session?.user) {
-    redirect(redirectTo || '/')
+    redirect(redirectTo ?? home)
   }
 
   const isProduction = process.env.VERCEL_ENV === 'production' || !process.env.VERCEL

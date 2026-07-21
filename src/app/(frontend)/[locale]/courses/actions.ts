@@ -2,8 +2,18 @@
 
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
+
+/** Bust cached course pages (both locales) after an enrollment mutation. */
+function revalidateCoursePages(slug: string) {
+  for (const prefix of ['', '/en']) {
+    revalidatePath(`${prefix}/courses/${slug}`)
+    revalidatePath(`${prefix}/courses/${slug}/steps/[stepIndex]`, 'page')
+    revalidatePath(`${prefix}/courses/${slug}/quiz`)
+  }
+}
 
 export async function enrollInCourse(courseId: number): Promise<{ success: boolean; enrollment?: Enrollment; error?: string }> {
   const session = await getSession()
@@ -35,6 +45,13 @@ export async function enrollInCourse(courseId: number): Promise<{ success: boole
       course: courseId,
     },
   })
+
+  const course = (await payload.findByID({
+    collection: 'courses',
+    id: courseId,
+    depth: 0,
+  })) as Course
+  revalidateCoursePages(course.slug)
 
   return { success: true, enrollment }
 }
@@ -97,6 +114,8 @@ export async function completeStep(
       ...(allComplete ? { completedAt: new Date().toISOString() } : {}),
     },
   })
+
+  revalidateCoursePages(course.slug)
 
   return { success: true, enrollment: updated }
 }
@@ -278,6 +297,8 @@ export async function submitQuizAttempt(
       ...(passed ? { quizPassed: true } : {}),
     },
   })
+
+  revalidateCoursePages(course.slug)
 
   return {
     success: true,

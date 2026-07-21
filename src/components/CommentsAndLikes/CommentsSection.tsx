@@ -19,6 +19,7 @@ interface Labels {
   submit: string
   submitting: string
   loginToComment: string
+  loginToLike?: string
   reply: string
   replying: string
   delete: string
@@ -129,10 +130,10 @@ export function CommentsSection({
 
   return (
     <section className="mt-6">
-      <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+      <h2 className="heading-display mb-6 flex items-center gap-2 text-xl tracking-[0.06em]">
         {labels.title}
         {optimisticComments.length > 0 && (
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="num text-sm font-normal normal-case tracking-normal text-fog">
             ({optimisticComments.length})
           </span>
         )}
@@ -193,9 +194,11 @@ export function CommentsSection({
                 placeholder: labels.placeholder,
                 submit: labels.submit,
                 submitting: labels.submitting,
+                loginToLike: labels.loginToLike,
               }}
               onReply={handleReply}
               onDelete={handleDelete}
+              loginUrl={loginUrl}
             />
           ))}
         </div>

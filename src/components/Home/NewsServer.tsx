@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent } from './content'
 import { NewsSection } from './News'
+import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
 
 type Props = {
   locale: SiteLocale
@@ -24,6 +25,11 @@ export async function NewsSectionServer({ locale }: Props) {
     },
   })
 
+  const likesCounts = await getLikesCountsBatch(
+    'posts',
+    docs.map((post) => post.id),
+  ).catch(() => ({}) as Record<number, number>)
+
   const items = docs.map((post) => {
     const image = post.meta?.image
     return {
@@ -32,6 +38,7 @@ export async function NewsSectionServer({ locale }: Props) {
       date: post.publishedAt ?? '',
       excerpt: post.meta?.description ?? '',
       image: typeof image === 'object' ? image : null,
+      likes: likesCounts[post.id] ?? 0,
     }
   })
 
@@ -44,27 +51,28 @@ export function NewsSectionSkeleton({ locale }: Props) {
   const c = getHomeContent(locale)
 
   return (
-    <section className="py-32 bg-gradient-to-b from-secondary/30 to-background">
-      <div className="container">
-        <div className="mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-[#F99E2D]/10 text-[#F99E2D] text-sm font-semibold tracking-wider uppercase mb-6">
-            {c.news.tag}
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-            {c.news.title}
-          </h2>
-          <p className="text-muted-foreground text-lg mt-3">{c.news.description}</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-48 rounded-2xl bg-muted mb-5" />
-              <div className="h-5 bg-muted rounded w-3/4 mb-2" />
-              <div className="h-4 bg-muted rounded w-full" />
-            </div>
-          ))}
-        </div>
+    <>
+      <div className="mb-9">
+        <span className="eyebrow">{c.news.tag}</span>
+        <h2 className="heading-display mt-2.5 text-[clamp(26px,3.4vw,38px)] text-ink">
+          {c.news.title}
+        </h2>
       </div>
-    </section>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="animate-pulse overflow-hidden rounded-[14px] border border-[#E4DFD2] bg-white"
+          >
+            <div className="aspect-[16/9] bg-[#EBE6D9]" />
+            <div className="space-y-2.5 p-5">
+              <div className="h-4 w-24 rounded bg-[#EBE6D9]" />
+              <div className="h-5 w-3/4 rounded bg-[#EBE6D9]" />
+              <div className="h-4 w-full rounded bg-[#EBE6D9]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   )
 }

@@ -10,6 +10,11 @@ type Props = {
   style?: CSSProperties
 }
 
+/**
+ * Progressive-enhancement reveal: content is visible by default (SSR, no-JS,
+ * reduced-motion). Only elements mounted below the fold are hidden and then
+ * faded in when scrolled into view.
+ */
 export function FadeIn({ children, className, delay = 0, style }: Props) {
   const ref = useRef<HTMLDivElement>(null)
 
@@ -17,15 +22,16 @@ export function FadeIn({ children, className, delay = 0, style }: Props) {
     const el = ref.current
     if (!el) return
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.classList.add('in')
-      return
-    }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    // Already on screen — leave it visible, no entrance animation.
+    if (el.getBoundingClientRect().top < window.innerHeight) return
+
+    el.classList.add('fade-pending')
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add('in')
+          el.classList.remove('fade-pending')
           observer.disconnect()
         }
       },

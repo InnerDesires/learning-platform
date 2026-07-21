@@ -44,6 +44,7 @@
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
   --font-sans: var(--font-montserrat);
+  --font-display: var(--font-oswald);
 }
 
 @layer utilities {
@@ -85,43 +86,74 @@
   }
 }
 
+/* ============ «Залізна енергія» — Iron Energy design system ============
+   Brand-locked palette continuous with ironsquad.org.ua:
+   orange hsl(30 95% 55%) #F98C1F · blue hsl(220 93% 23%) #042871
+   Dark 222° navy surfaces, near-white text, Oswald display + Montserrat body */
+
 :root {
-  --background: oklch(98.5% 0.005 270deg);
-  --foreground: oklch(25% 0.02 270deg);
-  --card: oklch(100% 0 0deg);
-  --card-foreground: oklch(25% 0.02 270deg);
-  --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(25% 0.02 270deg);
-  --primary: oklch(55% 0.25 270deg);
-  --primary-foreground: oklch(100% 0 0deg);
-  --secondary: oklch(95% 0.03 270deg);
-  --secondary-foreground: oklch(40% 0.12 270deg);
-  --muted: oklch(96% 0.01 270deg);
-  --muted-foreground: oklch(55% 0.02 270deg);
-  --accent: oklch(70% 0.2 25deg);
-  --accent-foreground: oklch(100% 0 0deg);
-  --destructive: oklch(57.7% 0.245 27.325deg);
-  --destructive-foreground: oklch(100% 0 0deg);
-  --border: oklch(93% 0.01 270deg);
-  --input: oklch(93% 0.01 270deg);
-  --ring: oklch(55% 0.25 270deg);
-  --chart-1: oklch(55% 0.25 270deg);
-  --chart-2: oklch(70% 0.2 25deg);
-  --chart-3: oklch(72% 0.19 155deg);
-  --chart-4: oklch(82% 0.15 85deg);
-  --chart-5: oklch(65% 0.22 310deg);
+  /* surfaces */
+  --void: #0b1327;
+  --navy: #172749;
+  --navy-2: #223458;
+  --ink: #0e1b3a;
+  /* brand blue */
+  --brand-blue: #042871;
+  --blue-line: #2a54b0;
+  --blue-ill: #5b9bff;
+  /* structure */
+  --line: #284069;
+  --line-2: #39568c;
+  /* brand orange */
+  --orange: #f98c1f;
+  --amber: #ffb24d;
+  --ember: #dc6a11;
+  /* text */
+  --cloud: #f3f7ff;
+  --fog: #bac5dc;
+  --steel: #93a0be;
+  --steel-dim: #697698;
+  /* light "paper" bands */
+  --paper: #f6f1e6;
+  --paper-muted: #5b6379;
+
+  /* semantic (shadcn) tokens mapped onto the palette */
+  --background: var(--void);
+  --foreground: var(--cloud);
+  --card: var(--navy);
+  --card-foreground: var(--cloud);
+  --popover: var(--navy-2);
+  --popover-foreground: var(--cloud);
+  --primary: var(--orange);
+  --primary-foreground: #1b1204;
+  --secondary: var(--navy-2);
+  --secondary-foreground: var(--cloud);
+  --muted: var(--navy-2);
+  --muted-foreground: var(--fog);
+  --accent: var(--navy-2);
+  --accent-foreground: var(--cloud);
+  --destructive: #f0555f;
+  --destructive-foreground: #ffffff;
+  --border: var(--line);
+  --input: var(--line-2);
+  --ring: var(--orange);
+  --chart-1: var(--orange);
+  --chart-2: var(--blue-line);
+  --chart-3: #31c47f;
+  --chart-4: var(--amber);
+  --chart-5: var(--blue-ill);
   --radius: 0.875rem;
-  --sidebar: oklch(98% 0.005 270deg);
-  --sidebar-foreground: oklch(25% 0.02 270deg);
-  --sidebar-primary: oklch(55% 0.25 270deg);
-  --sidebar-primary-foreground: oklch(100% 0 0deg);
-  --sidebar-accent: oklch(95% 0.03 270deg);
-  --sidebar-accent-foreground: oklch(40% 0.12 270deg);
-  --sidebar-border: oklch(93% 0.01 270deg);
-  --sidebar-ring: oklch(55% 0.25 270deg);
-  --success: oklch(72% 0.19 155deg);
-  --warning: oklch(85% 0.15 85deg);
-  --error: oklch(65% 0.2 25deg);
+  --sidebar: var(--navy);
+  --sidebar-foreground: var(--cloud);
+  --sidebar-primary: var(--orange);
+  --sidebar-primary-foreground: #1b1204;
+  --sidebar-accent: var(--navy-2);
+  --sidebar-accent-foreground: var(--cloud);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--orange);
+  --success: #31c47f;
+  --warning: var(--amber);
+  --error: #f0555f;
 }
 
 @theme inline {
@@ -164,14 +196,159 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
+
+  /* brand palette as first-class Tailwind colors */
+  --color-void: var(--void);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-ink: var(--ink);
+  --color-brand-blue: var(--brand-blue);
+  --color-blue-line: var(--blue-line);
+  --color-blue-ill: var(--blue-ill);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-orange: var(--orange);
+  --color-amber: var(--amber);
+  --color-ember: var(--ember);
+  --color-cloud: var(--cloud);
+  --color-fog: var(--fog);
+  --color-steel: var(--steel);
+  --color-steel-dim: var(--steel-dim);
+  --color-paper: var(--paper);
+  --color-paper-muted: var(--paper-muted);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    color-scheme: dark;
+  }
   body {
     @apply bg-background text-foreground min-h-screen flex flex-col;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--orange);
+    color: #1b1204;
+  }
+}
+
+/* ---------- athletic idiom: shared component classes ---------- */
+@layer components {
+  /* orange overline label above section headings */
+  .eyebrow {
+    @apply font-sans text-[11px] font-bold uppercase text-orange;
+    letter-spacing: 0.3em;
+  }
+  .on-paper .eyebrow {
+    color: var(--ember);
+  }
+
+  /* Oswald section heading */
+  .heading-display {
+    @apply font-display font-semibold uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  /* railway-track motif under headings */
+  .rails {
+    width: 96px;
+    height: 11px;
+    position: relative;
+    flex: none;
+  }
+  .rails::before,
+  .rails::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2.5px;
+    background: var(--orange);
+    border-radius: 2px;
+  }
+  .rails::before {
+    top: 0;
+  }
+  .rails::after {
+    bottom: 0;
+  }
+  .rails > i {
+    position: absolute;
+    inset: 2.5px 0;
+    background: repeating-linear-gradient(90deg, var(--orange) 0 2.5px, transparent 2.5px 14px);
+    opacity: 0.6;
+  }
+
+  /* diagonal warm-cream band (landing echo) */
+  .band {
+    position: relative;
+    padding: 96px 0;
+    color: var(--ink);
+  }
+  .band::before {
+    content: '';
+    position: absolute;
+    inset: 28px 0;
+    background: var(--paper);
+    transform: skewY(-2.2deg);
+  }
+  .band > * {
+    position: relative;
+  }
+
+  /* striped progress bar */
+  .pbar {
+    height: 6px;
+    border-radius: 99px;
+    background: rgb(147 160 190 / 0.25);
+    overflow: hidden;
+  }
+  .pbar > i {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+    background: repeating-linear-gradient(-55deg, var(--orange) 0 10px, var(--amber) 10px 20px);
+  }
+
+  /* category chip */
+  .chip {
+    @apply inline-block font-display text-[10.5px] font-semibold uppercase;
+    letter-spacing: 0.14em;
+    padding: 4px 11px;
+    border-radius: 99px;
+    background: rgb(249 140 31 / 0.16);
+    color: var(--amber);
+  }
+
+  /* XP scoreboard chip: ⚡ +NNN XP */
+  .xp-chip {
+    @apply inline-flex items-center gap-1 font-display font-semibold text-amber;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+  }
+  .xp-chip svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* reward pill: Нагорода · +250 XP · Сертифікат */
+  .reward-pill {
+    @apply inline-flex items-center gap-2 font-display font-semibold uppercase text-amber;
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    background: rgb(249 140 31 / 0.12);
+    border: 1px solid rgb(249 140 31 / 0.34);
+    border-radius: 99px;
+    padding: 5px 14px;
+  }
+  .reward-pill svg {
+    width: 13px;
+    height: 13px;
   }
 }
 
@@ -200,22 +377,23 @@
   .animate-marquee-reverse {
     animation: marquee-reverse 30s linear infinite;
   }
+  /* tabular numerals for scores, XP, stats */
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
+/* visible by default; JS hides below-fold elements until they scroll into view */
 .fade-up {
-  opacity: 0;
-  transform: translateY(1.5rem);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
-.fade-up.in {
-  opacity: 1;
-  transform: translateY(0);
+.fade-up.fade-pending {
+  opacity: 0;
+  transform: translateY(1.5rem);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fade-up {
-    opacity: 1;
-    transform: none;
     transition: none;
   }
   .animate-marquee,

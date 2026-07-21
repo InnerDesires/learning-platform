@@ -11,6 +11,7 @@ interface Labels {
   commentsSubmit: string
   commentsSubmitting: string
   commentsLoginToComment: string
+  likeLoginPrompt?: string
   commentsReply: string
   commentsReplying: string
   commentsDelete: string
@@ -39,12 +40,15 @@ export function InteractionClient({
   labels,
 }: InteractionClientProps) {
   return (
-    <div>
+    // #comments — post-login redirects land here so the user resumes the action in place
+    <div id="comments" className="scroll-mt-24">
       <div className="flex items-center gap-4 pt-4 pb-4 pl-2">
         <LikeButton
           targetCollection={targetCollection}
           targetId={targetId}
           isAuthenticated={isAuthenticated}
+          loginUrl={loginUrl}
+          loginPromptLabel={labels.likeLoginPrompt}
         />
       </div>
 
@@ -62,6 +66,7 @@ export function InteractionClient({
           submit: labels.commentsSubmit,
           submitting: labels.commentsSubmitting,
           loginToComment: labels.commentsLoginToComment,
+          loginToLike: labels.likeLoginPrompt,
           reply: labels.commentsReply,
           replying: labels.commentsReplying,
           delete: labels.commentsDelete,

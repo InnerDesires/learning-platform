@@ -8,18 +8,19 @@ interface Props {
   priority?: 'auto' | 'high' | 'low'
 }
 
+/** Official Iron Squad emblem (circular badge). Roughly square — size via height. */
 export const Logo = (props: Props) => {
   const { alt, className, loading = 'eager', priority = 'high' } = props
 
   return (
     <img
-      src="/logo.svg"
+      src="/logo-iron-squad.svg"
       alt={alt || 'Залізна Зміна'}
-      width={150}
-      height={40}
+      width={48}
+      height={44}
       loading={loading}
       fetchPriority={priority}
-      className={clsx('w-auto', className)}
+      className={clsx('w-auto drop-shadow-[0_1px_5px_rgba(0,0,0,0.5)]', className)}
     />
   )
 }

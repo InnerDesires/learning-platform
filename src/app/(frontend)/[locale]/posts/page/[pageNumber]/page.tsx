@@ -3,6 +3,7 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { PageHead } from '@/components/brand'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -39,23 +40,21 @@ export default async function Page({ params: paramsPromise }: Args) {
   })
 
   return (
-    <div className="pt-24 pb-24">
+    <div className="pb-24">
       <PageClient />
-      <div className="container mb-16">
-        <div className="prose max-w-none">
-          <h1>{t.postsTitle}</h1>
-        </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          locale={locale}
-          currentPage={posts.page}
-          limit={12}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
+      <PageHead
+        eyebrow={t.postsEyebrow}
+        title={t.postsTitle}
+        sub={
+          <PageRange
+            collection="posts"
+            locale={locale}
+            currentPage={posts.page}
+            limit={12}
+            totalDocs={posts.totalDocs}
+          />
+        }
+      />
 
       <CollectionArchive locale={locale} posts={posts.docs} />
 

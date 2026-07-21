@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
-import { LogOut, Mail, Shield, Calendar } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, Award, Calendar, Download, LogOut, Mail, Shield, Zap } from 'lucide-react'
 
 import { getPayload } from '@/lib/payload'
 import { requireSession } from '@/lib/auth/requireSession'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale, type SiteLocale } from '@/utilities/locales'
+import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
+import { formatDateTime } from '@/utilities/formatDateTime'
+import { plural } from '@/utilities/plural'
+import type { Course } from '@/payload-types'
 import { SignOutButton } from './SignOutButton'
 
 type Args = {
@@ -17,55 +22,289 @@ export default async function ProfilePage({ params }: Args) {
   const session = await requireSession(locale, profilePath)
   const user = session.user
   const t = getFrontendMessages(locale)
+  const prefix = locale === defaultLocale ? '' : `/${locale}`
 
   const payload = await getPayload()
-  const userDoc = await payload.findByID({
-    collection: 'users',
-    id: Number(user.id),
-  })
+  const [userDoc, enrollments, recentAttempts] = await Promise.all([
+    payload.findByID({
+      collection: 'users',
+      id: Number(user.id),
+    }),
+    payload.find({
+      collection: 'enrollments',
+      where: { user: { equals: Number(user.id) } },
+      sort: '-updatedAt',
+      limit: 100,
+      depth: 1,
+    }),
+    payload.find({
+      collection: 'quiz-attempts',
+      where: { user: { equals: Number(user.id) } },
+      sort: '-createdAt',
+      limit: 5,
+      depth: 1,
+    }),
+  ])
+
+  // XP scoreboard: 30 XP per completed step, 100 XP per passed final quiz.
+  let stepsDone = 0
+  let quizzesPassed = 0
+  for (const enrollment of enrollments.docs) {
+    stepsDone += Array.isArray(enrollment.completedSteps) ? enrollment.completedSteps.length : 0
+    if (enrollment.quizPassed) quizzesPassed += 1
+  }
+  const completed = enrollments.docs.filter(
+    (e) => e.status === 'completed' && typeof e.course === 'object' && e.course,
+  )
+  const inProgress = enrollments.docs.filter(
+    (e) => e.status !== 'completed' && typeof e.course === 'object' && e.course,
+  )
+  const totalXp = stepsDone * STEP_XP + quizzesPassed * QUIZ_XP
+  const { level, intoLevel, span } = levelForXp(totalXp)
+  const levelPct = Math.round((intoLevel / span) * 100)
 
   const initials = (user.name || user.email)?.[0]?.toUpperCase() || '?'
   const joinedDate =
     userDoc?.createdAt != null
-      ? new Date(userDoc.createdAt).toLocaleDateString(
-          locale === 'uk' ? 'uk-UA' : 'en-US',
-          { year: 'numeric', month: 'long', day: 'numeric' },
-        )
+      ? new Date(userDoc.createdAt).toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-GB', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
       : null
+
+  const sectionHeading = 'heading-display mb-4 mt-10 text-xl tracking-[0.06em]'
 
   return (
     <div className="container max-w-2xl py-16">
-      <div className="flex flex-col items-center gap-4 mb-10">
-        <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-primary/20">
+      <div className="mb-8 flex flex-col items-center gap-4">
+        {/* avatar with XP level ring */}
+        <div
+          className="h-24 w-24 rounded-full p-[4px]"
+          style={{
+            background: `conic-gradient(from -90deg, var(--orange) 0 ${levelPct}%, var(--blue-line) ${levelPct}% 100%)`,
+          }}
+        >
           {user.image ? (
             <img
               src={user.image}
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full rounded-full object-cover"
               referrerPolicy="no-referrer"
             />
           ) : (
-            <span className="flex h-full w-full items-center justify-center bg-primary text-primary-foreground text-2xl font-bold">
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-navy-2 font-display text-3xl font-bold text-amber">
               {initials}
             </span>
           )}
         </div>
-        <h1 className="text-2xl font-bold">{user.name}</h1>
+        <div className="text-center">
+          <h1 className="heading-display text-2xl">{user.name}</h1>
+          <p className="num mt-1.5 inline-flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.08em] text-amber">
+            <Zap className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
+            {t.profileLevel} {level} · {totalXp.toLocaleString('uk-UA')} XP
+          </p>
+        </div>
       </div>
 
-      <div className="rounded-xl border bg-card p-6 space-y-5">
-        <div className="flex items-center gap-3">
-          <Mail className="h-5 w-5 text-muted-foreground shrink-0" />
+      {/* XP progress to next level */}
+      <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-6">
+        <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.1em] text-fog">
+          <span>{t.profileToNextLevel}</span>
+          <b className="num text-amber">
+            {intoLevel}/{span} XP
+          </b>
+        </div>
+        <div className="pbar" role="progressbar" aria-valuenow={levelPct} aria-valuemin={0} aria-valuemax={100}>
+          <i style={{ width: `${levelPct}%` }} />
+        </div>
+        <div className="mt-5 grid grid-cols-3 gap-3 text-center">
           <div>
-            <p className="text-xs text-muted-foreground">{t.profileEmail}</p>
+            <p className="num font-display text-3xl font-bold text-orange">{completed.length}</p>
+            <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {plural(locale, completed.length, t.profileStatsCourses)}
+            </p>
+          </div>
+          <div>
+            <p className="num font-display text-3xl font-bold text-orange">{stepsDone}</p>
+            <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {plural(locale, stepsDone, t.profileStatsSteps)}
+            </p>
+          </div>
+          <div>
+            <p className="num font-display text-3xl font-bold text-orange">{quizzesPassed}</p>
+            <p className="mt-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-fog">
+              {plural(locale, quizzesPassed, t.profileStatsQuizzes)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* courses in progress */}
+      <h2 className={sectionHeading}>{t.profileMyCourses}</h2>
+      {inProgress.length === 0 && completed.length === 0 ? (
+        <div className="rounded-2xl border border-line bg-card p-8 text-center">
+          <p className="text-sm text-fog">{t.profileNoCourses}</p>
+          <Link
+            href={`${prefix}/courses`}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            {t.profileBrowseCourses}
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-2.5">
+          {inProgress.map((enrollment) => {
+            const course = enrollment.course as Course
+            const stepsTotal = course.steps?.length ?? 0
+            const done = Array.isArray(enrollment.completedSteps)
+              ? enrollment.completedSteps.length
+              : 0
+            const pct = stepsTotal > 0 ? Math.round((done / stepsTotal) * 100) : 0
+            const nextStep = Math.min(done + 1, Math.max(stepsTotal, 1))
+            return (
+              <Link
+                key={enrollment.id}
+                href={`${prefix}/courses/${course.slug}/steps/${nextStep}`}
+                className="group rounded-xl border border-line bg-card px-5 py-4 transition-colors hover:border-orange/55"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span className="truncate text-sm font-bold transition-colors group-hover:text-amber">
+                    {course.title}
+                  </span>
+                  <span className="num flex-none text-[11px] font-bold uppercase tracking-[0.1em] text-amber">
+                    {done}/{stepsTotal} · {pct}%
+                  </span>
+                </div>
+                <div className="pbar mt-2.5">
+                  <i style={{ width: `${pct}%` }} />
+                </div>
+              </Link>
+            )
+          })}
+          {inProgress.length === 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-card px-5 py-4">
+              <p className="text-sm text-fog">{t.profileAllCoursesDone}</p>
+              <Link
+                href={`${prefix}/courses`}
+                className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+              >
+                {t.profileBrowseCourses}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* certificates */}
+      {completed.length > 0 && (
+        <>
+          <h2 className={sectionHeading}>{t.profileCertificates}</h2>
+          <div className="grid gap-2.5">
+            {completed.map((enrollment) => {
+              const course = enrollment.course as Course
+              const completedAt = enrollment.completedAt ?? enrollment.updatedAt
+              return (
+                <div
+                  key={enrollment.id}
+                  className="flex items-center gap-4 rounded-xl border border-line bg-card px-5 py-3.5 transition-colors hover:border-orange/55"
+                >
+                  <span className="grid h-9 w-9 flex-none place-items-center rounded-full bg-orange/14">
+                    <Award className="h-4 w-4 text-orange" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`${prefix}/courses/${course.slug}`}
+                      className="block truncate text-sm font-bold transition-colors hover:text-amber"
+                    >
+                      {course.title}
+                    </Link>
+                    <p className="num mt-0.5 text-[11px] text-steel">
+                      {t.certificateCompletedOn} {formatDateTime(completedAt, locale)}
+                      {enrollment.bestQuizScore != null && (
+                        <span className="text-success"> · {enrollment.bestQuizScore}%</span>
+                      )}
+                    </p>
+                  </div>
+                  <a
+                    href={`/courses/${course.slug}/certificate`}
+                    download
+                    className="grid h-9 w-9 flex-none place-items-center rounded-full border border-line-2 text-fog transition-colors hover:border-orange hover:text-orange"
+                    aria-label={t.certificateDownload}
+                    title={t.certificateDownload}
+                  >
+                    <Download className="h-4 w-4" />
+                  </a>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* recent quiz attempts */}
+      {recentAttempts.docs.length > 0 && (
+        <>
+          <h2 className={sectionHeading}>{t.profileRecentQuizzes}</h2>
+          <div className="grid gap-2.5">
+            {recentAttempts.docs.map((attempt) => {
+              const course =
+                typeof attempt.course === 'object' && attempt.course
+                  ? (attempt.course as Course)
+                  : null
+              return (
+                <div
+                  key={attempt.id}
+                  className="flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-xl border border-line bg-card px-5 py-3 text-[13px] font-semibold"
+                >
+                  <b
+                    className={`num min-w-[52px] font-display text-[17px] font-semibold ${
+                      attempt.passed ? 'text-success' : 'text-cloud'
+                    }`}
+                  >
+                    {attempt.score}%
+                  </b>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 font-display text-[10.5px] font-semibold uppercase tracking-[0.1em] ${
+                      attempt.passed ? 'bg-success/18 text-success' : 'bg-error/16 text-error'
+                    }`}
+                  >
+                    {attempt.passed ? t.quizPassed : t.quizFailed}
+                  </span>
+                  {course && (
+                    <Link
+                      href={`${prefix}/courses/${course.slug}/quiz`}
+                      className="min-w-0 flex-1 truncate text-fog transition-colors hover:text-cloud"
+                    >
+                      {course.title}
+                    </Link>
+                  )}
+                  <span className="num ml-auto text-xs font-medium text-steel-dim">
+                    {formatDateTime(attempt.createdAt, locale)}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
+      {/* account info */}
+      <div className="mt-10 space-y-5 rounded-2xl border border-line bg-card p-6">
+        <div className="flex items-center gap-3">
+          <Mail className="h-5 w-5 shrink-0 text-orange" />
+          <div>
+            <p className="text-xs text-steel">{t.profileEmail}</p>
             <p className="text-sm font-medium">{user.email}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Shield className="h-5 w-5 text-muted-foreground shrink-0" />
+          <Shield className="h-5 w-5 shrink-0 text-orange" />
           <div>
-            <p className="text-xs text-muted-foreground">{t.profileRole}</p>
+            <p className="text-xs text-steel">{t.profileRole}</p>
             <p className="text-sm font-medium">
               {(user as { role?: string[] }).role?.includes('admin')
                 ? t.profileRoleAdmin
@@ -75,9 +314,9 @@ export default async function ProfilePage({ params }: Args) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-muted-foreground shrink-0" />
+          <Calendar className="h-5 w-5 shrink-0 text-orange" />
           <div>
-            <p className="text-xs text-muted-foreground">{t.profileJoined}</p>
+            <p className="text-xs text-steel">{t.profileJoined}</p>
             <p className="text-sm font-medium">{joinedDate ?? '—'}</p>
           </div>
         </div>
@@ -85,7 +324,7 @@ export default async function ProfilePage({ params }: Args) {
 
       <div className="mt-8 flex justify-center">
         <SignOutButton locale={locale}>
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="mr-2 h-4 w-4" />
           {t.profileSignOut}
         </SignOutButton>
       </div>

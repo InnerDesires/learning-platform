@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { PasswordInput } from './PasswordInput'
 import type { SiteLocale } from '@/utilities/locales'
 import { OTPInput } from '@/components/Auth/OTPInput'
 
@@ -91,7 +92,7 @@ export const ForgotPasswordForm: React.FC<{
   if (step === 'reset') {
     return (
       <div className="mx-auto w-full max-w-md">
-        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.forgotOtpTitle}</h1>
+        <h1 className="heading-display mb-2 text-center text-3xl">{t.forgotOtpTitle}</h1>
         <p className="mb-6 text-center text-sm text-muted-foreground">
           {t.forgotOtpDescription} <span className="font-medium text-foreground">{email}</span>
         </p>
@@ -103,15 +104,15 @@ export const ForgotPasswordForm: React.FC<{
             <label htmlFor="new-password" className="mb-1 block text-sm font-medium">
               {t.forgotNewPassword}
             </label>
-            <input
+            <PasswordInput
               id="new-password"
-              type="password"
               required
               minLength={8}
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+              showLabel={t.passwordShow}
+              hideLabel={t.passwordHide}
             />
             <p className="mt-1 text-xs text-muted-foreground">{t.forgotNewPasswordHint}</p>
           </div>
@@ -161,7 +162,7 @@ export const ForgotPasswordForm: React.FC<{
   // Step 1: Email entry
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.forgotTitle}</h1>
+      <h1 className="heading-display mb-2 text-center text-3xl">{t.forgotTitle}</h1>
       <p className="mb-6 text-center text-sm text-muted-foreground">{t.forgotDescription}</p>
 
       <form onSubmit={handleEmailSubmit} className="space-y-4">

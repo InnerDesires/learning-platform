@@ -5,6 +5,7 @@ import React from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseCatalog } from '@/components/Courses/CourseCatalog'
+import { PageHead } from '@/components/brand'
 import { getSession } from '@/lib/auth/getSession'
 import type { CourseStats } from '@/components/Courses/CourseCard'
 import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
@@ -34,6 +35,7 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
         heroImage: true,
         category: true,
         steps: true,
+        quiz: true,
       },
     }),
     payload.find({
@@ -115,10 +117,8 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
   }))
 
   return (
-    <div className="pt-16 pb-16">
-      <div className="container mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{t.coursesTitle}</h1>
-      </div>
+    <div className="pb-16">
+      <PageHead eyebrow={t.coursesEyebrow} title={t.coursesTitle} sub={t.coursesSub} />
       <div className="container">
         <CourseCatalog
           courses={coursesResult.docs}

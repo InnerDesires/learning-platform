@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CourseCard, type CourseCardData, type CourseStats } from './CourseCard'
 import { CategoryFilter } from './CategoryFilter'
 import type { SiteLocale } from '@/utilities/locales'
@@ -22,7 +23,33 @@ type Props = {
 
 export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, inProgressCourseIds, courseStats, locale }) => {
   const t = getFrontendMessages(locale)
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  // The active filter lives in ?category= so filtered views can be shared,
+  // bookmarked, and deep-linked from search results.
+  const categoryParam = Number(searchParams.get('category'))
+  const initialCategory =
+    Number.isInteger(categoryParam) && categories.some((c) => c.id === categoryParam)
+      ? categoryParam
+      : null
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(initialCategory)
+
+  const handleSelect = useCallback(
+    (categoryId: number | null) => {
+      setSelectedCategory(categoryId)
+      const params = new URLSearchParams(searchParams.toString())
+      if (categoryId === null) {
+        params.delete('category')
+      } else {
+        params.set('category', String(categoryId))
+      }
+      const qs = params.toString()
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+    },
+    [router, pathname, searchParams],
+  )
 
   const filteredCourses = useMemo(() => {
     if (selectedCategory === null) return courses
@@ -39,7 +66,7 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
-            onSelect={setSelectedCategory}
+            onSelect={handleSelect}
             allLabel={t.coursesAllCategories}
           />
         </div>
@@ -58,9 +85,16 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
         ))}
       </div>
       {filteredCourses.length === 0 && (
-        <p className="text-center text-muted-foreground py-12">
-          {t.searchNoResults}
-        </p>
+        <div className="py-12 text-center">
+          <p className="text-muted-foreground">{t.searchNoResults}</p>
+          <button
+            type="button"
+            onClick={() => handleSelect(null)}
+            className="mt-4 inline-flex items-center rounded-full border-[1.5px] border-line-2 px-5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            {t.coursesResetFilter}
+          </button>
+        </div>
       )}
     </div>
   )

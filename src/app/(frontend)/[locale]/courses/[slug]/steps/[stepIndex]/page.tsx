@@ -14,6 +14,9 @@ import { FileEmbed } from '@/components/Courses/FileEmbed'
 import { StepsList } from '@/components/Courses/StepsList'
 import { Button } from '@/components/ui/button'
 import RichText from '@/components/RichText'
+import { ArrowLeft } from 'lucide-react'
+import { XpChip } from '@/components/brand'
+import { STEP_XP } from '@/utilities/xp'
 import type { Course, CourseFile } from '@/payload-types'
 
 type Args = {
@@ -41,7 +44,10 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   ])
 
   if (!session?.user) {
-    redirect('/login')
+    const localePrefix = locale === 'en' ? '/en' : ''
+    redirect(
+      `${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${slug}/steps/${stepIndexStr}`)}`,
+    )
   }
 
   const course = result.docs[0] as Course | undefined
@@ -71,23 +77,33 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   const file = step.blockType === 'fileStep' && step.file && typeof step.file === 'object'
     ? step.file as CourseFile
     : null
+  const stepTypeLabel =
+    step.blockType === 'richTextStep'
+      ? t.stepRichText
+      : step.blockType === 'youtubeVideoStep'
+        ? t.stepVideo
+        : t.stepFile
+  const stepDuration =
+    'duration' in step && typeof step.duration === 'number' && step.duration > 0
+      ? step.duration
+      : null
+
+  const prefix = locale === 'en' ? '/en' : ''
 
   return (
-    <div className="pt-14 pb-16">
+    <div className="pt-10 pb-16">
       <div className="container max-w-7xl">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
           <Link
-            href={`/courses/${slug}`}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1.5"
+            href={`${prefix}/courses/${slug}`}
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-fog transition-colors hover:text-orange"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+            <ArrowLeft className="h-3.5 w-3.5" />
             {t.courseBackToOverview}
           </Link>
-          <span className="text-sm text-muted-foreground font-medium">
-            {stepIndex + 1} / {steps.length}
+          <span className="num font-display text-sm tracking-[0.14em] text-fog">
+            {t.stepSingular} <b className="font-semibold text-amber">{stepIndex + 1}</b> / {steps.length}
           </span>
         </div>
 
@@ -100,8 +116,21 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
         {/* Two-column layout on desktop */}
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main content */}
-          <div className="flex-1 min-w-0 order-2 lg:order-1">
-            <h1 className="text-2xl font-bold mb-5">{stepTitle}</h1>
+          <div className="order-1 min-w-0 flex-1">
+            <h1 className="heading-display mb-2.5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
+
+            <div className="mb-5 flex flex-wrap items-center gap-2.5 text-[12px] font-semibold text-steel">
+              <span>
+                {stepTypeLabel}
+                {stepDuration && (
+                  <span className="num">
+                    {' '}
+                    · {stepDuration} {t.minutesShort}
+                  </span>
+                )}
+              </span>
+              {!isStepCompleted && <XpChip xp={STEP_XP} />}
+            </div>
 
             <div className="mb-8">
               {step.blockType === 'richTextStep' && step.content && (
@@ -138,13 +167,11 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             </div>
 
             {/* Navigation footer */}
-            <div className="flex items-center justify-between gap-4 pt-5 border-t">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t">
               {stepIndex > 0 ? (
-                <Link href={`/courses/${slug}/steps/${stepIndex}`}>
+                <Link href={`${prefix}/courses/${slug}/steps/${stepIndex}`}>
                   <Button variant="outline" size="sm">
-                    <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="15 18 9 12 15 6" />
-                    </svg>
+                    <ArrowLeft className="mr-1 h-4 w-4" />
                     {t.stepPrevious}
                   </Button>
                 </Link>
@@ -170,9 +197,11 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
           </div>
 
           {/* Sidebar steps list — visible on desktop */}
-          <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 order-1 lg:order-2">
-            <div className="lg:sticky lg:top-20">
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">{t.courseSteps}</h3>
+          <aside className="order-2 w-full flex-shrink-0 lg:w-72 xl:w-80">
+            <div className="rounded-2xl border border-line bg-card p-4 lg:sticky lg:top-24">
+              <h3 className="mb-3.5 px-1 font-display text-xs font-semibold uppercase tracking-[0.2em] text-fog">
+                {t.courseSteps}
+              </h3>
               <StepsList
                 steps={steps}
                 courseSlug={slug}
@@ -181,6 +210,13 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
                 linked
                 completedLabel={t.courseCompleted}
                 stepsLabel={t.courseSteps}
+                localePrefix={prefix}
+                compact
+                typeLabels={{
+                  richTextStep: t.stepRichText,
+                  youtubeVideoStep: t.stepVideo,
+                  fileStep: t.stepFile,
+                }}
                 quiz={course.quiz?.enabled ? {
                   enabled: true,
                   passed: enrollment.quizPassed === true,

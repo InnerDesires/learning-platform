@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth/client'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { PasswordInput } from './PasswordInput'
+import { safeRedirectPath } from '@/utilities/safeRedirect'
 import type { SiteLocale } from '@/utilities/locales'
 import { OTPInput } from '@/components/Auth/OTPInput'
 
@@ -16,7 +17,6 @@ export const RegisterForm: React.FC<{
   googleEnabled?: boolean
 }> = ({ locale, redirectTo, googleEnabled = true }) => {
   const t = getFrontendMessages(locale)
-  const router = useRouter()
   const [step, setStep] = useState<Step>('credentials')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -26,7 +26,7 @@ export const RegisterForm: React.FC<{
   const [loading, setLoading] = useState(false)
   const [resendCooldown, setResendCooldown] = useState(0)
 
-  const callbackURL = redirectTo || `/${locale === 'uk' ? '' : locale + '/'}profile`
+  const callbackURL = safeRedirectPath(redirectTo, `/${locale === 'uk' ? '' : locale + '/'}profile`)
 
   // Resend cooldown timer
   useEffect(() => {
@@ -105,8 +105,9 @@ export const RegisterForm: React.FC<{
         setStep('otp')
         setLoading(false)
       } else {
-        router.push(callbackURL)
-        router.refresh()
+        // Full navigation: avoids the client-router race with /register's
+        // authed-user redirect that could bounce the user to the home page.
+        window.location.assign(callbackURL)
       }
     } catch {
       setError(t.registerErrorGeneric)
@@ -151,7 +152,7 @@ export const RegisterForm: React.FC<{
   if (step === 'otp') {
     return (
       <div className="mx-auto w-full max-w-md">
-        <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.otpTitle}</h1>
+        <h1 className="heading-display mb-2 text-center text-3xl">{t.otpTitle}</h1>
         <p className="mb-6 text-center text-sm text-muted-foreground">
           {t.otpSentTo} <span className="font-medium text-foreground">{email}</span>
         </p>
@@ -205,7 +206,7 @@ export const RegisterForm: React.FC<{
   // Step 1: Credentials form
   return (
     <div className="mx-auto w-full max-w-md">
-      <h1 className="mb-2 text-center text-3xl font-bold tracking-tight">{t.registerTitle}</h1>
+      <h1 className="heading-display mb-2 text-center text-3xl">{t.registerTitle}</h1>
 
       <form onSubmit={handleCredentialsSubmit} className="mt-8 space-y-4">
         <div>
@@ -241,15 +242,15 @@ export const RegisterForm: React.FC<{
           <label htmlFor="password" className="mb-1 block text-sm font-medium">
             {t.registerPassword}
           </label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            showLabel={t.passwordShow}
+            hideLabel={t.passwordHide}
           />
           <p className="mt-1 text-xs text-muted-foreground">{t.registerPasswordHint}</p>
         </div>

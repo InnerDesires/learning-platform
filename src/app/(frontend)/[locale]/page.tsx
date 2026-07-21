@@ -5,6 +5,10 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 import { Suspense } from 'react'
 import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsServer'
+import { CoursesGridServer, CoursesGridSkeleton } from '@/components/Home/CoursesServer'
+
+// Home has no per-request personalization on the server — safe to serve from ISR cache.
+export const revalidate = 300
 
 type Args = {
   params: Promise<{
@@ -21,6 +25,11 @@ export default async function Page({ params: paramsPromise }: Args) {
       newsSlot={
         <Suspense fallback={<NewsSectionSkeleton locale={locale} />}>
           <NewsSectionServer locale={locale} />
+        </Suspense>
+      }
+      coursesSlot={
+        <Suspense fallback={<CoursesGridSkeleton />}>
+          <CoursesGridServer locale={locale} />
         </Suspense>
       }
     />

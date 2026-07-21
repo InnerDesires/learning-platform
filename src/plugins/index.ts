@@ -162,7 +162,7 @@ export const plugins: Plugin[] = [
     },
   }),
   searchPlugin({
-    collections: ['posts', 'courses', 'course-categories'],
+    collections: ['posts', 'courses', 'course-categories', 'pages'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       fields: ({ defaultFields }) => {

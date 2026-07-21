@@ -1,10 +1,22 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 
 import { admin } from '../access/admin'
 import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 import { slugField } from 'payload'
 import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 import { populatePublishedAt } from '../hooks/populatePublishedAt'
+
+// Орієнтовна тривалість кроку — показується учням у списках кроків («Відео · 8 хв»).
+const stepDurationField: Field = {
+  name: 'duration',
+  type: 'number',
+  min: 1,
+  max: 600,
+  label: 'Тривалість (хв)',
+  admin: {
+    description: 'Орієнтовний час проходження кроку в хвилинах.',
+  },
+}
 
 export const Courses: CollectionConfig = {
   slug: 'courses',
@@ -125,6 +137,7 @@ export const Courses: CollectionConfig = {
               localized: true,
               label: 'Контент',
             },
+            stepDurationField,
           ],
         },
         {
@@ -159,6 +172,7 @@ export const Courses: CollectionConfig = {
                 return true
               },
             },
+            stepDurationField,
           ],
         },
         {
@@ -185,6 +199,7 @@ export const Courses: CollectionConfig = {
               required: true,
               label: 'Файл (PDF або презентація)',
             },
+            stepDurationField,
           ],
         },
       ],

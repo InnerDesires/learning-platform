@@ -12,6 +12,9 @@ interface LikeButtonProps {
   initialLiked?: boolean
   initialCount?: number
   size?: 'sm' | 'md'
+  /** Guests are sent here (login with a redirect back) instead of a dead disabled button. */
+  loginUrl?: string
+  loginPromptLabel?: string
 }
 
 export function LikeButton({
@@ -21,6 +24,8 @@ export function LikeButton({
   initialLiked,
   initialCount,
   size = 'md',
+  loginUrl,
+  loginPromptLabel,
 }: LikeButtonProps) {
   const [realState, setRealState] = useState({
     liked: initialLiked ?? false,
@@ -48,7 +53,10 @@ export function LikeButton({
   }, [targetCollection, targetId, initialLiked])
 
   const handleToggle = useCallback(() => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated) {
+      if (loginUrl) window.location.assign(loginUrl)
+      return
+    }
 
     startTransition(async () => {
       setOptimistic('toggle')
@@ -57,7 +65,7 @@ export function LikeButton({
         setRealState({ liked: result.liked, count: result.count, loaded: true })
       }
     })
-  }, [isAuthenticated, targetCollection, targetId, setOptimistic])
+  }, [isAuthenticated, loginUrl, targetCollection, targetId, setOptimistic])
 
   const isSm = size === 'sm'
   const iconSize = isSm ? 'w-4 h-4' : 'w-5 h-5'
@@ -72,17 +80,20 @@ export function LikeButton({
     )
   }
 
+  const guestCanLogin = !isAuthenticated && Boolean(loginUrl)
+
   return (
     <button
       type="button"
       onClick={handleToggle}
-      disabled={isPending || !isAuthenticated}
+      disabled={isPending || (!isAuthenticated && !loginUrl)}
+      title={guestCanLogin ? loginPromptLabel : undefined}
       className={`inline-flex items-center gap-1.5 ${textSize} transition-colors duration-200 ${
         optimistic.liked
-          ? 'text-red-500 hover:text-red-600'
-          : 'text-muted-foreground hover:text-red-500'
-      } ${!isAuthenticated ? 'cursor-default opacity-70' : 'cursor-pointer'} disabled:opacity-50`}
-      aria-label={optimistic.liked ? 'Unlike' : 'Like'}
+          ? 'text-orange hover:text-amber'
+          : 'text-muted-foreground hover:text-orange'
+      } ${!isAuthenticated && !loginUrl ? 'cursor-default opacity-70' : 'cursor-pointer'} disabled:opacity-50`}
+      aria-label={guestCanLogin ? loginPromptLabel : optimistic.liked ? 'Unlike' : 'Like'}
     >
       <svg
         className={`${iconSize} transition-transform duration-200 ${isPending ? 'scale-90' : 'scale-100'} ${optimistic.liked ? 'animate-[heartBeat_0.3s_ease-in-out]' : ''}`}
