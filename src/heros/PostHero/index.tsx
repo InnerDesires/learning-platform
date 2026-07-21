@@ -1,12 +1,12 @@
 import { formatDateTime } from 'src/utilities/formatDateTime'
 import React from 'react'
+import Link from 'next/link'
 import { Heart } from 'lucide-react'
-import type { SiteLocale } from '@/utilities/locales'
+import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 
 import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { Rails } from '@/components/brand'
 
@@ -18,8 +18,9 @@ export const PostHero: React.FC<{
   const t = getFrontendMessages(locale)
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
 
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+  const userProfileBase = locale === defaultLocale ? '/users' : `/${locale}/users`
+  const authors = (populatedAuthors ?? []).filter((author) => author.name)
+  const hasAuthors = authors.length > 0
 
   return (
     <div className="relative overflow-hidden">
@@ -54,7 +55,25 @@ export const PostHero: React.FC<{
           <Rails />
 
           <div className="mb-8 mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12.5px] font-semibold text-fog">
-            {hasAuthors && <span className="text-cloud">{formatAuthors(populatedAuthors)}</span>}
+            {hasAuthors && (
+              <span className="text-cloud">
+                {authors.map((author, index) => (
+                  <React.Fragment key={author.id ?? index}>
+                    {index > 0 && ', '}
+                    {author.id ? (
+                      <Link
+                        href={`${userProfileBase}/${author.id}`}
+                        className="transition-colors hover:text-amber"
+                      >
+                        {author.name}
+                      </Link>
+                    ) : (
+                      author.name
+                    )}
+                  </React.Fragment>
+                ))}
+              </span>
+            )}
             {publishedAt && (
               <time className="num text-steel" dateTime={publishedAt}>
                 {formatDateTime(publishedAt, locale)}

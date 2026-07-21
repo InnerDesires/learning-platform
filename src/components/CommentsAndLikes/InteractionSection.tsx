@@ -21,6 +21,7 @@ async function InteractionContent({
 }: InteractionSectionProps) {
   const session = await getSession()
   const t = getFrontendMessages(locale)
+  const userProfileBase = locale === defaultLocale ? '/users' : `/${locale}/users`
   const loginBase = locale === defaultLocale ? '/login' : `/${locale}/login`
   const loginPath = redirectPath
     ? `${loginBase}?redirect=${encodeURIComponent(`${redirectPath}#comments`)}`
@@ -40,6 +41,7 @@ async function InteractionContent({
       currentUserId={currentUserId}
       isAdmin={isAdmin}
       loginUrl={loginPath}
+      userProfileBase={userProfileBase}
       labels={{
         commentsTitle: t.commentsTitle,
         commentsEmpty: t.commentsEmpty,

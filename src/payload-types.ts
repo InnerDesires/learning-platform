@@ -204,6 +204,13 @@ export interface PayloadMcpApiKeyAuthOperations {
  */
 export interface User {
   id: number;
+  socialLinks?:
+    | {
+        platform: 'instagram' | 'facebook' | 'telegram' | 'youtube' | 'tiktok' | 'linkedin' | 'x' | 'website';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Users chosen display name
    */
@@ -1650,6 +1657,13 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
   name?: T;
   email?: T;
   emailVerified?: T;

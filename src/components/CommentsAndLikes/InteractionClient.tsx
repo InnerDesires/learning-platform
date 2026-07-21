@@ -27,6 +27,8 @@ interface InteractionClientProps {
   currentUserId: number | null
   isAdmin: boolean
   loginUrl: string
+  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
+  userProfileBase: string
   labels: Labels
 }
 
@@ -37,6 +39,7 @@ export function InteractionClient({
   currentUserId,
   isAdmin,
   loginUrl,
+  userProfileBase,
   labels,
 }: InteractionClientProps) {
   return (
@@ -59,6 +62,7 @@ export function InteractionClient({
         currentUserId={currentUserId}
         isAdmin={isAdmin}
         loginUrl={loginUrl}
+        userProfileBase={userProfileBase}
         labels={{
           title: labels.commentsTitle,
           empty: labels.commentsEmpty,

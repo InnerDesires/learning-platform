@@ -5,7 +5,14 @@ import configPromise from '@payload-config'
 import { getSession } from '@/lib/auth/getSession'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
 
-export type MyXp = { xp: number; level: number; intoLevel: number; span: number }
+export type MyXp = {
+  xp: number
+  level: number
+  intoLevel: number
+  span: number
+  /** Avatar URL from the users doc — the better-auth session payload omits `image`. */
+  image: string | null
+}
 
 /** Total XP and level for the signed-in user (30 XP/step, 100 XP/passed quiz). */
 export async function getMyXp(): Promise<MyXp | null> {
@@ -13,13 +20,22 @@ export async function getMyXp(): Promise<MyXp | null> {
   if (!session?.user) return null
 
   const payload = await getPayload({ config: configPromise })
-  const { docs } = await payload.find({
-    collection: 'enrollments',
-    where: { user: { equals: Number(session.user.id) } },
-    limit: 1000,
-    depth: 0,
-    select: { completedSteps: true, quizPassed: true },
-  })
+  const [{ docs }, userDoc] = await Promise.all([
+    payload.find({
+      collection: 'enrollments',
+      where: { user: { equals: Number(session.user.id) } },
+      limit: 1000,
+      depth: 0,
+      select: { completedSteps: true, quizPassed: true },
+    }),
+    payload.findByID({
+      collection: 'users',
+      id: Number(session.user.id),
+      depth: 0,
+      select: { image: true },
+      disableErrors: true,
+    }),
+  ])
 
   let steps = 0
   let quizzes = 0
@@ -30,5 +46,5 @@ export async function getMyXp(): Promise<MyXp | null> {
 
   const xp = steps * STEP_XP + quizzes * QUIZ_XP
   const { level, intoLevel, span } = levelForXp(xp)
-  return { xp, level, intoLevel, span }
+  return { xp, level, intoLevel, span, image: userDoc?.image ?? null }
 }

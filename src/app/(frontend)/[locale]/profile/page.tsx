@@ -1,6 +1,26 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Award, Calendar, Download, LogOut, Mail, Shield, Zap } from 'lucide-react'
+import {
+  ArrowRight,
+  Award,
+  Calendar,
+  Download,
+  ExternalLink,
+  Facebook,
+  Globe,
+  Instagram,
+  Linkedin,
+  LogOut,
+  Mail,
+  Music2,
+  Send,
+  Settings,
+  Shield,
+  Twitter,
+  Youtube,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react'
 
 import { getPayload } from '@/lib/payload'
 import { requireSession } from '@/lib/auth/requireSession'
@@ -14,6 +34,17 @@ import { SignOutButton } from './SignOutButton'
 
 type Args = {
   params: Promise<{ locale: SiteLocale }>
+}
+
+const socialIcons: Record<string, LucideIcon> = {
+  instagram: Instagram,
+  facebook: Facebook,
+  telegram: Send,
+  youtube: Youtube,
+  tiktok: Music2,
+  linkedin: Linkedin,
+  x: Twitter,
+  website: Globe,
 }
 
 export default async function ProfilePage({ params }: Args) {
@@ -63,7 +94,11 @@ export default async function ProfilePage({ params }: Args) {
   const { level, intoLevel, span } = levelForXp(totalXp)
   const levelPct = Math.round((intoLevel / span) * 100)
 
-  const initials = (user.name || user.email)?.[0]?.toUpperCase() || '?'
+  // Prefer the DB doc over the session snapshot: the session cookie cache can
+  // lag behind server-action updates (avatar) by up to its 5-minute maxAge.
+  const displayName = userDoc.name || user.name || ''
+  const image = userDoc.image ?? user.image
+  const initials = (displayName || user.email)?.[0]?.toUpperCase() || '?'
   const joinedDate =
     userDoc?.createdAt != null
       ? new Date(userDoc.createdAt).toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'en-GB', {
@@ -85,9 +120,9 @@ export default async function ProfilePage({ params }: Args) {
             background: `conic-gradient(from -90deg, var(--orange) 0 ${levelPct}%, var(--blue-line) ${levelPct}% 100%)`,
           }}
         >
-          {user.image ? (
+          {image ? (
             <img
-              src={user.image}
+              src={image}
               alt=""
               className="h-full w-full rounded-full object-cover"
               referrerPolicy="no-referrer"
@@ -99,11 +134,49 @@ export default async function ProfilePage({ params }: Args) {
           )}
         </div>
         <div className="text-center">
-          <h1 className="heading-display text-2xl">{user.name}</h1>
+          <h1 className="heading-display text-2xl">{displayName}</h1>
           <p className="num mt-1.5 inline-flex items-center gap-1.5 font-display text-sm font-semibold uppercase tracking-[0.08em] text-amber">
             <Zap className="h-3.5 w-3.5" fill="currentColor" strokeWidth={0} />
             {t.profileLevel} {level} · {totalXp.toLocaleString('uk-UA')} XP
           </p>
+        </div>
+
+        {(userDoc.socialLinks?.length ?? 0) > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {userDoc.socialLinks!.map((link) => {
+              const Icon = socialIcons[link.platform] ?? Globe
+              return (
+                <a
+                  key={link.id ?? link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.platform}
+                  title={link.url}
+                  className="grid h-8 w-8 place-items-center rounded-full border border-line-2 text-fog transition-colors hover:border-orange hover:text-orange"
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                </a>
+              )
+            })}
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <Link
+            href={`${prefix}/profile/settings`}
+            className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            <Settings className="h-3.5 w-3.5" />
+            {t.profileSettings}
+          </Link>
+          <Link
+            href={`${prefix}/users/${user.id}`}
+            className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            {t.profileViewPublic}
+          </Link>
         </div>
       </div>
 
