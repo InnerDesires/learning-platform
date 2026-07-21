@@ -31,7 +31,7 @@ export async function Footer({ locale }: { locale: SiteLocale }) {
     <footer className="relative mt-24 overflow-hidden border-t border-line">
       <div className="container">
         <div
-          className="select-none whitespace-nowrap pb-2.5 pt-8 font-display text-[clamp(48px,9vw,118px)] font-bold uppercase leading-none text-transparent [-webkit-text-stroke:1px_rgb(147_160_190/0.3)]"
+          className="select-none whitespace-nowrap pb-2.5 pt-8 font-display text-[clamp(48px,9vw,118px)] font-extrabold uppercase leading-none tracking-[0.02em] text-[rgb(147_160_190/0.07)]"
           aria-hidden="true"
         >
           {t.brandName1} {t.brandName2}

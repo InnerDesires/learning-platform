@@ -107,12 +107,12 @@ export function HeroSection({
         <div className="grid gap-3.5">
           {stats.map((stat, i) => (
             <FadeIn key={stat.label} delay={300 + i * 120}>
-              <div className="flex items-baseline gap-4 rounded-[14px] border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.62),var(--navy))] px-6 py-5 transition-all duration-200 hover:translate-x-1 hover:border-orange/55">
-                <b className="num min-w-[120px] font-display text-[44px] font-bold leading-none text-orange">
+              <div className="flex items-center justify-between gap-4 rounded-[14px] border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.62),var(--navy))] px-6 py-5 transition-all duration-200 hover:translate-x-1 hover:border-orange/55">
+                <b className="num font-display text-[44px] font-extrabold leading-none text-orange">
                   <StatCounter value={stat.value} />
                   {stat.suffix ?? ''}
                 </b>
-                <span className="text-[13px] font-semibold uppercase tracking-[0.08em] text-fog">
+                <span className="max-w-[16ch] text-right text-[13px] font-semibold uppercase tracking-[0.08em] text-fog">
                   {stat.label}
                 </span>
               </div>
