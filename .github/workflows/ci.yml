@@ -22,14 +22,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # ci-base is migration-managed (clean payload_migrations), so the PR's
+      # own migrations can be rehearsed here — unlike `dev`, whose push-managed
+      # bookkeeping makes `payload migrate` hang on an interactive prompt.
       - name: Create Neon branch
         id: neon
         uses: neondatabase/create-branch-action@v5
         with:
           project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
-          parent: dev
+          parent: ci-base
           branch_name: ci/${{ github.run_id }}
           api_key: ${{ secrets.NEON_DEV_API_KEY }}
+
+      - name: Run migrations (rehearses the PR's own migrations pre-merge)
+        run: pnpm payload migrate
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
       - name: Run integration tests
         run: pnpm test:int
