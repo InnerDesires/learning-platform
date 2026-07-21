@@ -49,13 +49,14 @@ const styles = StyleSheet.create({
     width: PAGE_WIDTH,
     height: PAGE_HEIGHT,
   },
-  // White rounded field in the mockup: x 65.7-529.1, top 158.3-199.8
+  // White rounded field, measured from the rasterized artwork: x 65.7-529.1, y 166.2-207.5
+  // (the mockup's text-space coordinates sit ~7.85pt above the rendered artwork)
   nameBox: {
     position: 'absolute',
-    top: 158.3,
+    top: 166.2,
     left: 65.7,
     width: 463.4,
-    height: 41.5,
+    height: 41.3,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -100,11 +101,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
   },
-  // Free dark strip right of the partner logos: below the tagline (bottom 340.2)
-  // and above the bottom-edge ornament (starts at y ~402)
+  // Free dark strip right of the partner logos, below the tagline (artwork bottom ~348);
+  // the bottom-edge ornament does not reach this x-range, so space is clear to the page edge
   qrBox: {
     position: 'absolute',
-    top: 346,
+    top: 356,
     left: 526,
     width: 52,
     height: 52,
