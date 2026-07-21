@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Check, Link2, Share2 } from 'lucide-react'
+import { Check, Facebook, Link2, Send, Share2, Twitter, type LucideIcon } from 'lucide-react'
 
 type Props = {
   url: string
@@ -11,18 +11,24 @@ type Props = {
   copiedLabel: string
 }
 
-const networks = (url: string, title: string) => [
+const networks = (
+  url: string,
+  title: string,
+): { name: string; href: string; icon: LucideIcon }[] => [
   {
     name: 'Telegram',
     href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+    icon: Send,
   },
   {
     name: 'Facebook',
     href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    icon: Facebook,
   },
   {
     name: 'X',
     href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+    icon: Twitter,
   },
 ]
 
@@ -70,6 +76,7 @@ export const ShareButtons: React.FC<Props> = ({ url, title, label, copyLabel, co
           rel="noopener noreferrer"
           className={pill}
         >
+          <network.icon className="h-3.5 w-3.5" />
           {network.name}
         </a>
       ))}
