@@ -24,7 +24,7 @@ export const LanguageSwitcher: React.FC<{ withTestIds?: boolean }> = ({ withTest
   }
 
   return (
-    <div className="flex rounded-full border border-line-2 bg-void/50 p-0.5 text-[10.5px] font-bold">
+    <div className="inline-flex rounded-full border border-line-2 bg-void/50 p-0.5 text-[10.5px] font-bold">
       {locales.map(({ code, label }) => (
         <Link
           key={code}

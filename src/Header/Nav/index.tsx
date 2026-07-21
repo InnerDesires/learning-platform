@@ -108,7 +108,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
               }
             />
           ))}
-          <div className="mt-2 border-t border-line px-4 pb-1 pt-3 sm:hidden">
+          <div className="mt-2 flex justify-center border-t border-line px-4 pb-1 pt-3 sm:hidden">
             <LanguageSwitcher />
           </div>
         </div>
