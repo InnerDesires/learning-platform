@@ -21,6 +21,9 @@ export const LoginForm: React.FC<{
   const [loading, setLoading] = useState(false)
 
   const callbackURL = safeRedirectPath(redirectTo, locale === 'uk' ? '/' : `/${locale}`)
+  // better-auth rejects relative callback URLs containing a #fragment, so the
+  // fragment (e.g. #comments) only rides on the client-side navigation below.
+  const serverCallbackURL = callbackURL.split('#')[0] || '/'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +33,7 @@ export const LoginForm: React.FC<{
     const { error: signInError } = await authClient.signIn.email({
       email,
       password,
-      callbackURL,
+      callbackURL: serverCallbackURL,
     })
 
     if (signInError) {
@@ -46,7 +49,7 @@ export const LoginForm: React.FC<{
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL,
+      callbackURL: serverCallbackURL,
     })
   }
 
