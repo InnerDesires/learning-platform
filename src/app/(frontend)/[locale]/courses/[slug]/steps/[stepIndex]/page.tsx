@@ -167,7 +167,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             </div>
 
             {/* Navigation footer */}
-            <div className="flex items-center justify-between gap-4 pt-5 border-t">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t">
               {stepIndex > 0 ? (
                 <Link href={`${prefix}/courses/${slug}/steps/${stepIndex}`}>
                   <Button variant="outline" size="sm">
