@@ -27,6 +27,9 @@ export const RegisterForm: React.FC<{
   const [resendCooldown, setResendCooldown] = useState(0)
 
   const callbackURL = safeRedirectPath(redirectTo, `/${locale === 'uk' ? '' : locale + '/'}profile`)
+  // better-auth rejects relative callback URLs containing a #fragment, so the
+  // fragment (e.g. #comments) only rides on the client-side navigation below.
+  const serverCallbackURL = callbackURL.split('#')[0] || '/'
 
   // Resend cooldown timer
   useEffect(() => {
@@ -97,7 +100,7 @@ export const RegisterForm: React.FC<{
         name,
         email,
         password,
-        callbackURL,
+        callbackURL: serverCallbackURL,
       })
 
       if (signUpError) {
@@ -131,7 +134,7 @@ export const RegisterForm: React.FC<{
   const handleGoogleSignUp = async () => {
     await authClient.signIn.social({
       provider: 'google',
-      callbackURL,
+      callbackURL: serverCallbackURL,
     })
   }
 
