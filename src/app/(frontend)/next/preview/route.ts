@@ -17,6 +17,13 @@ export async function GET(req: NextRequest): Promise<Response> {
   const slug = searchParams.get('slug')
   const previewSecret = searchParams.get('previewSecret')
 
+  if (!process.env.PREVIEW_SECRET) {
+    payload.logger.error(
+      'PREVIEW_SECRET is not set — live preview requests will always be rejected',
+    )
+    return new Response('Preview is not configured', { status: 500 })
+  }
+
   if (previewSecret !== process.env.PREVIEW_SECRET) {
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
@@ -32,10 +39,11 @@ export async function GET(req: NextRequest): Promise<Response> {
   let user
 
   try {
-    user = await payload.auth({
+    const authResult = await payload.auth({
       req: req as unknown as PayloadRequest,
       headers: req.headers,
     })
+    user = authResult.user
   } catch (error) {
     payload.logger.error({ err: error }, 'Error verifying token for live preview')
     return new Response('You are not allowed to preview this page', { status: 403 })
