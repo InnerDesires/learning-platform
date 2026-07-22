@@ -69,7 +69,7 @@ Hobby auto-builds a preview for **every PR push**, with one concurrent build and
 
 Either way, the invariant is the same: **no automatic Vercel behavior can reach the prod Neon project from a PR.**
 
-> **Current state (2026-07-21):** this invariant is violated today — a Neon↔Vercel integration on the prod project creates `preview/<git-branch>` branches there (forked from production data) for preview deployments; `neon-cleanup.yml` deletes them on PR close. Configuring Option A or B must include disconnecting that integration or repointing it at the dev project.
+> **Resolved 2026-07-22:** this invariant used to be violated — a Neon↔Vercel integration on the prod project created `preview/<git-branch>` branches there (forked from production data) on every PR push, even for builds canceled by the ignored-build-step. The integration has been disconnected; the prod project now holds only the `production` branch. Production env vars survived the disconnect.
 
 ## Flow 4 — Production deployment
 
@@ -107,7 +107,7 @@ document's assumptions are noted inline.
 - [x] Production `DATABASE_URL` verified: Production-scoped (not "all environments"), points at the prod project's `production` branch endpoint.
 - [x] Preview **Option A** implemented via `ignoreCommand` in `vercel.json` (in-repo, overrides the dashboard setting) — non-production builds are skipped. Verified live on PR #58: the preview deployment shows "Canceled by Ignored Build Step".
 - [x] Dashboard Build Command override (`payload migrate && pnpm build`) **cleared** via API — it ran migrations ungated on every environment that built, and it would have silently shadowed the `vercel-build` script. Build behavior is now fully repo-controlled.
-- [ ] **Manual (dashboard-only):** stop the Neon↔Vercel integration from creating `preview/<git-branch>` branches in the prod project. Prefer **disabling its preview-branching setting** (Neon console → prod project → Integrations → Vercel) over uninstalling: the Production `DATABASE_URL`/`DATABASE_URL_UNPOOLED` pair is likely integration-managed (Neon's naming convention), and uninstalling removes integration-owned env vars — the next production build would fail until they're re-added. If uninstalling anyway: snapshot values first (`vercel env pull`), then re-add manually. Afterwards, consider deleting the two stale `preview/*` branches and their per-branch Preview env rows (`gh-pages`, `fix/neon-cleanup-production-project`).
+- [x] Neon↔Vercel integration **disconnected** (2026-07-22). The integration had no setting to disable preview branching alone (branching is its whole feature — it even forked a `preview/*` branch for PR #58's *canceled* preview build), so it was removed via its Disconnect tab after snapshotting env values. Outcome: Production `DATABASE_URL`/`DATABASE_URL_UNPOOLED` survived intact; the per-branch Preview env rows were removed; all `preview/*` branches deleted — the prod project now contains only `production`.
 
 **Phase 3 — Local hygiene & docs** *(done)*
 - [x] `DATABASE_URL` override removed from `.env.local` (this machine; backup at `.env.local.bak-ci-flow`). Root cause documented: `vitest.setup.ts` loads `.env.local` with `override: true`, so a value there beats even explicitly passed env vars.
