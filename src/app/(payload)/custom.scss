@@ -1,0 +1,11 @@
+/* payload-auth hardcodes the English "Or login with" / "Or sign up with"
+   divider on the login and signup views with no translation API — swap the
+   text via CSS. A neutral phrase covers both views. */
+.login-form-methods__divider span {
+  font-size: 0;
+
+  &::after {
+    content: 'або продовжте через';
+    font-size: 12px;
+  }
+}

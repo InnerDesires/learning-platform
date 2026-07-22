@@ -14,13 +14,14 @@ export const FormBlock: Block = {
     {
       name: 'form',
       type: 'relationship',
+      label: 'Форма',
       relationTo: 'forms',
       required: true,
     },
     {
       name: 'enableIntro',
       type: 'checkbox',
-      label: 'Enable Intro Content',
+      label: 'Додати вступний текст',
     },
     {
       name: 'introContent',
@@ -38,14 +39,14 @@ export const FormBlock: Block = {
           ]
         },
       }),
-      label: 'Intro Content',
+      label: 'Вступний текст',
     },
   ],
   graphQL: {
     singularName: 'FormBlock',
   },
   labels: {
-    plural: 'Form Blocks',
-    singular: 'Form Block',
+    plural: 'Блоки форм',
+    singular: 'Блок форми',
   },
 }

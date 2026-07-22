@@ -51,12 +51,26 @@ export default buildConfig({
   serverURL: getServerSideURL(),
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      graphics: {
+        Icon: '@/components/admin/graphics/Icon',
+        Logo: '@/components/admin/graphics/Logo',
+      },
+    },
+    meta: {
+      description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',
+      icons: [
+        { type: 'image/png', rel: 'icon', url: '/favicon-192.png' },
+        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+      ],
+      openGraph: {
+        description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',
+        images: [{ height: 630, url: '/og-image.webp', width: 1200 }],
+        siteName: 'Залізна Зміна',
+        title: 'Панель адміністратора — Залізна Зміна',
+      },
+      titleSuffix: '— Залізна Зміна',
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -115,6 +129,27 @@ export default buildConfig({
   i18n: {
     fallbackLanguage: 'uk',
     supportedLanguages: { uk, en },
+    translations: {
+      uk: {
+        general: {
+          // «Створення нового {{label}}» clashes with feminine/plural labels
+          // (e.g. «нового Форма») — a case-neutral wording avoids that.
+          creatingNewLabel: 'Створення: {{label}}',
+          // Core uk translation says «Налаштування Payload» — strip the vendor name.
+          payloadSettings: 'Налаштування панелі',
+        },
+        // The redirects plugin ships no uk translations, and with fallbackLanguage=uk
+        // the raw `plugin-redirects:*` keys leak into the admin UI without these.
+        'plugin-redirects': {
+          customUrl: 'Власна URL-адреса',
+          documentToRedirect: 'Документ, на який перенаправляти',
+          fromUrl: 'Стара URL-адреса',
+          internalLink: 'Внутрішнє посилання',
+          redirectType: 'Тип перенаправлення',
+          toUrlType: 'Тип цільової адреси',
+        },
+      },
+    },
   },
   localization: {
     locales: [

@@ -2,10 +2,10 @@ import React from 'react'
 
 const BeforeLogin: React.FC = () => {
   return (
-    <div>
+    <div style={{ marginBottom: 'calc(var(--base) * 1.5)', textAlign: 'center' }}>
       <p>
-        <b>Welcome to your dashboard!</b>
-        {' This is where site admins will log in to manage your website.'}
+        <b>Вітаємо в панелі адміністратора!</b>
+        {' Увійдіть, щоб керувати курсами, публікаціями та користувачами платформи.'}
       </p>
     </div>
   )

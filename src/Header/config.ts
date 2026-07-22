@@ -5,7 +5,7 @@ import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
   slug: 'header',
-  label: 'Шапка сайту',
+  label: 'Хедер сайту',
   access: {
     read: () => true,
   },

@@ -14,21 +14,22 @@ const columnFields: Field[] = [
     name: 'size',
     type: 'select',
     defaultValue: 'oneThird',
+    label: 'Ширина колонки',
     options: [
       {
-        label: 'One Third',
+        label: 'Третина',
         value: 'oneThird',
       },
       {
-        label: 'Half',
+        label: 'Половина',
         value: 'half',
       },
       {
-        label: 'Two Thirds',
+        label: 'Дві третини',
         value: 'twoThirds',
       },
       {
-        label: 'Full',
+        label: 'Уся ширина',
         value: 'full',
       },
     ],
@@ -51,6 +52,7 @@ const columnFields: Field[] = [
   {
     name: 'enableLink',
     type: 'checkbox',
+    label: 'Додати посилання',
   },
   link({
     overrides: {
@@ -74,6 +76,12 @@ export const Content: Block = {
         initCollapsed: true,
       },
       fields: columnFields,
+      label: 'Колонки',
+      labels: { singular: 'Колонка', plural: 'Колонки' },
     },
   ],
+  labels: {
+    plural: 'Контент',
+    singular: 'Контент',
+  },
 }
