@@ -59,11 +59,6 @@ type HomeContent = {
     items: { question: string; answer: string }[]
     telegramCta: string
   }
-  video: {
-    tag: string
-    title: string
-    description: string
-  }
   contact: {
     tag: string
     title: string
@@ -224,11 +219,6 @@ const content: Record<SiteLocale, HomeContent> = {
       ],
       telegramCta: 'Задати питання в Telegram',
     },
-    video: {
-      tag: 'Відео',
-      title: 'Подивіться на нас в дії',
-      description: 'Пригоди, навчання та незабутні моменти проєкту «Залізна Зміна»',
-    },
     contact: {
       tag: 'Контакти',
       title: 'Звʼяжіться з нами',
@@ -387,11 +377,6 @@ const content: Record<SiteLocale, HomeContent> = {
         },
       ],
       telegramCta: 'Ask a question on Telegram',
-    },
-    video: {
-      tag: 'Video',
-      title: 'See us in action',
-      description: 'Adventures, learning, and unforgettable moments of the Iron Squad project',
     },
     contact: {
       tag: 'Contact',
