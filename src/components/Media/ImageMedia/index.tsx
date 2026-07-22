@@ -77,11 +77,13 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
-  // NOTE: this is used by the browser to determine which image to download at different screen sizes
+  // NOTE: this is used by the browser to determine which image to download at different screen sizes.
+  // Match the viewport width — next/image already accounts for devicePixelRatio,
+  // so doubling here would double every transformation and payload.
   const sizes = sizeFromProps
     ? sizeFromProps
     : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
+        .map(([, value]) => `(max-width: ${value}px) ${value}px`)
         .join(', ')
 
   return (
@@ -94,7 +96,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         placeholder="blur"
         blurDataURL={placeholderBlur}
         priority={priority}
-        quality={100}
+        quality={80}
         loading={loading}
         sizes={sizes}
         src={src}

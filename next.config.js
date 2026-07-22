@@ -19,6 +19,11 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      // Media is served directly from the Vercel Blob CDN (see src/plugins/index.ts).
+      {
+        hostname: '*.public.blob.vercel-storage.com',
+        protocol: 'https',
+      },
     ],
   },
   webpack: (webpackConfig) => {
