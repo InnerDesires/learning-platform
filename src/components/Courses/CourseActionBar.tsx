@@ -1,7 +1,9 @@
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
-import { getSession } from '@/lib/auth/getSession'
-import { getEnrollment } from '@/app/(frontend)/[locale]/courses/actions'
+import { useCourseUserState } from './CourseUserState'
+import { ActionButtonSkeleton } from './ActionButtonSkeleton'
 import { EnrollButton } from './EnrollButton'
 import { Button } from '@/components/ui/button'
 
@@ -32,10 +34,11 @@ type Props = {
   }
 }
 
-export async function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, localePrefix = '', labels }: Props) {
-  const session = await getSession().catch(() => null)
-  const isLoggedIn = !!session?.user
-  const enrollment = isLoggedIn ? await getEnrollment(courseId) : null
+export function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, localePrefix = '', labels }: Props) {
+  const { loading, isLoggedIn, enrollment } = useCourseUserState()
+
+  if (loading) return <ActionButtonSkeleton />
+
   const isEnrolled = !!enrollment
   const isCompleted = enrollment?.status === 'completed'
 

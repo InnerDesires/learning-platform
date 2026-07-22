@@ -9,6 +9,8 @@ interface LikeButtonProps {
   targetCollection: LikeTargetCollection
   targetId: number
   isAuthenticated: boolean
+  /** When false, the like-state request is deferred (e.g. until scrolled into view). */
+  active?: boolean
   initialLiked?: boolean
   initialCount?: number
   size?: 'sm' | 'md'
@@ -21,6 +23,7 @@ export function LikeButton({
   targetCollection,
   targetId,
   isAuthenticated,
+  active = true,
   initialLiked,
   initialCount,
   size = 'md',
@@ -40,7 +43,7 @@ export function LikeButton({
   const [isPending, startTransition] = useTransition()
 
   useEffect(() => {
-    if (initialLiked !== undefined) return
+    if (initialLiked !== undefined || !active) return
     let cancelled = false
     getLikeInfo(targetCollection, targetId).then((info) => {
       if (!cancelled) {
@@ -50,7 +53,7 @@ export function LikeButton({
     return () => {
       cancelled = true
     }
-  }, [targetCollection, targetId, initialLiked])
+  }, [targetCollection, targetId, initialLiked, active])
 
   const handleToggle = useCallback(() => {
     if (!isAuthenticated) {

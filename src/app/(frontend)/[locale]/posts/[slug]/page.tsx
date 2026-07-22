@@ -16,10 +16,14 @@ import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedLikesCounts } from '@/utilities/contentCounts'
 import { ShareButtons } from '@/components/ShareButtons'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getFrontendMessages } from '@/utilities/i18n'
+
+// Refresh periodically so the baked-in like/comment counts don't go stale;
+// content edits still revalidate immediately via the collection hook.
+export const revalidate = 600
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -58,7 +62,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
-  const postLikesCounts = await getLikesCountsBatch('posts', [post.id])
+  const postLikesCounts = await getCachedLikesCounts('posts')
   const likesCount = postLikesCounts[post.id] ?? 0
   const t = getFrontendMessages(locale)
   const shareUrl = `${getServerSideURL()}${locale === 'en' ? '/en' : ''}/posts/${decodedSlug}`

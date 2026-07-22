@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import type { SiteLocale } from '@/utilities/locales'
+import { locales, type SiteLocale } from '@/utilities/locales'
 import { HomePage } from '@/components/Home'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -8,7 +8,13 @@ import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsSe
 import { CoursesGridServer, CoursesGridSkeleton } from '@/components/Home/CoursesServer'
 
 // Home has no per-request personalization on the server — safe to serve from ISR cache.
+// generateStaticParams is required for that: without it, a dynamic-segment route
+// is rendered per request and `revalidate` has no effect.
 export const revalidate = 300
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
 
 type Args = {
   params: Promise<{

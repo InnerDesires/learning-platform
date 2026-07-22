@@ -7,12 +7,16 @@ import { PageHead } from '@/components/brand'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import type { SiteLocale } from '@/utilities/locales'
+import { locales, type SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedCommentsCounts, getCachedLikesCounts } from '@/utilities/contentCounts'
 
 export const revalidate = 600
+
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
 
 type Args = {
   params: Promise<{
@@ -41,10 +45,9 @@ export default async function Page({ params: paramsPromise }: Args) {
     },
   })
 
-  const postIds = posts.docs.map((p) => p.id)
   const [likesCountMap, commentsCountMap] = await Promise.all([
-    getLikesCountsBatch('posts', postIds),
-    getCommentsCountsBatch('posts', postIds),
+    getCachedLikesCounts('posts'),
+    getCachedCommentsCounts('posts'),
   ])
 
   return (

@@ -9,6 +9,7 @@ import { cn } from '@/utilities/ui'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getMyXp, type MyXp } from '@/actions/xp'
+import { readMyXpCache, writeMyXpCache } from '@/utilities/myXpCache'
 
 interface UserMenuProps {
   locale: SiteLocale
@@ -29,10 +30,18 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       setXp(null)
       return
     }
+    const userId = String(session.user.id)
+    const cached = readMyXpCache(userId)
+    if (cached) {
+      setXp(cached)
+      return
+    }
     let cancelled = false
     getMyXp()
       .then((result) => {
-        if (!cancelled) setXp(result)
+        if (cancelled) return
+        setXp(result)
+        if (result) writeMyXpCache(userId, result)
       })
       .catch(() => {})
     return () => {

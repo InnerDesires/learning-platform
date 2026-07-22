@@ -10,7 +10,7 @@ import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
 import { Rails } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedCommentsCounts, getCachedLikesCounts } from '@/utilities/contentCounts'
 
 type Args = {
   params: Promise<{
@@ -90,10 +90,9 @@ export default async function Page({ params: paramsPromise, searchParams: search
     if (result.docId) searchDocToPostId.push({ searchId: result.id, postId: result.docId })
   }
 
-  const postIds = searchDocToPostId.map((e) => e.postId)
   const [postLikesCounts, postCommentsCounts] = await Promise.all([
-    getLikesCountsBatch('posts', postIds),
-    getCommentsCountsBatch('posts', postIds),
+    getCachedLikesCounts('posts'),
+    getCachedCommentsCounts('posts'),
   ])
 
   const likesCountMap: Record<number, number> = {}

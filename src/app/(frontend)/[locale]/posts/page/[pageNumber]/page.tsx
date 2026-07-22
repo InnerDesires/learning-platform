@@ -11,7 +11,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedCommentsCounts, getCachedLikesCounts } from '@/utilities/contentCounts'
 
 export const revalidate = 600
 
@@ -40,10 +40,9 @@ export default async function Page({ params: paramsPromise }: Args) {
     overrideAccess: false,
   })
 
-  const postIds = posts.docs.map((p) => p.id)
   const [likesCountMap, commentsCountMap] = await Promise.all([
-    getLikesCountsBatch('posts', postIds),
-    getCommentsCountsBatch('posts', postIds),
+    getCachedLikesCounts('posts'),
+    getCachedCommentsCounts('posts'),
   ])
 
   return (

@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { LoaderCircle } from 'lucide-react'
 import { submitQuizAttempt } from '@/app/(frontend)/[locale]/courses/actions'
+import { clearMyXpCache } from '@/utilities/myXpCache'
 import { QuizResults } from './QuizResults'
 
 type Answer = {
@@ -119,6 +120,7 @@ export const QuizForm: React.FC<Props> = ({
     setIsPending(false)
 
     if (response.success && response.attempt) {
+      clearMyXpCache()
       setResult(response.attempt)
     } else {
       setError(response.error ?? 'Something went wrong')
