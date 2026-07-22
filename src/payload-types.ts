@@ -214,25 +214,25 @@ export interface User {
       }[]
     | null;
   /**
-   * Users chosen display name
+   * Відображуване імʼя користувача
    */
   name: string;
   /**
-   * The email of the user
+   * Електронна пошта користувача
    */
   email: string;
   /**
-   * Whether the email of the user has been verified
+   * Чи підтверджено електронну пошту користувача
    */
   emailVerified: boolean;
   /**
-   * The image of the user
+   * Аватар користувача (URL)
    */
   image?: string | null;
   createdAt: string;
   updatedAt: string;
   /**
-   * The role/ roles of the user
+   * Роль або ролі користувача
    */
   role?: ('admin' | 'learner')[] | null;
   account?: {
@@ -248,7 +248,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Accounts are used to store user accounts for authentication providers
+ * Облікові записи користувачів у провайдерів автентифікації.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "accounts".
@@ -256,50 +256,50 @@ export interface User {
 export interface Account {
   id: number;
   /**
-   * The id of the account as provided by the SSO or equal to userId for credential accounts
+   * Ідентифікатор облікового запису від SSO-провайдера (для входу за паролем збігається з ID користувача)
    */
   accountId: string;
   /**
-   * The id of the provider as provided by the SSO
+   * Ідентифікатор провайдера автентифікації
    */
   providerId: string;
   /**
-   * The user that the account belongs to
+   * Користувач, якому належить обліковий запис
    */
   user: number | User;
   /**
-   * The access token of the account. Returned by the provider
+   * Токен доступу, виданий провайдером
    */
   accessToken?: string | null;
   /**
-   * The refresh token of the account. Returned by the provider
+   * Токен оновлення, виданий провайдером
    */
   refreshToken?: string | null;
   /**
-   * The id token for the account. Returned by the provider
+   * ID-токен від провайдера
    */
   idToken?: string | null;
   /**
-   * The date and time when the access token will expire
+   * Дата й час завершення дії токена доступу
    */
   accessTokenExpiresAt?: string | null;
   /**
-   * The date and time when the refresh token will expire
+   * Дата й час завершення дії токена оновлення
    */
   refreshTokenExpiresAt?: string | null;
   /**
-   * The scope of the account. Returned by the provider
+   * Області доступу облікового запису
    */
   scope?: string | null;
   /**
-   * The hashed password of the account. Mainly used for email and password authentication
+   * Хешований пароль — використовується для входу за email і паролем
    */
   password?: string | null;
   createdAt: string;
   updatedAt: string;
 }
 /**
- * Sessions are active sessions for users. They are used to authenticate users with a session token
+ * Активні сесії користувачів. Використовуються для входу за токеном сесії.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "sessions".
@@ -307,30 +307,30 @@ export interface Account {
 export interface Session {
   id: number;
   /**
-   * The date and time when the session will expire
+   * Дата й час завершення сесії
    */
   expiresAt: string;
   /**
-   * The unique session token
+   * Унікальний токен сесії
    */
   token: string;
   createdAt: string;
   updatedAt: string;
   /**
-   * The IP address of the device
+   * IP-адреса пристрою
    */
   ipAddress?: string | null;
   /**
-   * The user agent information of the device
+   * Інформація про браузер і пристрій
    */
   userAgent?: string | null;
   /**
-   * The user that the session belongs to
+   * Користувач, якому належить сесія
    */
   user: number | User;
 }
 /**
- * Verifications are used to verify authentication requests
+ * Запити верифікації (підтвердження email, скидання пароля тощо).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "verifications".
@@ -338,15 +338,15 @@ export interface Session {
 export interface Verification {
   id: number;
   /**
-   * The identifier of the verification request
+   * Ідентифікатор запиту верифікації
    */
   identifier: string;
   /**
-   * The value to be verified
+   * Значення, що підлягає перевірці
    */
   value: string;
   /**
-   * The date and time when the verification request will expire
+   * Дата й час завершення дії запиту
    */
   expiresAt: string;
   createdAt: string;
@@ -915,7 +915,7 @@ export interface Form {
     | null;
   submitButtonLabel?: string | null;
   /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
+   * Оберіть, що станеться після надсилання форми: показ повідомлення на сторінці чи перенаправлення на іншу сторінку.
    */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
@@ -937,7 +937,7 @@ export interface Form {
     url: string;
   };
   /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
+   * Надсилайте власні листи після надсилання форми. Для кількох одержувачів розділяйте адреси комами. Щоб підставити значення з форми, обгорніть імʼя поля подвійними фігурними дужками, напр. {{firstName}}. {{*}} виведе всі дані, а {{*:table}} — у вигляді HTML-таблиці в листі.
    */
   emails?:
     | {
@@ -1180,7 +1180,7 @@ export interface QuizAttempt {
   createdAt: string;
 }
 /**
- * API keys control which collections, resources, tools, and prompts MCP clients can access
+ * API-ключі визначають, до яких колекцій, ресурсів, інструментів і промптів мають доступ MCP-клієнти
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-mcp-api-keys".
@@ -1188,15 +1188,15 @@ export interface QuizAttempt {
 export interface PayloadMcpApiKey {
   id: number;
   /**
-   * The user that the API key is associated with.
+   * Користувач, з яким повʼязано API-ключ
    */
   user: number | User;
   /**
-   * A useful label for the API key.
+   * Зрозуміла назва API-ключа
    */
   label?: string | null;
   /**
-   * The purpose of the API key.
+   * Призначення API-ключа
    */
   description?: string | null;
   posts?: {
@@ -1365,7 +1365,7 @@ export interface PayloadMcpApiKey {
 export interface Redirect {
   id: number;
   /**
-   * You will need to rebuild the website when changing this field.
+   * Після зміни цього поля сайт потрібно перебудувати.
    */
   from: string;
   to?: {
@@ -1402,7 +1402,7 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
- * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ * Колекція результатів пошуку, що створюються автоматично. Використовується глобальним пошуком по сайту й оновлюється під час створення чи зміни документів у CMS.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search".

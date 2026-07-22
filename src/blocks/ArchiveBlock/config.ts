@@ -24,19 +24,20 @@ export const Archive: Block = {
           ]
         },
       }),
-      label: 'Intro Content',
+      label: 'Вступний текст',
     },
     {
       name: 'populateBy',
       type: 'select',
       defaultValue: 'collection',
+      label: 'Джерело наповнення',
       options: [
         {
-          label: 'Collection',
+          label: 'Колекція',
           value: 'collection',
         },
         {
-          label: 'Individual Selection',
+          label: 'Вибрані вручну',
           value: 'selection',
         },
       ],
@@ -48,10 +49,10 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
       defaultValue: 'posts',
-      label: 'Collections To Show',
+      label: 'Колекція для показу',
       options: [
         {
-          label: 'Posts',
+          label: 'Публікації',
           value: 'posts',
         },
       ],
@@ -63,7 +64,7 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
       hasMany: true,
-      label: 'Categories To Show',
+      label: 'Категорії для показу',
       relationTo: 'categories',
     },
     {
@@ -74,7 +75,7 @@ export const Archive: Block = {
         step: 1,
       },
       defaultValue: 10,
-      label: 'Limit',
+      label: 'Кількість',
     },
     {
       name: 'selectedDocs',
@@ -83,12 +84,12 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
       hasMany: true,
-      label: 'Selection',
+      label: 'Вибрані документи',
       relationTo: ['posts'],
     },
   ],
   labels: {
-    plural: 'Archives',
-    singular: 'Archive',
+    plural: 'Архіви',
+    singular: 'Архів',
   },
 }

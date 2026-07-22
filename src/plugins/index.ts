@@ -13,6 +13,7 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { betterAuthPluginOptions } from '@/lib/auth/options'
+import { ukrainianAdmin } from './ukrainianAdmin'
 
 import { Page, Post } from '@/payload-types'
 import { Media } from '@/collections/Media'
@@ -115,7 +116,7 @@ export const plugins: Plugin[] = [
             return {
               ...field,
               admin: {
-                description: 'You will need to rebuild the website when changing this field.',
+                description: 'Після зміни цього поля сайт потрібно перебудувати.',
               },
             }
           }
@@ -170,4 +171,7 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  // Must stay last: rewrites hardcoded English labels of the collections the
+  // plugins above register (auth, forms, search, MCP api keys).
+  ukrainianAdmin,
 ]

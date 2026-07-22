@@ -3,6 +3,7 @@ import { nextCookies } from 'better-auth/next-js'
 import { emailOTP } from 'better-auth/plugins/email-otp'
 import { Resend } from 'resend'
 import { buildOtpEmailHtml } from '@/lib/email/verification-otp'
+import { buildInviteEmailHtml } from '@/lib/email/admin-invite'
 import { consumePreVerified } from '@/lib/auth/pre-verified'
 
 function resolveBaseURL(): string {
@@ -60,8 +61,24 @@ export const betterAuthOptions = {
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => {
+        before: async (user, ctx) => {
           if (user.emailVerified) return
+          // Admin-invite signups (/admin/signup?token=…) never go through the
+          // public OTP flow — a valid invite token authorizes creation instead.
+          // Token sources mirror payload-auth's own invite middleware.
+          const inviteToken =
+            ctx?.headers?.get('x-admin-invite-token') ??
+            (ctx?.query as { adminInviteToken?: string } | undefined)?.adminInviteToken ??
+            (ctx?.body as { adminInviteToken?: string } | undefined)?.adminInviteToken ??
+            (ctx?.body as { additionalData?: { adminInviteToken?: string } } | undefined)
+              ?.additionalData?.adminInviteToken
+          if (typeof inviteToken === 'string' && inviteToken && ctx) {
+            const invitations = await ctx.context.adapter.count({
+              model: 'admin-invitations',
+              where: [{ field: 'token', operator: 'eq', value: inviteToken }],
+            })
+            if (invitations > 0) return
+          }
           if (!consumePreVerified(user.email)) return false
           return { data: { ...user, emailVerified: true } }
         },
@@ -114,6 +131,24 @@ export const betterAuthPluginOptions = {
   },
   verifications: {
     slug: 'verifications',
+  },
+  adminInvitations: {
+    // Required by the "Send Email" button in the admin invite modal — without
+    // it the send-invite endpoint 500s. Goes through payload.sendEmail, i.e.
+    // the Resend adapter in production and the console fallback in dev/CI.
+    sendInviteEmail: async ({ payload, email, url }) => {
+      try {
+        await payload.sendEmail({
+          to: email,
+          subject: 'Запрошення до панелі адміністратора — Залізна Зміна',
+          html: buildInviteEmailHtml(url),
+        })
+        return { success: true }
+      } catch (error) {
+        payload.logger.error({ err: error, msg: 'Failed to send admin invite email' })
+        return { success: false, message: 'Не вдалося надіслати лист із запрошенням' }
+      }
+    },
   },
   betterAuthOptions,
 } satisfies PayloadAuthOptions

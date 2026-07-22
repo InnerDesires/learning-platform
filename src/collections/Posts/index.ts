@@ -153,12 +153,16 @@ export const Posts: CollectionConfig<'posts'> = {
             }),
             MetaTitleField({
               hasGenerateFn: true,
+              overrides: { label: 'Мета-заголовок' },
             }),
             MetaImageField({
               relationTo: 'media',
+              overrides: { label: 'Мета-зображення' },
             }),
 
-            MetaDescriptionField({}),
+            MetaDescriptionField({
+              overrides: { label: 'Мета-опис' },
+            }),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

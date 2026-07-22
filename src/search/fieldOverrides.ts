@@ -19,7 +19,7 @@ export const searchFields: Field[] = [
   },
   {
     name: 'meta',
-    label: 'Meta',
+    label: 'Мета',
     type: 'group',
     index: true,
     admin: {
@@ -29,23 +29,23 @@ export const searchFields: Field[] = [
       {
         type: 'text',
         name: 'title',
-        label: 'Title',
+        label: 'Заголовок',
       },
       {
         type: 'text',
         name: 'description',
-        label: 'Description',
+        label: 'Опис',
       },
       {
         name: 'image',
-        label: 'Image',
+        label: 'Зображення',
         type: 'upload',
         relationTo: 'media',
       },
     ],
   },
   {
-    label: 'Categories',
+    label: 'Категорії',
     name: 'categories',
     type: 'array',
     admin: {

@@ -5,7 +5,7 @@ import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
-  label: 'Підвал сайту',
+  label: 'Футер сайту',
   access: {
     read: () => true,
   },
