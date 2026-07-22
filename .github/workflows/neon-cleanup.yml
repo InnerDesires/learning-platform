@@ -18,3 +18,32 @@ jobs:
           project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
           branch: ${{ github.head_ref }}
           api_key: ${{ secrets.NEON_DEV_API_KEY }}
+
+      # Sessions sometimes create the Neon branch under one random 6-char
+      # suffix and end up pushing the git branch under another (e.g. Neon
+      # `claude/foo-a99fcb` vs git `claude/foo-6ef218`), so the exact-name
+      # delete above misses it and the branch leaks until the project hits
+      # its branch limit. Delete same-stem siblings, sparing any that an
+      # open PR still uses.
+      - name: Delete same-stem session branches (renamed suffix leaks)
+        continue-on-error: true
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_DEV_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_DEV_PROJECT_ID }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          stem=$(printf '%s' "$HEAD_REF" | sed -E 's/-[0-9a-f]{6}$//')
+          if [ "$stem" = "$HEAD_REF" ]; then
+            echo "Head ref has no session suffix — nothing extra to sweep."
+            exit 0
+          fi
+          open_prs=$(curl -sf "https://api.github.com/repos/${{ github.repository }}/pulls?state=open&per_page=100" | jq -r '.[].head.ref') || exit 0
+          npx -y neonctl@2 branches list --project-id "$NEON_PROJECT_ID" --output json \
+            | jq -r '.[].name' \
+            | grep -E "^$(printf '%s' "$stem" | sed 's/[.[\*^$()+?{|]/\\&/g')-[0-9a-f]{6}$" \
+            | while read -r name; do
+                case "$name" in dev|ci-base|preview|main|production) continue ;; esac
+                printf '%s\n' "$open_prs" | grep -qxF "$name" && continue
+                echo "Deleting leaked session branch: $name"
+                npx -y neonctl@2 branches delete "$name" --project-id "$NEON_PROJECT_ID" || true
+              done

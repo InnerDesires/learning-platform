@@ -3,6 +3,12 @@ name: CI
 on:
   pull_request:
 
+# Superseded runs are cancelled; their always() delete steps still run, so
+# rapid pushes don't stack Neon branches toward the project limit.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: Integration tests
@@ -19,6 +25,41 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # The Neon project has a hard branch limit; leaked branches (crashed
+      # runs, dev sessions that never opened a PR, renamed session branches)
+      # eventually block branch creation for every CI run. Sweep them here:
+      # ci/* older than 2h is always garbage; other non-protected branches
+      # are deleted only when >24h old with no open PR using them.
+      - name: Sweep stale Neon branches
+        continue-on-error: true
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_DEV_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_DEV_PROJECT_ID }}
+        run: |
+          now=$(date +%s)
+          if open_prs=$(curl -sf "https://api.github.com/repos/${{ github.repository }}/pulls?state=open&per_page=100" | jq -r '.[].head.ref'); then
+            pr_list_ok=0
+          else
+            pr_list_ok=1
+          fi
+          pnpm exec neonctl branches list --project-id "$NEON_PROJECT_ID" --output json \
+            | jq -r '.[] | "\(.name)\t\(.created_at)"' \
+            | while IFS=$'\t' read -r name created; do
+                case "$name" in dev|ci-base|preview|main|production) continue ;; esac
+                age=$(( now - $(date -d "$created" +%s) ))
+                if [[ "$name" == ci/* ]]; then
+                  [ "$age" -gt 7200 ] || continue
+                else
+                  # Without the open-PR list we cannot tell which session
+                  # branches are still in use — skip them entirely.
+                  [ "$pr_list_ok" -eq 0 ] || continue
+                  printf '%s\n' "$open_prs" | grep -qxF "$name" && continue
+                  [ "$age" -gt 86400 ] || continue
+                fi
+                echo "Deleting stale Neon branch: $name (age ${age}s)"
+                pnpm exec neonctl branches delete "$name" --project-id "$NEON_PROJECT_ID" || true
+              done
 
       # ci-base is migration-managed (clean payload_migrations), so the PR's
       # own migrations can be rehearsed here — unlike `dev`, whose push-managed
@@ -44,8 +85,11 @@ jobs:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
+      # continue-on-error: when branch creation failed (e.g. project branch
+      # limit), this delete has nothing to remove and must not add noise.
       - name: Delete Neon branch
         if: always()
+        continue-on-error: true
         uses: neondatabase/delete-branch-action@v3
         with:
           project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
