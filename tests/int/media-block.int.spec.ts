@@ -8,6 +8,8 @@ const createdPageIds: number[] = []
 const basePage = (suffix: string) => ({
   title: `Media Block Test ${suffix}`,
   slug: `media-block-test-${suffix}-${Date.now()}`,
+  // hero is required by the generated Page type; matches the runtime default
+  hero: { type: 'lowImpact' as const },
   _status: 'published' as const,
 })
 
