@@ -1,11 +1,11 @@
-name: Delete Neon branches on PR close
+name: Delete Neon branch on PR close
 
 on:
   pull_request:
     types: [closed]
 
 jobs:
-  delete-neon-branches:
+  delete-neon-branch:
     runs-on: ubuntu-latest
     steps:
       # Dev-session branch: created manually at session start, named after the
@@ -18,14 +18,3 @@ jobs:
           project_id: ${{ vars.NEON_DEV_PROJECT_ID }}
           branch: ${{ github.head_ref }}
           api_key: ${{ secrets.NEON_DEV_API_KEY }}
-
-      # Preview branch: created by the Neon<->Vercel integration on the
-      # production project for preview deployments (if that integration is
-      # active — see docs/database-workflow.md Flow 3).
-      - name: Delete prod-project preview branch
-        continue-on-error: true
-        uses: neondatabase/delete-branch-action@v3
-        with:
-          project_id: ${{ vars.NEON_PRODUCTION_PROJECT_ID }}
-          branch: preview/${{ github.head_ref }}
-          api_key: ${{ secrets.NEON_API_KEY }}
