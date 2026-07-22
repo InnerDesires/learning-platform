@@ -8,6 +8,7 @@ const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], variable: '--fon
 import React from 'react'
 import NextTopLoader from 'nextjs-toploader'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/next'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NextTopLoader color="var(--primary)" showSpinner={false} height={3} />
         {children}
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )
