@@ -52,11 +52,52 @@ jobs:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
 
+      # Visual baselines are platform-suffixed (…-chromium-linux.png vs
+      # …-chromium-darwin.png). Local dev records darwin baselines via
+      # `pnpm test:e2e:snapshots`; the linux ones can only be recorded on a
+      # linux runner, so on first run (or after a deliberate baseline reset)
+      # this step records them and pushes the commit to the PR branch. The
+      # push triggers a fresh workflow run that then enforces against them.
+      - name: Bootstrap missing Linux visual baselines
+        id: baselines
+        run: |
+          SNAP_DIR="tests/e2e/smoke-locale-content.e2e.spec.ts-snapshots"
+          MISSING=0
+          for name in search-uk search-en posts-uk posts-en; do
+            [ -f "$SNAP_DIR/${name}-chromium-linux.png" ] || MISSING=1
+          done
+          if [ "$MISSING" = "0" ]; then
+            echo "Linux baselines present — enforcing."
+            exit 0
+          fi
+          echo "Linux baselines missing — recording."
+          pnpm test:e2e:snapshots
+          cp -r "$SNAP_DIR" /tmp/snapshots-backup
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin "${{ github.head_ref }}"
+          git checkout -B "${{ github.head_ref }}" "origin/${{ github.head_ref }}"
+          cp /tmp/snapshots-backup/*-chromium-linux.png "$SNAP_DIR/"
+          git add "$SNAP_DIR"
+          git commit -m "test: record linux visual regression baselines"
+          git push origin "${{ github.head_ref }}"
+          # Return to the PR merge ref for the enforcement run below; restore
+          # the freshly recorded baselines as untracked files so the visual
+          # specs compare against them in this run too.
+          git checkout --detach "${{ github.sha }}"
+          cp /tmp/snapshots-backup/*-chromium-linux.png "$SNAP_DIR/"
+        env:
+          DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3100
+          NEXT_PUBLIC_BETTER_AUTH_URL: http://localhost:3100
+          CRON_SECRET: ci-cron-secret
+          PREVIEW_SECRET: ci-preview-secret
+
       - name: Run E2E tests
-        # Skip visual regression snapshot tests — baselines were taken on macOS
-        # and will false-fail on Ubuntu due to font rendering differences.
-        # Run `pnpm test:e2e:snapshots` locally to update them.
-        run: pnpm test:e2e:ci
+        # Full suite including visual regression snapshots (linux baselines).
+        run: pnpm test:e2e
         env:
           DATABASE_URL: ${{ steps.neon.outputs.db_url_with_pooler }}
           PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
