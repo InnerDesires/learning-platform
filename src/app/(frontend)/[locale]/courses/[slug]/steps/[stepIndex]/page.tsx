@@ -14,7 +14,7 @@ import { FileEmbed } from '@/components/Courses/FileEmbed'
 import { StepsList } from '@/components/Courses/StepsList'
 import { Button } from '@/components/ui/button'
 import RichText from '@/components/RichText'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Lock } from 'lucide-react'
 import { XpChip } from '@/components/brand'
 import { STEP_XP } from '@/utilities/xp'
 import type { Course, CourseFile } from '@/payload-types'
@@ -87,6 +87,12 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
     'duration' in step && typeof step.duration === 'number' && step.duration > 0
       ? step.duration
       : null
+  const stepIds = steps.map((s) => s.id ?? '')
+  const quizEnabled = course.quiz?.enabled === true
+  // Completing the current step counts — the quiz opens right after this press.
+  const quizReady =
+    isCourseCompleted ||
+    steps.every((s, i) => i === stepIndex || completedSteps.includes(s.id ?? ''))
 
   const prefix = locale === 'en' ? '/en' : ''
 
@@ -167,6 +173,12 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             </div>
 
             {/* Navigation footer */}
+            {isLastStep && quizEnabled && !quizReady && (
+              <p className="mb-3 flex items-center justify-end gap-1.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-steel">
+                <Lock className="h-3.5 w-3.5 flex-none" />
+                {t.quizCompleteStepsFirst}
+              </p>
+            )}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t">
               {stepIndex > 0 ? (
                 <Link href={`${prefix}/courses/${slug}/steps/${stepIndex}`}>
@@ -184,11 +196,15 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
                 stepBlockId={step.id ?? ''}
                 courseId={course.id}
                 courseSlug={course.slug}
+                stepIds={stepIds}
+                completedSteps={completedSteps}
                 isLastStep={isLastStep}
                 nextStepIndex={stepIndex + 2}
                 isAlreadyCompleted={isStepCompleted}
                 isCourseCompleted={isCourseCompleted}
-                quizEnabled={course.quiz?.enabled === true}
+                quizEnabled={quizEnabled}
+                quizReady={quizReady}
+                localePrefix={prefix}
                 completeLabel={t.stepComplete}
                 startQuizLabel={t.stepStartQuiz}
                 nextLabel={t.stepNext}

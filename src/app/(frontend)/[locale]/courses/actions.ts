@@ -137,8 +137,10 @@ export async function completeStep(
     depth: 0,
   }) as Course
 
-  const totalSteps = course.steps?.length ?? 0
-  const allComplete = newCompletedSteps.length >= totalSteps
+  // Compare against actual step ids (not counts) so stale ids of deleted
+  // steps can never mark a course completed early.
+  const stepIds = (course.steps ?? []).map((s) => s.id).filter((id): id is string => Boolean(id))
+  const allComplete = stepIds.length > 0 && stepIds.every((id) => newCompletedSteps.includes(id))
 
   const updated = await payload.update({
     collection: 'enrollments',
