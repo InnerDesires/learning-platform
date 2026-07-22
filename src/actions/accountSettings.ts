@@ -88,6 +88,22 @@ export async function updateAbout(about: string): Promise<SettingsResult> {
   return { success: true }
 }
 
+export async function updateHideProfileComments(hide: boolean): Promise<SettingsResult> {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: 'AUTH_REQUIRED' }
+
+  if (typeof hide !== 'boolean') return { success: false, error: 'INVALID_VALUE' }
+
+  const payload = await getPayload()
+  await payload.update({
+    collection: 'users',
+    id: Number(session.user.id),
+    data: { hideProfileComments: hide },
+  })
+
+  return { success: true }
+}
+
 type SocialLink = NonNullable<User['socialLinks']>[number]
 
 const SOCIAL_PLATFORMS: SocialLink['platform'][] = [

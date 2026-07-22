@@ -110,6 +110,9 @@ type FrontendMessages = {
   profileSettings: string
   profileViewPublic: string
   publicProfileCompleted: string
+  publicProfileComments: string
+  publicProfileCommentsMore: string
+  publicProfileCommentReply: string
   settingsTitle: string
   settingsBack: string
   settingsNameSection: string
@@ -128,6 +131,9 @@ type FrontendMessages = {
   settingsSocialAdd: string
   settingsSocialRemove: string
   settingsSocialErrorUrl: string
+  settingsPrivacySection: string
+  settingsPrivacyHideComments: string
+  settingsPrivacyHideCommentsHint: string
   settingsProvidersSection: string
   settingsProviderPassword: string
   settingsProviderConnected: string
@@ -165,8 +171,8 @@ type FrontendMessages = {
   courseInProgress: string
   courseOverview: string
   courseLoginToEnroll: string
-  stepCompleteAndContinue: string
   stepComplete: string
+  stepStartQuiz: string
   stepPrevious: string
   stepNext: string
   stepProgress: string
@@ -393,6 +399,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSettings: 'Налаштування',
     profileViewPublic: 'Публічний профіль',
     publicProfileCompleted: 'Завершені курси',
+    publicProfileComments: 'Останні коментарі',
+    publicProfileCommentsMore: 'та ще %d коментар|та ще %d коментарі|та ще %d коментарів',
+    publicProfileCommentReply: 'У відповідь на:',
     settingsTitle: 'Налаштування акаунту',
     settingsBack: 'До профілю',
     settingsNameSection: "Ім'я",
@@ -411,6 +420,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     settingsSocialAdd: 'Додати посилання',
     settingsSocialRemove: 'Прибрати',
     settingsSocialErrorUrl: 'Перевірте посилання — воно має починатися з https://',
+    settingsPrivacySection: 'Приватність',
+    settingsPrivacyHideComments: 'Приховувати мої коментарі в публічному профілі',
+    settingsPrivacyHideCommentsHint:
+      'Відвідувачі вашого профілю не бачитимуть залишених вами коментарів.',
     settingsProvidersSection: 'Способи входу',
     settingsProviderPassword: 'Електронна пошта і пароль',
     settingsProviderConnected: 'Підключено',
@@ -449,8 +462,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'Розпочато',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
-    stepCompleteAndContinue: 'Завершити і продовжити',
     stepComplete: 'Завершити',
+    stepStartQuiz: 'Почати тест',
     stepPrevious: 'Назад',
     stepNext: 'Далі',
     stepProgress: 'Прогрес',
@@ -678,6 +691,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     profileSettings: 'Settings',
     profileViewPublic: 'Public profile',
     publicProfileCompleted: 'Completed courses',
+    publicProfileComments: 'Latest comments',
+    publicProfileCommentsMore: 'and %d more comment|and %d more comments',
+    publicProfileCommentReply: 'In reply to:',
     settingsTitle: 'Account settings',
     settingsBack: 'Back to profile',
     settingsNameSection: 'Name',
@@ -696,6 +712,9 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     settingsSocialAdd: 'Add link',
     settingsSocialRemove: 'Remove',
     settingsSocialErrorUrl: 'Check the link — it must start with https://',
+    settingsPrivacySection: 'Privacy',
+    settingsPrivacyHideComments: 'Hide my comments on my public profile',
+    settingsPrivacyHideCommentsHint: 'Visitors to your profile will not see comments you have left.',
     settingsProvidersSection: 'Sign-in methods',
     settingsProviderPassword: 'Email & password',
     settingsProviderConnected: 'Connected',
@@ -734,8 +753,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'In Progress',
     courseOverview: 'Course overview',
     courseLoginToEnroll: 'Log in to enroll in this course',
-    stepCompleteAndContinue: 'Complete & Continue',
-    stepComplete: 'Mark as complete',
+    stepComplete: 'Finish',
+    stepStartQuiz: 'Start quiz',
     stepPrevious: 'Back',
     stepNext: 'Next',
     stepProgress: 'Progress',

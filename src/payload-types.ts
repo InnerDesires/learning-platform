@@ -205,6 +205,7 @@ export interface PayloadMcpApiKeyAuthOperations {
 export interface User {
   id: number;
   about?: string | null;
+  hideProfileComments?: boolean | null;
   socialLinks?:
     | {
         platform: 'instagram' | 'facebook' | 'telegram' | 'youtube' | 'tiktok' | 'linkedin' | 'x' | 'website';
@@ -1659,6 +1660,7 @@ export interface PayloadMigration {
  */
 export interface UsersSelect<T extends boolean = true> {
   about?: T;
+  hideProfileComments?: T;
   socialLinks?:
     | T
     | {

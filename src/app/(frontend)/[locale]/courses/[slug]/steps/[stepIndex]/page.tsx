@@ -189,8 +189,8 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
                 isAlreadyCompleted={isStepCompleted}
                 isCourseCompleted={isCourseCompleted}
                 quizEnabled={course.quiz?.enabled === true}
-                completeAndContinueLabel={t.stepCompleteAndContinue}
                 completeLabel={t.stepComplete}
+                startQuizLabel={t.stepStartQuiz}
                 nextLabel={t.stepNext}
               />
             </div>
