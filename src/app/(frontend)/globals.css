@@ -353,6 +353,15 @@
   }
 }
 
+/* hide the scrollbar on horizontal chip rows while keeping them scrollable */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @keyframes marquee {
   0% {
     transform: translateX(0);

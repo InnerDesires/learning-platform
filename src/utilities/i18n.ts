@@ -160,6 +160,12 @@ type FrontendMessages = {
   coursesMetaTitle: string
   coursesAllCategories: string
   coursesResetFilter: string
+  coursesPlural: string
+  courseCategoryEyebrow: string
+  courseCategoryMetaTitle: string
+  courseCategoryEmpty: string
+  categorySeeAll: string
+  courseCollectionsTitle: string
   courseSteps: string
   courseStepsCount: string
   courseStepsPlural: string
@@ -451,6 +457,12 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     coursesMetaTitle: 'Курси | Залізна Зміна',
     coursesAllCategories: 'Усі категорії',
     coursesResetFilter: 'Показати всі курси',
+    coursesPlural: 'курс|курси|курсів',
+    courseCategoryEyebrow: 'Категорія',
+    courseCategoryMetaTitle: '{title} — Курси | Залізна Зміна',
+    courseCategoryEmpty: 'У цій категорії поки немає курсів.',
+    categorySeeAll: 'Дивитися всі',
+    courseCollectionsTitle: 'Добірки за категоріями',
     courseSteps: 'Кроки',
     courseStepsCount: 'кроків',
     courseStepsPlural: 'крок|кроки|кроків',
@@ -742,6 +754,12 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     coursesMetaTitle: 'Courses | Iron Squad',
     coursesAllCategories: 'All categories',
     coursesResetFilter: 'Show all courses',
+    coursesPlural: 'course|courses',
+    courseCategoryEyebrow: 'Category',
+    courseCategoryMetaTitle: '{title} — Courses | Iron Squad',
+    courseCategoryEmpty: 'No courses in this category yet.',
+    categorySeeAll: 'See all',
+    courseCollectionsTitle: 'Category collections',
     courseSteps: 'Steps',
     courseStepsCount: 'steps',
     courseStepsPlural: 'step|steps',

@@ -61,7 +61,9 @@ export const Card: React.FC<{
   const prefix = effectiveLocale === 'en' ? '/en' : ''
   const href =
     effectiveRelationTo === 'course-categories'
-      ? `${prefix}/courses${docId ? `?category=${docId}` : ''}`
+      ? slug
+        ? `${prefix}/courses/category/${slug}`
+        : `${prefix}/courses${docId ? `?category=${docId}` : ''}`
       : effectiveRelationTo === 'pages'
         ? `${prefix}/${slug}`
         : `${prefix}/${effectiveRelationTo}/${slug}`

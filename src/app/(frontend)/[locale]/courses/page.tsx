@@ -5,16 +5,12 @@ import React, { Suspense } from 'react'
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseCatalog } from '@/components/Courses/CourseCatalog'
+import { CategoryCarousels } from '@/components/Courses/CategoryCarousels'
 import { PageHead } from '@/components/brand'
-import type { CourseStats } from '@/components/Courses/CourseCard'
-import {
-  getCachedCommentsCounts,
-  getCachedEnrollmentStats,
-  getCachedLikesCounts,
-} from '@/utilities/contentCounts'
+import { getCatalogData } from '@/lib/courses/getCatalogData'
 
 // The catalog is the same for everyone — per-user progress badges are fetched
-// client-side (getMyCourseStatuses), so this page can be served from the ISR cache.
+// client-side (useMyCourseStatuses), so this page can be served from the ISR cache.
 export const revalidate = 300
 
 export function generateStaticParams() {
@@ -30,57 +26,16 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
   const t = getFrontendMessages(locale)
   const payload = await getPayload({ config: configPromise })
 
-  const [coursesResult, categoriesResult, enrollmentStats, courseLikesCounts, courseCommentsCounts] =
-    await Promise.all([
-      payload.find({
-        collection: 'courses',
-        locale,
-        depth: 1,
-        limit: 100,
-        sort: '-createdAt',
-        where: { _status: { equals: 'published' } },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          description: true,
-          heroImage: true,
-          category: true,
-          steps: true,
-          quiz: true,
-        },
-      }),
-      payload.find({
-        collection: 'course-categories',
-        locale,
-        limit: 50,
-        sort: 'title',
-        select: { id: true, title: true },
-      }),
-      getCachedEnrollmentStats(),
-      getCachedLikesCounts('courses'),
-      getCachedCommentsCounts('courses'),
-    ])
-
-  const courseStats: Record<number, CourseStats> = {}
-  const statFor = (cid: number): CourseStats => {
-    if (!courseStats[cid]) courseStats[cid] = { enrolledCount: 0, completedCount: 0 }
-    return courseStats[cid]
-  }
-
-  for (const [cidStr, stats] of Object.entries(enrollmentStats)) {
-    const stat = statFor(Number(cidStr))
-    stat.enrolledCount = stats.enrolledCount
-    stat.completedCount = stats.completedCount
-  }
-
-  for (const [cidStr, count] of Object.entries(courseLikesCounts)) {
-    statFor(Number(cidStr)).likesCount = count
-  }
-
-  for (const [cidStr, count] of Object.entries(courseCommentsCounts)) {
-    statFor(Number(cidStr)).commentsCount = count
-  }
+  const [{ courses, courseStats }, categoriesResult] = await Promise.all([
+    getCatalogData({ payload, locale }),
+    payload.find({
+      collection: 'course-categories',
+      locale,
+      limit: 50,
+      sort: 'title',
+      select: { id: true, title: true },
+    }),
+  ])
 
   const categories = categoriesResult.docs.map((c) => ({
     id: c.id,
@@ -95,10 +50,17 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
             must not block static prerendering of the rest of the page. */}
         <Suspense>
           <CourseCatalog
-            courses={coursesResult.docs}
+            courses={courses}
             categories={categories}
             courseStats={courseStats}
             locale={locale}
+          />
+        </Suspense>
+        <Suspense fallback={null}>
+          <CategoryCarousels
+            locale={locale}
+            heading={t.courseCollectionsTitle}
+            className="mt-16 border-t border-line pt-10"
           />
         </Suspense>
       </div>

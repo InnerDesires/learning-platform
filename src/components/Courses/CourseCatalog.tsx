@@ -1,13 +1,12 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CourseCard, type CourseCardData, type CourseStats } from './CourseCard'
 import { CategoryFilter } from './CategoryFilter'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { useSession } from '@/lib/auth/client'
-import { getMyCourseStatuses, type MyCourseStatuses } from '@/app/(frontend)/[locale]/courses/actions'
+import { useMyCourseStatuses } from './useMyCourseStatuses'
 
 type Category = {
   id: number
@@ -21,8 +20,6 @@ type Props = {
   locale: SiteLocale
 }
 
-const NO_STATUSES: MyCourseStatuses = { completed: [], inProgress: [] }
-
 export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStats, locale }) => {
   const t = getFrontendMessages(locale)
   const router = useRouter()
@@ -31,23 +28,7 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStat
 
   // Per-user progress badges load after hydration so the page itself can be
   // served from the shared ISR cache. Guests never trigger the request.
-  const { data: session } = useSession()
-  const [myStatuses, setMyStatuses] = useState<MyCourseStatuses>(NO_STATUSES)
-  useEffect(() => {
-    if (!session?.user) {
-      setMyStatuses(NO_STATUSES)
-      return
-    }
-    let cancelled = false
-    getMyCourseStatuses()
-      .then((statuses) => {
-        if (!cancelled) setMyStatuses(statuses)
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [session?.user])
+  const myStatuses = useMyCourseStatuses()
 
   // The active filter lives in ?category= so filtered views can be shared,
   // bookmarked, and deep-linked from search results.

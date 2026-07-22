@@ -6,6 +6,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { Suspense } from 'react'
 import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsServer'
 import { CoursesGridServer, CoursesGridSkeleton } from '@/components/Home/CoursesServer'
+import { CategoryCarousels } from '@/components/Courses/CategoryCarousels'
 
 // Home has no per-request personalization on the server — safe to serve from ISR cache.
 // generateStaticParams is required for that: without it, a dynamic-segment route
@@ -34,9 +35,14 @@ export default async function Page({ params: paramsPromise }: Args) {
         </Suspense>
       }
       coursesSlot={
-        <Suspense fallback={<CoursesGridSkeleton />}>
-          <CoursesGridServer locale={locale} />
-        </Suspense>
+        <>
+          <Suspense fallback={<CoursesGridSkeleton />}>
+            <CoursesGridServer locale={locale} />
+          </Suspense>
+          <Suspense fallback={null}>
+            <CategoryCarousels locale={locale} className="mt-12" />
+          </Suspense>
+        </>
       }
     />
   )
