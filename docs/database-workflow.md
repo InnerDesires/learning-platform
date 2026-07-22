@@ -62,12 +62,14 @@ Both `ci.yml` (Vitest integration) and `e2e.yml` (Playwright) follow the same sh
 
 ## Flow 3 — Preview deployments (Vercel, Hobby plan)
 
-Hobby auto-builds a preview for **every PR push**, with one concurrent build and shared build-minute quota. Two acceptable configurations — pick one and write it down in the Vercel dashboard:
+Hobby auto-builds a preview for **every PR push**, with one concurrent build and shared build-minute quota. GitHub Actions already tests every PR, so automatic previews are redundant CI — instead previews are **on-demand** (implemented 2026-07-22):
 
-- **Option A — previews off (default recommendation, implemented).** `ignoreCommand` in `vercel.json`: `if [ "$VERCEL_ENV" = "production" ]; then exit 1; else exit 0; fi` (Vercel semantics: exit 0 skips the build, exit 1 proceeds — note an earlier draft of this doc had the test inverted). GitHub Actions already tests every PR; the preview build is redundant CI that queues behind production deploys. Costs nothing to re-enable later.
-- **Option B — previews on, sandboxed.** Preview-scoped `DATABASE_URL` (env scoping works on Hobby) pointing at the long-lived `preview` branch in the **dev** project — never the prod project. Previews must **never run migrations** (see Flow 4's gate); a schema-changing PR's preview may render errors against the older preview schema — that's accepted and expected. Periodically reset `preview` from `ci-base`.
+- **Default: skipped.** `ignoreCommand` in `vercel.json` exits 0 (= skip; exit 1 = build — note an earlier draft of this doc had the test inverted) for every non-production build without an opt-in.
+- **Opt-in per push:** include `[preview]` anywhere in the commit message and that push gets a preview deployment. For a preview without code changes: `git commit --allow-empty -m "chore: preview [preview]" && git push`.
+- **Ad-hoc from a machine:** `vercel deploy` builds a preview of the current checkout any time (CLI deploys don't consult `ignoreCommand`).
+- **Database:** Preview-scoped `DATABASE_URL` points at the long-lived `preview` branch in the **dev** project (forked from `dev`, so it carries seed content) — never the prod project. Previews **never run migrations** (Flow 4's gate is production-only); a schema-changing PR's preview may render errors against the older preview schema — accepted and expected. If the preview schema falls behind or the data gets messy, reset it: delete the `preview` branch and re-fork it from `dev` (then update the Preview `DATABASE_URL` if the endpoint changed).
 
-Either way, the invariant is the same: **no automatic Vercel behavior can reach the prod Neon project from a PR.**
+The invariant is unchanged: **no automatic Vercel behavior can reach the prod Neon project from a PR.**
 
 > **Resolved 2026-07-22:** this invariant used to be violated — a Neon↔Vercel integration on the prod project created `preview/<git-branch>` branches there (forked from production data) on every PR push, even for builds canceled by the ignored-build-step. The integration has been disconnected; the prod project now holds only the `production` branch. Production env vars survived the disconnect.
 
