@@ -7,6 +7,7 @@ import { Montserrat } from 'next/font/google'
 const montserrat = Montserrat({ subsets: ['latin', 'cyrillic'], variable: '--font-montserrat', display: 'swap' })
 import React from 'react'
 import NextTopLoader from 'nextjs-toploader'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <NextTopLoader color="var(--primary)" showSpinner={false} height={3} />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   )
