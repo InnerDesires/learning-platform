@@ -16,8 +16,8 @@ type Props = {
   isAlreadyCompleted: boolean
   isCourseCompleted: boolean
   quizEnabled?: boolean
-  completeAndContinueLabel: string
   completeLabel: string
+  startQuizLabel: string
   nextLabel: string
 }
 
@@ -31,8 +31,8 @@ export const CompleteStepButton: React.FC<Props> = ({
   isAlreadyCompleted,
   isCourseCompleted,
   quizEnabled,
-  completeAndContinueLabel,
   completeLabel,
+  startQuizLabel,
   nextLabel,
 }) => {
   const [isPending, startTransition] = useTransition()
@@ -54,24 +54,18 @@ export const CompleteStepButton: React.FC<Props> = ({
     })
   }
 
-  if (isCourseCompleted || isAlreadyCompleted) {
-    return (
-      <Button
-        onClick={handleComplete}
-        disabled={isPending}
-        variant={isLastStep ? 'outline' : 'default'}
-        size="lg"
-      >
-        {isPending && <LoaderCircle className="w-4 h-4 animate-spin" />}
-        {isLastStep ? completeLabel : nextLabel}
-      </Button>
-    )
-  }
+  const label = isLastStep ? (quizEnabled ? startQuizLabel : completeLabel) : nextLabel
+  const isDone = isCourseCompleted || isAlreadyCompleted
 
   return (
-    <Button onClick={handleComplete} disabled={isPending} size="lg">
+    <Button
+      onClick={handleComplete}
+      disabled={isPending}
+      variant={isDone && isLastStep && !quizEnabled ? 'outline' : 'default'}
+      size="lg"
+    >
       {isPending && <LoaderCircle className="w-4 h-4 animate-spin" />}
-      {isLastStep ? completeLabel : completeAndContinueLabel}
+      {label}
     </Button>
   )
 }

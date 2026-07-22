@@ -26,6 +26,12 @@ export const Users: CollectionConfig = {
       maxLength: 500,
     },
     {
+      name: 'hideProfileComments',
+      type: 'checkbox',
+      label: 'Приховувати коментарі в публічному профілі',
+      defaultValue: false,
+    },
+    {
       name: 'socialLinks',
       type: 'array',
       label: 'Соціальні мережі',

@@ -13,6 +13,7 @@ import * as migration_20260721_120000_step_duration from './20260721_120000_step
 import * as migration_20260721_140000_add_user_social_links from './20260721_140000_add_user_social_links';
 import * as migration_20260721_150000_add_user_about from './20260721_150000_add_user_about';
 import * as migration_20260721_233000_reconcile_schema_drift from './20260721_233000_reconcile_schema_drift';
+import * as migration_20260722_090000_add_user_hide_profile_comments from './20260722_090000_add_user_hide_profile_comments';
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20260721_233000_reconcile_schema_drift.up,
     down: migration_20260721_233000_reconcile_schema_drift.down,
     name: '20260721_233000_reconcile_schema_drift',
+  },
+  {
+    up: migration_20260722_090000_add_user_hide_profile_comments.up,
+    down: migration_20260722_090000_add_user_hide_profile_comments.down,
+    name: '20260722_090000_add_user_hide_profile_comments',
   },
 ];

@@ -10,6 +10,7 @@ import { AboutForm } from '@/components/AccountSettings/AboutForm'
 import { NameForm } from '@/components/AccountSettings/NameForm'
 import { AvatarForm } from '@/components/AccountSettings/AvatarForm'
 import { SocialLinksForm } from '@/components/AccountSettings/SocialLinksForm'
+import { PrivacyForm } from '@/components/AccountSettings/PrivacyForm'
 import { ConnectedProviders } from '@/components/AccountSettings/ConnectedProviders'
 import { PasswordForm } from '@/components/AccountSettings/PasswordForm'
 
@@ -77,6 +78,9 @@ export default async function SettingsPage({ params }: Args) {
 
       <h2 className={sectionHeading}>{t.settingsSocialSection}</h2>
       <SocialLinksForm locale={locale} initialLinks={initialLinks} />
+
+      <h2 className={sectionHeading}>{t.settingsPrivacySection}</h2>
+      <PrivacyForm locale={locale} initialHideComments={userDoc.hideProfileComments === true} />
 
       <h2 className={sectionHeading}>{t.settingsProvidersSection}</h2>
       <ConnectedProviders

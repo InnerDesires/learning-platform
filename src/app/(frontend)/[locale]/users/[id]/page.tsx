@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
@@ -22,6 +23,10 @@ import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { plural } from '@/utilities/plural'
+import {
+  ProfileLatestComments,
+  ProfileLatestCommentsSkeleton,
+} from '@/components/Profile/ProfileLatestComments'
 import type { Course, User } from '@/payload-types'
 
 type Args = {
@@ -39,8 +44,9 @@ const socialIcons: Record<string, LucideIcon> = {
   website: Globe,
 }
 
-// Public profile: only name, avatar, XP, social links, and completed courses.
-// Never render email, role, quiz attempts, or in-progress enrollments here.
+// Public profile: only name, avatar, XP, social links, completed courses, and
+// recent comments (unless hideProfileComments is set). Never render email,
+// role, quiz attempts, or in-progress enrollments here.
 async function getPublicUser(id: number): Promise<User | null> {
   if (!Number.isInteger(id) || id <= 0) return null
   const payload = await getPayload()
@@ -210,6 +216,13 @@ export default async function PublicProfilePage({ params }: Args) {
             })}
           </div>
         </>
+      )}
+
+      {/* latest comments — streamed after first paint so they never block the page */}
+      {user.hideProfileComments !== true && (
+        <Suspense fallback={<ProfileLatestCommentsSkeleton />}>
+          <ProfileLatestComments userId={user.id} locale={locale} />
+        </Suspense>
       )}
 
       {/* joined date */}
