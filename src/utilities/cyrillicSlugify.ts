@@ -4,7 +4,7 @@ import type { PayloadRequest } from 'payload'
 export const cyrillicSlugify = ({
   valueToSlugify,
 }: {
-  data: any
+  data: unknown
   req: PayloadRequest
   valueToSlugify?: string
 }): string | undefined => {
