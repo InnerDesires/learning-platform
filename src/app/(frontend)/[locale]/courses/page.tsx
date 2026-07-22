@@ -1,10 +1,11 @@
 import type { Metadata } from 'next/types'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import React from 'react'
+import React, { Suspense } from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseCatalog } from '@/components/Courses/CourseCatalog'
+import { CategoryCarousels } from '@/components/Courses/CategoryCarousels'
 import { PageHead } from '@/components/brand'
 import { getCatalogData } from '@/lib/courses/getCatalogData'
 
@@ -46,6 +47,13 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
           courseStats={courseStats}
           locale={locale}
         />
+        <Suspense fallback={null}>
+          <CategoryCarousels
+            locale={locale}
+            heading={t.courseCollectionsTitle}
+            className="mt-16 border-t border-line pt-10"
+          />
+        </Suspense>
       </div>
     </div>
   )
