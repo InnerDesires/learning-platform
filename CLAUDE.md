@@ -84,6 +84,8 @@ pnpm exec neonctl connection-string <BRANCH_ID> --pooled \
 DATABASE_URL=<connection_string>
 ```
 
+**Never set `DATABASE_URL` in `.env.local`** — `vitest.setup.ts` loads `.env.local` with `override: true`, so a value there silently beats both `.env` and explicitly passed env vars.
+
 **Session end** — delete your branch (or let the PR close action handle it):
 ```bash
 pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
@@ -91,11 +93,13 @@ pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
 
 ## Database: Push vs Migrations
 
-- `push: true` in the Postgres adapter **only applies in dev** — auto-syncs schema via Drizzle on startup.
-- **Production** schema changes go through migrations in `src/migrations/`.
-- Migrations run automatically on Vercel deploy.
-- **Never run migrations on dev** — `push: true` handles it.
-- After adding collections/fields: create a migration with `payload migrate:create`.
+Full topology and rationale: [docs/database-workflow.md](docs/database-workflow.md).
+
+- Push (`push: !process.env.CI`) auto-syncs schema via Drizzle on dev-server startup — local iteration only.
+- **Every schema change ships a migration in the same PR** (`src/migrations/`). Hand-edit the generated diff down to your change and keep DDL guarded (`IF NOT EXISTS`) so reruns are safe.
+- **CI rehearses migrations**: PR workflows fork `ci/*` branches from the migration-managed `ci-base` branch and run `pnpm payload migrate` before tests. A broken migration fails CI, not the production deploy. `ci-base` is refreshed on every push to `main` (`.github/workflows/refresh-ci-base.yml`).
+- **Production** runs migrations during the Vercel production build only, via `scripts/migrate-on-vercel.mjs` (`vercel-build` script). Previews never run migrations.
+- **Never run migrations on dev or session branches** — push handles them, and their `payload_migrations` bookkeeping (`batch=-1`) makes `payload migrate` hang on an interactive prompt.
 
 ## Critical Security Rules
 

@@ -1,0 +1,50 @@
+name: Refresh ci-base
+
+# Keeps the ci-base Neon branch (the migration-managed parent of all ci/*
+# branches) current: every merge to main applies any newly merged migrations.
+# See docs/database-workflow.md.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-ci-base
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    name: Apply migrations to ci-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve ci-base connection string
+        id: conn
+        run: |
+          url=$(pnpm exec neonctl connection-string ci-base --pooled \
+            --project-id "$NEON_PROJECT_ID")
+          echo "::add-mask::$url"
+          echo "database_url=$url" >> "$GITHUB_OUTPUT"
+        env:
+          NEON_PROJECT_ID: ${{ vars.NEON_DEV_PROJECT_ID }}
+          NEON_API_KEY: ${{ secrets.NEON_DEV_API_KEY }}
+
+      - name: Run migrations against ci-base
+        run: pnpm payload migrate
+        env:
+          DATABASE_URL: ${{ steps.conn.outputs.database_url }}
+          PAYLOAD_SECRET: ${{ secrets.PAYLOAD_SECRET }}
