@@ -1,6 +1,6 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."_locales" AS ENUM('uk', 'en');
   CREATE TYPE "public"."enum__pages_v_published_locale" AS ENUM('uk', 'en');
@@ -367,7 +367,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "search" DROP COLUMN "title";`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
    ALTER TABLE "pages_locales" DISABLE ROW LEVEL SECURITY;
   ALTER TABLE "_pages_v_locales" DISABLE ROW LEVEL SECURITY;
