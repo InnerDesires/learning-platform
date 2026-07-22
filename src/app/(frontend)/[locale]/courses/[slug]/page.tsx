@@ -1,22 +1,42 @@
 import type { Metadata } from 'next/types'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import React, { Suspense } from 'react'
+import React from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { SiteLocale } from '@/utilities/locales'
+import Image from 'next/image'
+import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseActionBar } from '@/components/Courses/CourseActionBar'
 import { CourseProgressAndSteps } from '@/components/Courses/CourseProgressAndSteps'
-import { ActionButtonSkeleton } from '@/components/Courses/ActionButtonSkeleton'
-import { StepsList } from '@/components/Courses/StepsList'
+import { CourseUserStateProvider } from '@/components/Courses/CourseUserState'
 import type { Course, Media as MediaType } from '@/payload-types'
 import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
-import { getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedEnrollmentStats, getCachedLikesCounts } from '@/utilities/contentCounts'
 import { ArrowLeft, Check, Heart, Rows3, Users } from 'lucide-react'
 import { RewardPill } from '@/components/brand'
 import { courseXp } from '@/utilities/xp'
 import { plural } from '@/utilities/plural'
+
+// Per-user state (enrollment, progress) is fetched client-side via
+// CourseUserStateProvider, so the page itself is the same for everyone and
+// can be served from the ISR cache. Enrollment mutations revalidate it by path.
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const courses = await payload.find({
+    collection: 'courses',
+    draft: false,
+    limit: 1000,
+    overrideAccess: false,
+    pagination: false,
+    where: { _status: { equals: 'published' } },
+    select: { slug: true },
+  })
+
+  return courses.docs.flatMap(({ slug }) => locales.map((locale) => ({ locale, slug })))
+}
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -44,17 +64,11 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
   const steps = course.steps ?? []
 
   const [enrollmentStats, courseLikesCounts] = await Promise.all([
-    payload.find({
-      collection: 'enrollments',
-      where: { course: { equals: course.id } },
-      limit: 10000,
-      depth: 0,
-      select: { status: true },
-    }),
-    getLikesCountsBatch('courses', [course.id]),
+    getCachedEnrollmentStats(),
+    getCachedLikesCounts('courses'),
   ])
-  const enrolledCount = enrollmentStats.totalDocs
-  const completedCount = enrollmentStats.docs.filter((e) => e.status === 'completed').length
+  const enrolledCount = enrollmentStats[course.id]?.enrolledCount ?? 0
+  const completedCount = enrollmentStats[course.id]?.completedCount ?? 0
   const likesCount = courseLikesCounts[course.id] ?? 0
 
   const heroImage =
@@ -68,12 +82,17 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
   const xpReward = courseXp(steps.length, course.quiz?.enabled === true)
 
   return (
+    <CourseUserStateProvider courseId={course.id}>
     <div className="pb-16">
       <div className="relative overflow-hidden">
         {heroUrl && (
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-25"
-            style={{ backgroundImage: `url(${heroUrl})` }}
+          <Image
+            src={heroUrl}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-25"
           />
         )}
         <div
@@ -134,87 +153,50 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             )}
           </div>
 
-          <Suspense fallback={<ActionButtonSkeleton />}>
-            <CourseActionBar
-              courseId={course.id}
-              courseSlug={course.slug}
-              steps={steps}
-              quizEnabled={course.quiz?.enabled === true}
-              localePrefix={prefix}
-              labels={{
-                completed: t.courseCompleted,
-                loginToEnroll: t.courseLoginToEnroll,
-                enroll: t.courseEnroll,
-                continueLearning: t.courseContinueLearning,
-                reviewMaterials: t.courseReviewMaterials,
-                quizTakeQuiz: t.quizTakeQuiz,
-                quizRetakeQuiz: t.quizRetakeQuiz,
-                quizPassed: t.quizPassed,
-                quizBestScore: t.quizBestScore,
-                downloadCertificate: t.certificateDownload,
-              }}
-            />
-          </Suspense>
-        </div>
-      </div>
-
-      <div className="container max-w-5xl mt-8">
-        <Suspense
-          fallback={
-            <div className="flex flex-col lg:flex-row gap-8">
-              <div className="flex-1 min-w-0">
-                <h2 className="heading-display mb-4 text-xl tracking-[0.06em]">
-                  {t.courseSteps} <span className="num text-fog">({steps.length})</span>
-                </h2>
-                <StepsList
-                  steps={steps}
-                  courseSlug={course.slug}
-                  completedSteps={[]}
-                  linked={false}
-                  completedLabel={t.courseCompleted}
-                  stepsLabel={t.courseSteps}
-                  localePrefix={prefix}
-                  typeLabels={{
-                    richTextStep: t.stepRichText,
-                    youtubeVideoStep: t.stepVideo,
-                    fileStep: t.stepFile,
-                  }}
-                  minutesLabel={t.minutesShort}
-                  quiz={course.quiz?.enabled ? {
-                    enabled: true,
-                    passed: false,
-                    allStepsCompleted: false,
-                    label: t.quizTitle,
-                    lockedLabel: t.quizCompleteStepsFirst,
-                    passedLabel: t.quizPassed,
-                  } : undefined}
-                />
-              </div>
-            </div>
-          }
-        >
-          <CourseProgressAndSteps
+          <CourseActionBar
             courseId={course.id}
             courseSlug={course.slug}
             steps={steps}
             quizEnabled={course.quiz?.enabled === true}
             localePrefix={prefix}
-            typeLabels={{
-              richTextStep: t.stepRichText,
-              youtubeVideoStep: t.stepVideo,
-              fileStep: t.stepFile,
-            }}
-            minutesLabel={t.minutesShort}
             labels={{
-              stepProgress: t.stepProgress,
-              courseCompleted: t.courseCompleted,
-              courseSteps: t.courseSteps,
-              quizTitle: t.quizTitle,
+              completed: t.courseCompleted,
+              loginToEnroll: t.courseLoginToEnroll,
+              enroll: t.courseEnroll,
+              continueLearning: t.courseContinueLearning,
+              reviewMaterials: t.courseReviewMaterials,
+              quizTakeQuiz: t.quizTakeQuiz,
+              quizRetakeQuiz: t.quizRetakeQuiz,
               quizPassed: t.quizPassed,
-              quizCompleteStepsFirst: t.quizCompleteStepsFirst,
+              quizBestScore: t.quizBestScore,
+              downloadCertificate: t.certificateDownload,
             }}
           />
-        </Suspense>
+        </div>
+      </div>
+
+      <div className="container max-w-5xl mt-8">
+        <CourseProgressAndSteps
+          courseId={course.id}
+          courseSlug={course.slug}
+          steps={steps}
+          quizEnabled={course.quiz?.enabled === true}
+          localePrefix={prefix}
+          typeLabels={{
+            richTextStep: t.stepRichText,
+            youtubeVideoStep: t.stepVideo,
+            fileStep: t.stepFile,
+          }}
+          minutesLabel={t.minutesShort}
+          labels={{
+            stepProgress: t.stepProgress,
+            courseCompleted: t.courseCompleted,
+            courseSteps: t.courseSteps,
+            quizTitle: t.quizTitle,
+            quizPassed: t.quizPassed,
+            quizCompleteStepsFirst: t.quizCompleteStepsFirst,
+          }}
+        />
 
         <InteractionSection
           targetCollection="courses"
@@ -224,6 +206,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
         />
       </div>
     </div>
+    </CourseUserStateProvider>
   )
 }
 

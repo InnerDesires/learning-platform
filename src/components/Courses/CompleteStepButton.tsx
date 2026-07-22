@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { LoaderCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { completeStep } from '@/app/(frontend)/[locale]/courses/actions'
+import { clearMyXpCache } from '@/utilities/myXpCache'
 
 type Props = {
   enrollmentId: number
@@ -46,6 +47,7 @@ export const CompleteStepButton: React.FC<Props> = ({
     startTransition(async () => {
       if (!isCourseCompleted && !isAlreadyCompleted) {
         await completeStep(enrollmentId, stepBlockId, courseId)
+        clearMyXpCache()
         // Purge the client router cache so the next page shows fresh progress
         // instead of a stale prefetched payload.
         router.refresh()

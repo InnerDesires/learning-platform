@@ -6,6 +6,7 @@ import { CourseCard, type CourseCardData, type CourseStats } from './CourseCard'
 import { CategoryFilter } from './CategoryFilter'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { useMyCourseStatuses } from './useMyCourseStatuses'
 
 type Category = {
   id: number
@@ -15,17 +16,19 @@ type Category = {
 type Props = {
   courses: CourseCardData[]
   categories: Category[]
-  completedCourseIds: number[]
-  inProgressCourseIds: number[]
   courseStats: Record<number, CourseStats>
   locale: SiteLocale
 }
 
-export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedCourseIds, inProgressCourseIds, courseStats, locale }) => {
+export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStats, locale }) => {
   const t = getFrontendMessages(locale)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  // Per-user progress badges load after hydration so the page itself can be
+  // served from the shared ISR cache. Guests never trigger the request.
+  const myStatuses = useMyCourseStatuses()
 
   // The active filter lives in ?category= so filtered views can be shared,
   // bookmarked, and deep-linked from search results.
@@ -77,8 +80,8 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, completedC
             key={course.slug || index}
             course={course}
             locale={locale}
-            isCompleted={completedCourseIds.includes(course.id)}
-            isInProgress={inProgressCourseIds.includes(course.id)}
+            isCompleted={myStatuses.completed.includes(course.id)}
+            isInProgress={myStatuses.inProgress.includes(course.id)}
             stats={courseStats[course.id]}
             className="h-full"
           />

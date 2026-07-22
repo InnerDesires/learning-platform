@@ -8,7 +8,6 @@ import { AboutSection } from './About'
 import { CoursesSection } from './Courses'
 import { PartnersSection } from './Partners'
 import { CalendarSection } from './Calendar'
-import { VideoSection } from './Video'
 import { FAQSection } from './FAQ'
 import { ContactSection } from './Contact'
 
@@ -39,7 +38,6 @@ export function HomePage({ locale, newsSlot, coursesSlot }: Props) {
         </div>
       </div>
 
-      <VideoSection {...c.video} />
       <PartnersSection {...c.partners} />
       <FAQSection {...c.faq} telegramUrl={c.contact.telegramManager} />
       <ContactSection {...c.contact} />

@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent } from './content'
 import { NewsSection } from './News'
-import { getCommentsCountsBatch, getLikesCountsBatch } from '@/actions/commentsAndLikes'
+import { getCachedCommentsCounts, getCachedLikesCounts } from '@/utilities/contentCounts'
 
 type Props = {
   locale: SiteLocale
@@ -25,10 +25,9 @@ export async function NewsSectionServer({ locale }: Props) {
     },
   })
 
-  const postIds = docs.map((post) => post.id)
   const [likesCounts, commentsCounts] = await Promise.all([
-    getLikesCountsBatch('posts', postIds).catch(() => ({}) as Record<number, number>),
-    getCommentsCountsBatch('posts', postIds).catch(() => ({}) as Record<number, number>),
+    getCachedLikesCounts('posts').catch(() => ({}) as Record<number, number>),
+    getCachedCommentsCounts('posts').catch(() => ({}) as Record<number, number>),
   ])
 
   const items = docs.map((post) => {

@@ -2,7 +2,7 @@
 
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
 
@@ -13,6 +13,41 @@ function revalidateCoursePages(slug: string) {
     revalidatePath(`${prefix}/courses/${slug}/steps/[stepIndex]`, 'page')
     revalidatePath(`${prefix}/courses/${slug}/quiz`)
   }
+  // Cached aggregate counters (src/utilities/contentCounts.ts)
+  revalidateTag('course-enrollment-stats')
+}
+
+export type MyCourseStatuses = {
+  completed: number[]
+  inProgress: number[]
+}
+
+/**
+ * Course ids the signed-in user has completed / started. Fetched client-side
+ * so the catalog page itself can stay statically cached for everyone.
+ */
+export async function getMyCourseStatuses(): Promise<MyCourseStatuses> {
+  const session = await getSession().catch(() => null)
+  if (!session?.user) return { completed: [], inProgress: [] }
+
+  const payload = await getPayload({ config: configPromise })
+  const { docs } = await payload.find({
+    collection: 'enrollments',
+    where: { user: { equals: Number(session.user.id) } },
+    limit: 1000,
+    depth: 0,
+    select: { course: true, status: true },
+  })
+
+  const completed: number[] = []
+  const inProgress: number[] = []
+  for (const enrollment of docs) {
+    const courseId =
+      typeof enrollment.course === 'object' ? enrollment.course.id : enrollment.course
+    if (enrollment.status === 'completed') completed.push(courseId)
+    else inProgress.push(courseId)
+  }
+  return { completed, inProgress }
 }
 
 export async function enrollInCourse(courseId: number): Promise<{ success: boolean; enrollment?: Enrollment; error?: string }> {
@@ -137,6 +172,9 @@ export async function getEnrollment(
       ],
     },
     limit: 1,
+    // Consumed client-side (CourseUserState) — ids are enough, don't populate
+    // the full user/course docs into the response.
+    depth: 0,
   })
 
   return result.docs[0] ?? null

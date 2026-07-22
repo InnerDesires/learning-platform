@@ -1,6 +1,7 @@
+'use client'
+
 import React from 'react'
-import { getSession } from '@/lib/auth/getSession'
-import { getEnrollment } from '@/app/(frontend)/[locale]/courses/actions'
+import { useCourseUserState } from './CourseUserState'
 import { ProgressBar } from './ProgressBar'
 import { StepsList } from './StepsList'
 
@@ -29,9 +30,8 @@ type Props = {
   }
 }
 
-export async function CourseProgressAndSteps({ courseId, courseSlug, steps, quizEnabled, localePrefix, typeLabels, minutesLabel, labels }: Props) {
-  const session = await getSession().catch(() => null)
-  const enrollment = session?.user ? await getEnrollment(courseId) : null
+export function CourseProgressAndSteps({ courseSlug, steps, quizEnabled, localePrefix, typeLabels, minutesLabel, labels }: Props) {
+  const { enrollment } = useCourseUserState()
   const isEnrolled = !!enrollment
 
   const completedSteps: string[] = Array.isArray(enrollment?.completedSteps)

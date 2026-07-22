@@ -49,6 +49,16 @@ export const AdminBar: React.FC<AdminBarProps> = ({ adminBarProps }) => {
       setIsAdmin(false)
       return
     }
+    // The session payload carries the role; only sessions that claim admin are
+    // verified against /api/users/me. Regular members skip the request entirely.
+    const sessionRole = (session.user as { role?: string[] | string }).role
+    const claimsAdmin = Array.isArray(sessionRole)
+      ? sessionRole.includes('admin')
+      : sessionRole === 'admin'
+    if (!claimsAdmin) {
+      setIsAdmin(false)
+      return
+    }
     let cancelled = false
     fetch(`${cmsURL}/api/users/me`, { credentials: 'include' })
       .then((res) => (res.ok ? res.json() : null))

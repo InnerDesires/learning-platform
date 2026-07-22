@@ -1,7 +1,8 @@
 'use server'
 
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
+import { revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
 
 type TargetCollection = 'posts' | 'courses'
@@ -125,6 +126,8 @@ export async function addComment(
 
   const author = typeof doc.author === 'object' ? doc.author : null
 
+  revalidateCounts('comments', targetCollection)
+
   return {
     success: true,
     comment: {
@@ -195,6 +198,8 @@ export async function deleteComment(
     id: commentId,
   })
 
+  revalidateCounts('comments', comment.targetCollection)
+
   return { success: true }
 }
 
@@ -203,63 +208,11 @@ export type LikeInfo = {
   count: number
 }
 
-export async function getCommentsCountsBatch(
-  targetCollection: TargetCollection,
-  targetIds: number[],
-): Promise<Record<number, number>> {
-  if (targetIds.length === 0) return {}
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'comments',
-    where: {
-      and: [
-        { targetCollection: { equals: targetCollection } },
-        { targetId: { in: targetIds } },
-      ],
-    },
-    limit: 10000,
-    depth: 0,
-    select: { targetId: true },
-  })
-
-  const counts: Record<number, number> = {}
-  for (const comment of result.docs) {
-    const tid = Number(comment.targetId)
-    counts[tid] = (counts[tid] || 0) + 1
+/** Invalidate the cached grouped counts (src/utilities/contentCounts.ts) after a write. */
+function revalidateCounts(kind: 'likes' | 'comments', targetCollection: LikeTargetCollection) {
+  if (targetCollection === 'posts' || targetCollection === 'courses') {
+    revalidateTag(`${kind}-counts-${targetCollection}`)
   }
-
-  return counts
-}
-
-export async function getLikesCountsBatch(
-  targetCollection: LikeTargetCollection,
-  targetIds: number[],
-): Promise<Record<number, number>> {
-  if (targetIds.length === 0) return {}
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'likes',
-    where: {
-      and: [
-        { targetCollection: { equals: targetCollection } },
-        { targetId: { in: targetIds } },
-      ],
-    },
-    limit: 10000,
-    depth: 0,
-  })
-
-  const counts: Record<number, number> = {}
-  for (const like of result.docs) {
-    const tid = Number(like.targetId)
-    counts[tid] = (counts[tid] || 0) + 1
-  }
-
-  return counts
 }
 
 export async function getLikeInfo(
@@ -270,27 +223,24 @@ export async function getLikeInfo(
   const session = await getSession()
   const userId = session?.user?.id ? Number(session.user.id) : null
 
-  const result = await payload.find({
-    collection: 'likes',
-    where: {
-      and: [
-        { targetCollection: { equals: targetCollection } },
-        { targetId: { equals: targetId } },
-      ],
-    },
-    limit: 10000,
-    depth: 0,
-  })
+  const targetWhere: Where[] = [
+    { targetCollection: { equals: targetCollection } },
+    { targetId: { equals: targetId } },
+  ]
 
-  let liked = false
-  if (userId) {
-    liked = result.docs.some((doc) => {
-      const likeUserId = typeof doc.user === 'object' ? doc.user.id : doc.user
-      return likeUserId === userId
-    })
-  }
+  const [{ totalDocs: count }, userLike] = await Promise.all([
+    payload.count({ collection: 'likes', where: { and: targetWhere } }),
+    userId
+      ? payload.find({
+          collection: 'likes',
+          where: { and: [...targetWhere, { user: { equals: userId } }] },
+          limit: 1,
+          depth: 0,
+        })
+      : Promise.resolve(null),
+  ])
 
-  return { liked, count: result.totalDocs }
+  return { liked: (userLike?.totalDocs ?? 0) > 0, count }
 }
 
 export async function toggleLike(
@@ -334,7 +284,7 @@ export async function toggleLike(
     })
   }
 
-  const updatedCount = await payload.find({
+  const { totalDocs: count } = await payload.count({
     collection: 'likes',
     where: {
       and: [
@@ -342,13 +292,13 @@ export async function toggleLike(
         { targetId: { equals: targetId } },
       ],
     },
-    limit: 0,
-    depth: 0,
   })
+
+  revalidateCounts('likes', targetCollection)
 
   return {
     success: true,
     liked: existing.totalDocs === 0,
-    count: updatedCount.totalDocs,
+    count,
   }
 }

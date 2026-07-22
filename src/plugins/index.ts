@@ -22,7 +22,13 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 const vercelBlobPlugin = process.env.BLOB_READ_WRITE_TOKEN
   ? vercelBlobStorage({
-      collections: { [Media.slug]: true, [CourseFiles.slug]: true },
+      collections: {
+        // Both collections are public-read (access.read: anyone), so serving
+        // straight from the Blob CDN skips a serverless invocation per file
+        // request and lets responses cache at the edge.
+        [Media.slug]: { disablePayloadAccessControl: true },
+        [CourseFiles.slug]: { disablePayloadAccessControl: true },
+      },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     })
   : null

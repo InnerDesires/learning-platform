@@ -34,6 +34,8 @@ interface CommentsSectionProps {
   isAuthenticated: boolean
   currentUserId: number | null
   isAdmin: boolean
+  /** When false, loading the comment list is deferred (e.g. until scrolled into view). */
+  active?: boolean
   labels: Labels
   loginUrl: string
   /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
@@ -50,6 +52,7 @@ export function CommentsSection({
   isAuthenticated,
   currentUserId,
   isAdmin,
+  active = true,
   labels,
   loginUrl,
   userProfileBase,
@@ -72,6 +75,7 @@ export function CommentsSection({
   )
 
   useEffect(() => {
+    if (!active) return
     let cancelled = false
     getComments(targetCollection, targetId).then((data) => {
       if (!cancelled) {
@@ -82,7 +86,7 @@ export function CommentsSection({
     return () => {
       cancelled = true
     }
-  }, [targetCollection, targetId])
+  }, [targetCollection, targetId, active])
 
   const handleAddComment = useCallback(
     async (body: string): Promise<boolean> => {

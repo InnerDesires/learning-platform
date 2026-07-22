@@ -5,13 +5,31 @@ import React, { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import type { SiteLocale } from '@/utilities/locales'
+import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { CourseCard } from '@/components/Courses/CourseCard'
+import { CourseGrid } from '@/components/Courses/CourseGrid'
 import { Eyebrow, Rails } from '@/components/brand'
 import { getCatalogData } from '@/lib/courses/getCatalogData'
 import { plural } from '@/utilities/plural'
 import type { Media as MediaType } from '@/payload-types'
+
+// Session-free on the server (viewer progress loads client-side in CourseGrid),
+// so category pages serve from the ISR cache like the main catalog.
+export const revalidate = 300
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const categories = await payload.find({
+    collection: 'course-categories',
+    limit: 200,
+    pagination: false,
+    select: { slug: true },
+  })
+
+  return categories.docs.flatMap(({ slug }) =>
+    slug ? locales.map((locale) => ({ locale, slug })) : [],
+  )
+}
 
 type Args = {
   params: Promise<{ locale: SiteLocale; slug: string }>
@@ -40,7 +58,7 @@ export default async function CourseCategoryPage({ params: paramsPromise }: Args
   const category = await queryCategoryBySlug({ slug: decodedSlug, locale })
   if (!category) notFound()
 
-  const { courses, courseStats, completedCourseIds, inProgressCourseIds } = await getCatalogData({
+  const { courses, courseStats } = await getCatalogData({
     payload,
     locale,
     where: { category: { equals: category.id } },
@@ -91,19 +109,7 @@ export default async function CourseCategoryPage({ params: paramsPromise }: Args
       </div>
       <div className="container">
         {courses.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {courses.map((course, index) => (
-              <CourseCard
-                key={course.slug || index}
-                course={course}
-                locale={locale}
-                isCompleted={completedCourseIds.includes(course.id)}
-                isInProgress={inProgressCourseIds.includes(course.id)}
-                stats={courseStats[course.id]}
-                className="h-full"
-              />
-            ))}
-          </div>
+          <CourseGrid courses={courses} courseStats={courseStats} locale={locale} />
         ) : (
           <div className="py-12 text-center">
             <p className="text-muted-foreground">{t.courseCategoryEmpty}</p>

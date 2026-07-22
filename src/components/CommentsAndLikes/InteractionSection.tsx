@@ -1,5 +1,4 @@
-import React, { Suspense } from 'react'
-import { getSession } from '@/lib/auth/getSession'
+import React from 'react'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { defaultLocale } from '@/utilities/locales'
@@ -13,13 +12,17 @@ interface InteractionSectionProps {
   redirectPath?: string
 }
 
-async function InteractionContent({
+/**
+ * Likes + comments block. Deliberately session-free on the server: auth state
+ * is derived client-side (useSession) and data loads lazily once the section
+ * scrolls into view, so pages embedding it can be statically cached.
+ */
+export function InteractionSection({
   targetCollection,
   targetId,
   locale,
   redirectPath,
 }: InteractionSectionProps) {
-  const session = await getSession()
   const t = getFrontendMessages(locale)
   const userProfileBase = locale === defaultLocale ? '/users' : `/${locale}/users`
   const loginBase = locale === defaultLocale ? '/login' : `/${locale}/login`
@@ -27,19 +30,10 @@ async function InteractionContent({
     ? `${loginBase}?redirect=${encodeURIComponent(`${redirectPath}#comments`)}`
     : loginBase
 
-  const isAuthenticated = Boolean(session?.user)
-  const currentUserId = session?.user?.id ? Number(session.user.id) : null
-  const isAdmin = Boolean(
-    session?.user && 'role' in session.user && (session.user as { role?: string[] }).role?.includes('admin'),
-  )
-
   return (
     <InteractionClient
       targetCollection={targetCollection}
       targetId={targetId}
-      isAuthenticated={isAuthenticated}
-      currentUserId={currentUserId}
-      isAdmin={isAdmin}
       loginUrl={loginPath}
       userProfileBase={userProfileBase}
       labels={{
@@ -58,33 +52,5 @@ async function InteractionContent({
         commentsHideReplies: t.commentsHideReplies,
       }}
     />
-  )
-}
-
-export function InteractionSection(props: InteractionSectionProps) {
-  return (
-    <Suspense
-      fallback={
-        <div className="mt-12 space-y-4">
-          <div className="h-6 w-32 rounded bg-muted animate-pulse" />
-          <div className="h-24 rounded-xl bg-muted/50 animate-pulse" />
-          <div className="space-y-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="rounded-xl bg-muted/50 p-4 animate-pulse">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-muted" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-3 w-24 rounded bg-muted" />
-                    <div className="h-3 w-full rounded bg-muted" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      }
-    >
-      <InteractionContent {...props} />
-    </Suspense>
   )
 }
