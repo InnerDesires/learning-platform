@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { MessageSquare } from 'lucide-react'
+import { Heart, MessageSquare } from 'lucide-react'
 
 import { getPayload } from '@/lib/payload'
 import { getFrontendMessages } from '@/utilities/i18n'
@@ -57,8 +57,9 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
   const parentIds = topGroups
     .map((g) => g.latest.parent)
     .filter((p): p is number => typeof p === 'number')
+  const displayedIds = topGroups.map((g) => g.latest.id)
 
-  const [postsRes, coursesRes, parentsRes] = await Promise.all([
+  const [postsRes, coursesRes, parentsRes, likesRes] = await Promise.all([
     postIds.length
       ? payload.find({
           collection: 'posts',
@@ -87,6 +88,13 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
           select: { body: true, author: true },
         })
       : null,
+    payload.find({
+      collection: 'likes',
+      where: { targetCollection: { equals: 'comments' }, targetId: { in: displayedIds } },
+      depth: 0,
+      limit: 1000,
+      select: { targetId: true },
+    }),
   ])
 
   const targets = new Map<string, { title: string; url: string }>()
@@ -101,6 +109,11 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
       title: course.title,
       url: `${prefix}/courses/${course.slug}#comments`,
     })
+  }
+
+  const likeCounts = new Map<number, number>()
+  for (const like of likesRes.docs) {
+    likeCounts.set(like.targetId, (likeCounts.get(like.targetId) ?? 0) + 1)
   }
 
   // Only the parent's name and body reach the markup — never the author doc.
@@ -129,6 +142,7 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
           const parent =
             typeof group.latest.parent === 'number' ? parents.get(group.latest.parent) : undefined
           const moreCount = group.count - 1
+          const likes = likeCounts.get(group.latest.id) ?? 0
           return (
             <div
               key={group.latest.id}
@@ -142,7 +156,13 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
                   <MessageSquare className="h-3.5 w-3.5 flex-none text-orange" />
                   <span className="truncate">{target.title}</span>
                 </Link>
-                <span className="num flex-none text-[11px] text-steel">
+                <span className="num flex-none inline-flex items-center gap-2.5 text-[11px] text-steel">
+                  {likes > 0 && (
+                    <span className="inline-flex items-center gap-1">
+                      <Heart className="h-3 w-3" fill="currentColor" strokeWidth={0} />
+                      {likes}
+                    </span>
+                  )}
                   {formatDateTime(group.latest.createdAt, locale)}
                 </span>
               </div>
