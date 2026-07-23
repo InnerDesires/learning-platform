@@ -46,16 +46,16 @@ export default async function CoursesPage({ params: paramsPromise }: Args) {
     <div className="pb-16">
       <PageHead eyebrow={t.coursesEyebrow} title={t.coursesTitle} sub={t.coursesSub} />
       <div className="container">
-        {/* Suspense: CourseCatalog reads ?category= via useSearchParams, which
-            must not block static prerendering of the rest of the page. */}
-        <Suspense>
-          <CourseCatalog
-            courses={courses}
-            categories={categories}
-            courseStats={courseStats}
-            locale={locale}
-          />
-        </Suspense>
+        {/* No Suspense here: the catalog must be part of the static ISR HTML.
+            It reads ?category= from window.location after mount, NOT via
+            useSearchParams(), which would bail the grid out of prerendering
+            and reintroduce the layout shift on hydration. */}
+        <CourseCatalog
+          courses={courses}
+          categories={categories}
+          courseStats={courseStats}
+          locale={locale}
+        />
         <Suspense fallback={null}>
           <CategoryCarousels
             locale={locale}
