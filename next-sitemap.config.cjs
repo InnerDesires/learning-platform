@@ -1,7 +1,10 @@
+// VERCEL_PROJECT_PRODUCTION_URL is a bare domain (no protocol) — must be prefixed,
+// or crawlers resolve the sitemap <loc> entries as relative paths.
 const SITE_URL =
   process.env.NEXT_PUBLIC_SERVER_URL ||
-  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-  'https://example.com'
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'https://example.com')
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
