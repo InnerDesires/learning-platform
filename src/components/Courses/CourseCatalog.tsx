@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useCallback, useMemo, useState } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { CourseCard, type CourseCardData, type CourseStats } from './CourseCard'
 import { CategoryFilter } from './CategoryFilter'
 import type { SiteLocale } from '@/utilities/locales'
@@ -24,25 +24,29 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStat
   const t = getFrontendMessages(locale)
   const router = useRouter()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   // Per-user progress badges load after hydration so the page itself can be
   // served from the shared ISR cache. Guests never trigger the request.
   const myStatuses = useMyCourseStatuses()
 
   // The active filter lives in ?category= so filtered views can be shared,
-  // bookmarked, and deep-linked from search results.
-  const categoryParam = Number(searchParams.get('category'))
-  const initialCategory =
-    Number.isInteger(categoryParam) && categories.some((c) => c.id === categoryParam)
-      ? categoryParam
-      : null
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(initialCategory)
+  // bookmarked, and deep-linked from search results. The param is read from
+  // window.location after mount instead of useSearchParams(): useSearchParams
+  // opts the whole subtree out of static prerendering, which shipped ISR HTML
+  // without the grid and caused a huge layout shift when it hydrated in.
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
+
+  useEffect(() => {
+    const param = Number(new URLSearchParams(window.location.search).get('category'))
+    if (Number.isInteger(param) && categories.some((c) => c.id === param)) {
+      setSelectedCategory(param)
+    }
+  }, [categories])
 
   const handleSelect = useCallback(
     (categoryId: number | null) => {
       setSelectedCategory(categoryId)
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(window.location.search)
       if (categoryId === null) {
         params.delete('category')
       } else {
@@ -51,7 +55,7 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStat
       const qs = params.toString()
       router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
     },
-    [router, pathname, searchParams],
+    [router, pathname],
   )
 
   const filteredCourses = useMemo(() => {
