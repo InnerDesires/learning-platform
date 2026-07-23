@@ -42,33 +42,38 @@ export default async function QuizPage({ params: paramsPromise }: Args) {
     redirect(`${prefix}/login?redirect=${encodeURIComponent(`${prefix}/courses/${slug}/quiz`)}`)
   }
 
+  const prefix = locale === 'en' ? '/en' : ''
+
   const course = result.docs[0] as Course | undefined
   if (!course) notFound()
 
   if (!course.quiz?.enabled) {
-    redirect(`/courses/${slug}`)
+    redirect(`${prefix}/courses/${slug}`)
   }
 
   const enrollment = await getEnrollment(course.id)
   if (!enrollment) {
-    redirect(`/courses/${slug}`)
+    redirect(`${prefix}/courses/${slug}`)
   }
 
   const completedSteps: string[] = Array.isArray(enrollment.completedSteps)
     ? (enrollment.completedSteps as string[])
     : []
-  const totalSteps = course.steps?.length ?? 0
-  const allStepsComplete = completedSteps.length >= totalSteps
+  const steps = course.steps ?? []
+  const isCourseCompleted = enrollment.status === 'completed'
+  const firstIncompleteIndex = isCourseCompleted
+    ? -1
+    : steps.findIndex((step) => !completedSteps.includes(step.id ?? ''))
 
-  if (!allStepsComplete) {
-    redirect(`/courses/${slug}`)
+  // The quiz unlocks only after every step is done — send stragglers to the
+  // first incomplete step rather than silently bouncing them off the course.
+  if (firstIncompleteIndex !== -1) {
+    redirect(`${prefix}/courses/${slug}/steps/${firstIncompleteIndex + 1}`)
   }
 
   const attempts = await getQuizAttempts(course.id)
   const questions = course.quiz.questions ?? []
   const passingScore = course.quiz.passingScore ?? 70
-
-  const prefix = locale === 'en' ? '/en' : ''
   return (
     <div className="pt-10 pb-16">
       <div className="container max-w-3xl">
