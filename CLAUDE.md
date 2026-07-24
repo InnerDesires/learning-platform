@@ -101,7 +101,7 @@ passed), an in-progress course, and comments. Full details: [docs/dev-admin-logi
 - **Browser login (one navigation)**: `http://localhost:3000/api/dev-login` — signs in as the dev admin and sets session cookies. `?redirect=/admin` supported. Dev-only (404 on Vercel/production).
 - **CLI session (one command)**: `curl -si -c cookies.txt http://localhost:3000/api/dev-login`
 - **Credentials**: `dev-admin@example.com` / `dev-admin-password` (defined in `src/lib/auth/dev-credentials.ts`)
-- **Reset/seed the account**: `pnpm seed:dev-admin` (idempotent; needed only on branches created before 2026-07-24 or after destructive tests)
+- **Seeding is automatic**: if the account is missing (unseeded branch, wiped DB), `/api/dev-login` seeds it and retries — no manual step. `pnpm seed:dev-admin` exists only to *reset* mangled data to the canonical state.
 
 ## Database: Push vs Migrations
 
