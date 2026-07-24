@@ -162,6 +162,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             labels={{
               completed: t.courseCompleted,
               loginToEnroll: t.courseLoginToEnroll,
+              signIn: t.signIn,
               enroll: t.courseEnroll,
               continueLearning: t.courseContinueLearning,
               reviewMaterials: t.courseReviewMaterials,
@@ -195,6 +196,10 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             quizTitle: t.quizTitle,
             quizPassed: t.quizPassed,
             quizCompleteStepsFirst: t.quizCompleteStepsFirst,
+            loginPromptTitle: t.courseLoginPromptTitle,
+            loginPromptText: t.courseLoginPromptText,
+            loginPromptLogin: t.signIn,
+            loginPromptClose: t.courseLoginPromptClose,
           }}
         />
 

@@ -17,13 +17,8 @@ interface UserMenuProps {
   onToggle?: (open: boolean) => void
 }
 
-export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen, onToggle }) => {
-  const { data: session, isPending } = useSession()
-  const [internalOpen, setInternalOpen] = useState(false)
+function useMyXp(session: ReturnType<typeof useSession>['data']) {
   const [xp, setXp] = useState<MyXp | null>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
-  const t = getFrontendMessages(locale)
 
   useEffect(() => {
     if (!session?.user) {
@@ -48,6 +43,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       cancelled = true
     }
   }, [session?.user])
+
+  return xp
+}
+
+export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen, onToggle }) => {
+  const { data: session, isPending } = useSession()
+  const [internalOpen, setInternalOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const t = getFrontendMessages(locale)
+  const xp = useMyXp(session)
 
   const open = controlledOpen ?? internalOpen
   const setOpen = useCallback(
@@ -177,5 +183,78 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
         </div>
       )}
     </div>
+  )
+}
+
+const mobileRowClass =
+  'flex w-full items-center gap-2.5 rounded-lg px-4 py-3 text-sm font-medium text-fog no-underline transition-colors hover:bg-navy hover:text-cloud hover:no-underline'
+
+/**
+ * Inline user section for the mobile hamburger panel — same functionality as
+ * the avatar dropdown (profile, settings, sign out / sign in).
+ */
+export const UserMenuMobileSection: React.FC<{
+  locale: SiteLocale
+  onNavigate?: () => void
+}> = ({ locale, onNavigate }) => {
+  const { data: session, isPending } = useSession()
+  const xp = useMyXp(session)
+  const router = useRouter()
+  const pathname = usePathname()
+  const t = getFrontendMessages(locale)
+
+  const isEn = locale === 'en'
+  const profilePath = isEn ? '/en/profile' : '/profile'
+  const loginPath = `${isEn ? '/en' : ''}/login?redirect=${encodeURIComponent(pathname)}`
+
+  const handleSignOut = async () => {
+    onNavigate?.()
+    await signOut({ fetchOptions: { onSuccess: () => router.refresh() } })
+  }
+
+  if (isPending) {
+    return <div className="mx-4 my-3 h-5 animate-pulse rounded bg-muted" />
+  }
+
+  if (!session?.user) {
+    return (
+      <Link href={loginPath} onClick={onNavigate} className={mobileRowClass}>
+        <UserIcon className="h-4 w-4" />
+        {t.signIn}
+      </Link>
+    )
+  }
+
+  const user = session.user
+
+  return (
+    <>
+      <div className="px-4 pb-2 pt-1">
+        <p className="truncate text-sm font-medium text-cloud">{user.name}</p>
+        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+        {xp && (
+          <p className="num mt-1.5 inline-flex items-center gap-1 font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-amber">
+            <Zap className="h-2.5 w-2.5" fill="currentColor" strokeWidth={0} />
+            {t.profileLevel} {xp.level} · {xp.xp.toLocaleString('uk-UA')} XP
+          </p>
+        )}
+      </div>
+      <Link href={profilePath} onClick={onNavigate} className={mobileRowClass}>
+        <UserIcon className="h-4 w-4" />
+        {t.profile}
+      </Link>
+      <Link href={`${profilePath}/settings`} onClick={onNavigate} className={mobileRowClass}>
+        <Settings className="h-4 w-4" />
+        {t.profileSettings}
+      </Link>
+      <button
+        type="button"
+        onClick={handleSignOut}
+        className={cn(mobileRowClass, 'hover:bg-destructive/10 hover:text-destructive')}
+      >
+        <LogOut className="h-4 w-4" />
+        {t.signOut}
+      </button>
+    </>
   )
 }

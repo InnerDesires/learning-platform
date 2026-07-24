@@ -177,6 +177,9 @@ type FrontendMessages = {
   courseInProgress: string
   courseOverview: string
   courseLoginToEnroll: string
+  courseLoginPromptTitle: string
+  courseLoginPromptText: string
+  courseLoginPromptClose: string
   stepComplete: string
   stepStartQuiz: string
   stepPrevious: string
@@ -474,6 +477,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'Розпочато',
     courseOverview: 'Огляд курсу',
     courseLoginToEnroll: 'Увійдіть, щоб записатися на курс',
+    courseLoginPromptTitle: 'Потрібно увійти',
+    courseLoginPromptText:
+      'Кроки курсу доступні після входу. Увійдіть у свій акаунт — і ми повернемо вас на цю сторінку, щоб записатися на курс.',
+    courseLoginPromptClose: 'Закрити',
     stepComplete: 'Завершити',
     stepStartQuiz: 'Почати тест',
     stepPrevious: 'Назад',
@@ -771,6 +778,10 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseInProgress: 'In Progress',
     courseOverview: 'Course overview',
     courseLoginToEnroll: 'Log in to enroll in this course',
+    courseLoginPromptTitle: 'Log in to continue',
+    courseLoginPromptText:
+      'Course steps are available after you log in. Sign in and we will bring you back to this page so you can enroll.',
+    courseLoginPromptClose: 'Close',
     stepComplete: 'Finish',
     stepStartQuiz: 'Start quiz',
     stepPrevious: 'Back',

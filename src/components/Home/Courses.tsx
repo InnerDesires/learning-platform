@@ -27,7 +27,7 @@ export function CoursesSection({ tag, title, description, cta, locale, children 
           action={
             <Link
               href={`${prefix}/courses`}
-              className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-4.5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+              className="inline-flex h-11 items-center gap-2 rounded-full border-[1.5px] border-line-2 px-5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
             >
               {cta}
               <ArrowRight className="h-3.5 w-3.5" />

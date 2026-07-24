@@ -249,7 +249,7 @@ export default async function ProfilePage({ params }: Args) {
                 className="group rounded-xl border border-line bg-card px-5 py-4 transition-colors hover:border-orange/55"
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className="truncate text-sm font-bold transition-colors group-hover:text-amber">
+                  <span className="min-w-0 break-words text-sm font-bold transition-colors group-hover:text-amber">
                     {course.title}
                   </span>
                   <span className="num flex-none text-[11px] font-bold uppercase tracking-[0.1em] text-amber">
@@ -296,7 +296,7 @@ export default async function ProfilePage({ params }: Args) {
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`${prefix}/courses/${course.slug}`}
-                      className="block truncate text-sm font-bold transition-colors hover:text-amber"
+                      className="block break-words text-sm font-bold transition-colors hover:text-amber"
                     >
                       {course.title}
                     </Link>
@@ -355,12 +355,12 @@ export default async function ProfilePage({ params }: Args) {
                   {course && (
                     <Link
                       href={`${prefix}/courses/${course.slug}/quiz`}
-                      className="min-w-0 flex-1 truncate text-fog transition-colors hover:text-cloud"
+                      className="order-first w-full min-w-0 break-words text-cloud transition-colors hover:text-amber sm:order-none sm:w-auto sm:flex-1 sm:truncate sm:text-fog sm:hover:text-cloud"
                     >
                       {course.title}
                     </Link>
                   )}
-                  <span className="num ml-auto text-xs font-medium text-steel-dim">
+                  <span className="num text-xs font-medium text-steel-dim sm:ml-auto">
                     {formatDateTime(attempt.createdAt, locale)}
                   </span>
                 </div>

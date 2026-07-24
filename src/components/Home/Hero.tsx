@@ -96,7 +96,7 @@ export function HeroSection({
             </div>
           </FadeIn>
           <FadeIn delay={400}>
-            <span className="mt-9 inline-flex items-center gap-3 rounded-full border border-blue-line bg-brand-blue/30 px-4.5 py-2.5 text-[11.5px] tracking-[0.06em] text-fog">
+            <span className="mt-9 inline-flex items-center gap-2.5 text-[11.5px] tracking-[0.06em] text-fog before:h-0.5 before:w-8 before:bg-orange">
               {supportLabel}{' '}
               <b className="font-bold tracking-[0.14em] text-cloud">{supportName}</b>
             </span>
