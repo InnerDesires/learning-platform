@@ -397,8 +397,11 @@
   .animate-ticker {
     animation: ticker var(--ticker-duration, 30s) linear infinite;
   }
-  .animate-ticker:hover {
-    animation-play-state: paused;
+  /* hover-capable devices only: on touch, a tap would stick the pause */
+  @media (hover: hover) {
+    .animate-ticker:hover {
+      animation-play-state: paused;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .animate-ticker {

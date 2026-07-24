@@ -1,14 +1,14 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
 import type { CourseCompletion } from '@/utilities/leaderboard'
 
 const REFRESH_MS = 60_000
 
-/** Animate only when there are enough chips for the loop to read as a ticker. */
-const MIN_ANIMATE = 5
+/** Constant scroll speed so short and long lists feel the same. */
+const SPEED_PX_PER_S = 35
 
 /**
  * Live «completed by» running line for the course hero. Fetched client-side
@@ -20,6 +20,10 @@ export const CompletedByTicker: React.FC<{
   label: string
 }> = ({ courseId, localePrefix, label }) => {
   const [items, setItems] = useState<CourseCompletion[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
+  const firstGroupRef = useRef<HTMLDivElement>(null)
+  const [copies, setCopies] = useState(2)
+  const [duration, setDuration] = useState(30)
 
   useEffect(() => {
     let cancelled = false
@@ -43,17 +47,47 @@ export const CompletedByTicker: React.FC<{
     }
   }, [courseId])
 
+  // The -50% keyframe loops seamlessly only when the track is two identical
+  // halves and each half is at least as wide as the container, so repeat the
+  // chip group however many times that takes (always an even total).
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    const group = firstGroupRef.current
+    if (!container || !group || items.length === 0) return
+
+    const measure = () => {
+      const groupWidth = group.scrollWidth
+      const containerWidth = container.clientWidth
+      if (groupWidth === 0 || containerWidth === 0) return
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setCopies(1)
+        return
+      }
+      const groupsPerHalf = Math.max(1, Math.ceil(containerWidth / groupWidth))
+      setCopies(groupsPerHalf * 2)
+      setDuration(Math.max(15, Math.round((groupWidth * groupsPerHalf) / SPEED_PX_PER_S)))
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [items])
+
   if (items.length === 0) return null
 
-  const animate = items.length >= MIN_ANIMATE
-
-  const chips = (ariaHidden: boolean) => (
-    <div className="flex items-center gap-2 pr-2" aria-hidden={ariaHidden || undefined}>
+  const chips = (groupIndex: number) => (
+    <div
+      key={groupIndex}
+      ref={groupIndex === 0 ? firstGroupRef : undefined}
+      className="flex items-center gap-2 pr-2"
+      aria-hidden={groupIndex > 0 || undefined}
+    >
       {items.map((item) => (
         <Link
           key={item.userId}
           href={`${localePrefix}/users/${item.userId}`}
-          tabIndex={ariaHidden ? -1 : undefined}
+          tabIndex={groupIndex > 0 ? -1 : undefined}
           className="flex shrink-0 items-center gap-1.5 rounded-full border border-line-2 bg-navy/60 py-1 pl-1 pr-3 text-[12px] font-semibold text-fog transition-colors hover:text-cloud"
         >
           {item.image ? (
@@ -80,20 +114,15 @@ export const CompletedByTicker: React.FC<{
         {label}:
       </span>
       <div
+        ref={containerRef}
         className="min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]"
       >
-        {animate ? (
-          // Two identical halves + translateX(-50%) make a seamless loop.
-          <div
-            className="animate-ticker flex w-max"
-            style={{ '--ticker-duration': `${Math.max(20, items.length * 4)}s` } as React.CSSProperties}
-          >
-            {chips(false)}
-            {chips(true)}
-          </div>
-        ) : (
-          <div className="no-scrollbar overflow-x-auto">{chips(false)}</div>
-        )}
+        <div
+          className="animate-ticker flex w-max"
+          style={{ '--ticker-duration': `${duration}s` } as React.CSSProperties}
+        >
+          {Array.from({ length: copies }, (_, i) => chips(i))}
+        </div>
       </div>
     </div>
   )
