@@ -355,12 +355,12 @@ export default async function ProfilePage({ params }: Args) {
                   {course && (
                     <Link
                       href={`${prefix}/courses/${course.slug}/quiz`}
-                      className="order-last w-full min-w-0 break-words text-fog transition-colors hover:text-cloud sm:order-none sm:w-auto sm:flex-1 sm:truncate"
+                      className="order-first w-full min-w-0 break-words text-cloud transition-colors hover:text-amber sm:order-none sm:w-auto sm:flex-1 sm:truncate sm:text-fog sm:hover:text-cloud"
                     >
                       {course.title}
                     </Link>
                   )}
-                  <span className="num ml-auto w-full text-right text-xs font-medium text-steel-dim sm:w-auto">
+                  <span className="num text-xs font-medium text-steel-dim sm:ml-auto">
                     {formatDateTime(attempt.createdAt, locale)}
                   </span>
                 </div>
