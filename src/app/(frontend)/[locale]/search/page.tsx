@@ -29,6 +29,9 @@ export default async function Page({ params: paramsPromise, searchParams: search
   const posts = await payload.find({
     collection: 'search',
     locale,
+    // Index rows synced before the locale backfill existed can miss this
+    // locale's title — show the other locale's title rather than a blank card.
+    fallbackLocale: locale === 'uk' ? 'en' : 'uk',
     depth: 1,
     limit: 12,
     select: {

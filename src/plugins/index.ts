@@ -12,6 +12,7 @@ import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { searchIndexedCollections, searchLocaleSync } from '@/search/localeSync'
 import { betterAuthPluginOptions } from '@/lib/auth/options'
 import { ukrainianAdmin } from './ukrainianAdmin'
 
@@ -169,7 +170,7 @@ export const plugins: Plugin[] = [
     },
   }),
   searchPlugin({
-    collections: ['posts', 'courses', 'course-categories', 'pages'],
+    collections: searchIndexedCollections,
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       fields: ({ defaultFields }) => {
@@ -177,6 +178,7 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  searchLocaleSync,
   // Must stay last: rewrites hardcoded English labels of the collections the
   // plugins above register (auth, forms, search, MCP api keys).
   ukrainianAdmin,
