@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 
 import { cn } from '@/utilities/ui'
+import { filterPill } from '@/components/Courses/CategoryFilter'
 import { formatXp, levelForXp } from '@/utilities/xp'
 import type { LeaderboardEntry } from '@/utilities/leaderboard'
 
@@ -33,7 +34,7 @@ export const LeaderboardTabs: React.FC<{
     <div>
       <div
         role="tablist"
-        className="inline-flex flex-wrap gap-0.5 rounded-full border border-line-2 bg-void/50 p-0.5 text-[12px] font-bold"
+        className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:flex-wrap md:overflow-x-visible md:px-0"
       >
         {boards.map((b, i) => (
           <button
@@ -43,10 +44,7 @@ export const LeaderboardTabs: React.FC<{
             aria-selected={i === active}
             data-testid={`leaderboard-tab-${b.key}`}
             onClick={() => setActive(i)}
-            className={cn(
-              'rounded-full px-3.5 py-1.5 uppercase tracking-[0.08em] transition-colors',
-              i === active ? 'bg-orange text-ink' : 'text-fog hover:text-cloud',
-            )}
+            className={filterPill(i === active)}
           >
             {b.label}
           </button>

@@ -15,7 +15,8 @@ type Props = {
   allLabel: string
 }
 
-const pill = (active: boolean) =>
+/** Chip style for horizontal filter rows (course categories, leaderboard periods). */
+export const filterPill = (active: boolean) =>
   cn(
     'shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors md:px-4 md:py-2 md:text-xs md:tracking-[0.1em]',
     active
@@ -40,7 +41,7 @@ export const CategoryFilter: React.FC<Props> = ({ categories, selectedCategory, 
       <button
         ref={selectedCategory === null ? activeRef : undefined}
         onClick={() => onSelect(null)}
-        className={pill(selectedCategory === null)}
+        className={filterPill(selectedCategory === null)}
       >
         {allLabel}
       </button>
@@ -49,7 +50,7 @@ export const CategoryFilter: React.FC<Props> = ({ categories, selectedCategory, 
           key={cat.id}
           ref={selectedCategory === cat.id ? activeRef : undefined}
           onClick={() => onSelect(cat.id)}
-          className={pill(selectedCategory === cat.id)}
+          className={filterPill(selectedCategory === cat.id)}
         >
           {cat.title}
         </button>
