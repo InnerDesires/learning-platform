@@ -64,6 +64,7 @@ pnpm lint             # ESLint
 - **Port 3000 is the default.** If it's busy with another worktree's server, leave that server running and start yours on a free port (`.claude/launch.json` has `autoPort: true`; manually: `PORT=3001 pnpm dev`).
 - Non-3000 caveat: `NEXT_PUBLIC_SERVER_URL` and Better Auth `trustedOrigins` assume `localhost:3000`, so Google OAuth and form-based sign-in can fail on other ports. `GET /api/dev-login` (see [docs/dev-admin-login.md](docs/dev-admin-login.md)) signs in server-side and works on any port.
 - If the server is not responding, check the Neon branch in `.env` first.
+- If the server throws `relation "..." does not exist` on tables that do exist, check `DATABASE_URL` for a `-pooler` host — dev sessions must use the direct (unpooled) connection string (see Database: Neon Branching) — then restart the server.
 
 ## Database: Neon Branching
 
@@ -77,13 +78,15 @@ Name the Neon branch after your **git branch name** — this is required for aut
 pnpm exec neonctl branches create --name <git-branch-name> --parent dev \
   --project-id ancient-cell-80589995 --output json
 
-# 2. Get connection string (use branch.id from above)
-pnpm exec neonctl connection-string <BRANCH_ID> --pooled \
+# 2. Get the DIRECT (unpooled) connection string (use branch.id from above)
+pnpm exec neonctl connection-string <BRANCH_ID> \
   --project-id ancient-cell-80589995
 
 # 3. Set in .env
 DATABASE_URL=<connection_string>
 ```
+
+**Use the direct (unpooled) connection string for dev — no `--pooled`, no `-pooler` in the host.** Drizzle push (which runs on dev-server startup) leaks `SET search_path` onto pgbouncer transaction-mode pooled connections; other clients then reuse the poisoned connections and unqualified table names randomly stop resolving (`42P01 relation "..." does not exist` on tables that exist). A single dev server is fine unpooled. Production and previews keep pooled URLs — they never run drizzle push.
 
 **Never set `DATABASE_URL` in `.env.local`** — `vitest.setup.ts` loads `.env.local` with `override: true`, so a value there silently beats both `.env` and explicitly passed env vars.
 
