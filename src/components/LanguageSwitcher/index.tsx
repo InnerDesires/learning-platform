@@ -17,7 +17,10 @@ export const LanguageSwitcher: React.FC<{ withTestIds?: boolean }> = ({ withTest
   const currentLocale = isEnglish ? 'en' : 'uk'
 
   const getLocalePath = (targetLocale: string) => {
-    const cleanPath = isEnglish ? pathname.replace(/^\/en/, '') || '/' : pathname
+    // During prerender usePathname() returns the internal /uk/* route path
+    // (middleware rewrites / -> /uk and redirects public /uk/* to /*),
+    // so strip either locale prefix, not just /en.
+    const cleanPath = pathname.replace(/^\/(en|uk)(?=\/|$)/, '') || '/'
 
     if (targetLocale === defaultLocale) return cleanPath
     return `/en${cleanPath === '/' ? '' : cleanPath}`
