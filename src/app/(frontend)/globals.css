@@ -380,12 +380,30 @@
   }
 }
 
+/* seamless loop for a track made of two identical halves */
+@keyframes ticker {
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @layer utilities {
   .animate-marquee {
     animation: marquee 30s linear infinite;
   }
   .animate-marquee-reverse {
     animation: marquee-reverse 30s linear infinite;
+  }
+  .animate-ticker {
+    animation: ticker var(--ticker-duration, 30s) linear infinite;
+  }
+  .animate-ticker:hover {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-ticker {
+      animation: none;
+    }
   }
   /* tabular numerals for scores, XP, stats */
   .num {

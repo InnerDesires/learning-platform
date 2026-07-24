@@ -14,6 +14,7 @@ import { Courses } from './collections/Courses'
 import { Enrollments } from './collections/Enrollments'
 import { Likes } from './collections/Likes'
 import { QuizAttempts } from './collections/QuizAttempts'
+import { XpEvents } from './collections/XpEvents'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -119,6 +120,7 @@ export default buildConfig({
     Comments,
     Likes,
     QuizAttempts,
+    XpEvents,
   ],
   cors: [
     getServerSideURL(),

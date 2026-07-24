@@ -58,6 +58,14 @@ export async function Footer({ locale }: { locale: SiteLocale }) {
               ))}
               <li>
                 <Link
+                  href={`${prefix}/leaderboard`}
+                  className="text-fog transition-colors hover:text-cloud"
+                >
+                  {t.footerLeaderboard}
+                </Link>
+              </li>
+              <li>
+                <Link
                   href={`${prefix}/certificates`}
                   className="text-fog transition-colors hover:text-cloud"
                 >
