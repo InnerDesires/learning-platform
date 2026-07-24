@@ -1,7 +1,8 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useCourseUserState } from './CourseUserState'
+import { LoginPromptDialog } from './LoginPromptDialog'
 import { ProgressBar } from './ProgressBar'
 import { StepsList } from './StepsList'
 
@@ -27,12 +28,18 @@ type Props = {
     quizTitle: string
     quizPassed: string
     quizCompleteStepsFirst: string
+    loginPromptTitle: string
+    loginPromptText: string
+    loginPromptLogin: string
+    loginPromptClose: string
   }
 }
 
-export function CourseProgressAndSteps({ courseSlug, steps, quizEnabled, localePrefix, typeLabels, minutesLabel, labels }: Props) {
-  const { enrollment } = useCourseUserState()
+export function CourseProgressAndSteps({ courseSlug, steps, quizEnabled, localePrefix = '', typeLabels, minutesLabel, labels }: Props) {
+  const { loading, isLoggedIn, enrollment } = useCourseUserState()
   const isEnrolled = !!enrollment
+  const isGuest = !loading && !isLoggedIn
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false)
 
   const completedSteps: string[] = Array.isArray(enrollment?.completedSteps)
     ? (enrollment.completedSteps as string[])
@@ -64,6 +71,7 @@ export function CourseProgressAndSteps({ courseSlug, steps, quizEnabled, localeP
             courseSlug={courseSlug}
             completedSteps={completedSteps}
             linked={isEnrolled}
+            onStepClick={isGuest ? () => setLoginPromptOpen(true) : undefined}
             completedLabel={labels.courseCompleted}
             stepsLabel={labels.courseSteps}
             localePrefix={localePrefix}
@@ -80,6 +88,19 @@ export function CourseProgressAndSteps({ courseSlug, steps, quizEnabled, localeP
           />
         </div>
       </div>
+      {isGuest && (
+        <LoginPromptDialog
+          open={loginPromptOpen}
+          onClose={() => setLoginPromptOpen(false)}
+          loginHref={`${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${courseSlug}`)}`}
+          labels={{
+            title: labels.loginPromptTitle,
+            text: labels.loginPromptText,
+            login: labels.loginPromptLogin,
+            close: labels.loginPromptClose,
+          }}
+        />
+      )}
     </>
   )
 }

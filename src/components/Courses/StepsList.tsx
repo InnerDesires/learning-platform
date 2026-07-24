@@ -31,6 +31,8 @@ type Props = {
   completedSteps: string[]
   activeStepIndex?: number
   linked?: boolean
+  /** When set (and not linked), step rows become buttons — used to prompt guests to log in */
+  onStepClick?: (index: number) => void
   completedLabel: string
   stepsLabel: string
   localePrefix?: string
@@ -54,6 +56,7 @@ export const StepsList: React.FC<Props> = ({
   completedSteps,
   activeStepIndex,
   linked = false,
+  onStepClick,
   completedLabel,
   stepsLabel,
   localePrefix = '',
@@ -72,18 +75,19 @@ export const StepsList: React.FC<Props> = ({
         const typeLabel = typeLabels?.[step.blockType as keyof typeof typeLabels]
         const duration = typeof step.duration === 'number' && step.duration > 0 ? step.duration : null
 
+        const isClickable = linked || !!onStepClick
         const rowClass = compact
           ? cn(
               'flex items-center gap-3 rounded-[10px] px-2.5 py-2 transition-colors',
               isActive ? 'bg-orange/12 text-cloud' : 'text-fog',
-              linked && 'hover:bg-steel/10 hover:text-cloud',
+              isClickable && 'hover:bg-steel/10 hover:text-cloud',
             )
           : cn(
               'flex items-center gap-4 rounded-xl border bg-card px-5 py-3.5 transition-colors',
               isActive
                 ? 'border-orange bg-[linear-gradient(120deg,rgb(249_140_31/0.12),var(--navy))]'
                 : 'border-line',
-              linked && 'hover:border-orange/55',
+              isClickable && 'hover:border-orange/55',
             )
 
         const content = (
@@ -147,6 +151,19 @@ export const StepsList: React.FC<Props> = ({
             <Link key={step.id ?? i} href={`${localePrefix}/courses/${courseSlug}/steps/${i + 1}`} className={rowClass}>
               {content}
             </Link>
+          )
+        }
+
+        if (onStepClick) {
+          return (
+            <button
+              key={step.id ?? i}
+              type="button"
+              onClick={() => onStepClick(i)}
+              className={cn(rowClass, 'w-full cursor-pointer text-left')}
+            >
+              {content}
+            </button>
           )
         }
 

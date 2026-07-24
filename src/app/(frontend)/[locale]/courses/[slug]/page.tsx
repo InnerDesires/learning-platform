@@ -195,6 +195,10 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             quizTitle: t.quizTitle,
             quizPassed: t.quizPassed,
             quizCompleteStepsFirst: t.quizCompleteStepsFirst,
+            loginPromptTitle: t.courseLoginPromptTitle,
+            loginPromptText: t.courseLoginPromptText,
+            loginPromptLogin: t.signIn,
+            loginPromptClose: t.courseLoginPromptClose,
           }}
         />
 
