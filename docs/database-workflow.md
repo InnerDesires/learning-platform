@@ -37,9 +37,10 @@ Why `ci-base` exists (instead of forking CI branches from `dev`): `dev` is push-
    ```bash
    pnpm exec neonctl branches create --name feat/<slug> --parent dev \
      --project-id ancient-cell-80589995 --output json
-   pnpm exec neonctl connection-string <BRANCH_ID> --pooled \
+   pnpm exec neonctl connection-string <BRANCH_ID> \
      --project-id ancient-cell-80589995
    ```
+   Use the **direct** (unpooled) connection string — no `--pooled` flag, no `-pooler` suffix in the host. Pooled URLs break under `push: true` (see sharp edges below); a single dev server doesn't need pooling. Production and previews keep pooled URLs — they never run drizzle push.
 3. Set `DATABASE_URL` in `.env`. **Check that `.env.local` does not define `DATABASE_URL`** — Next.js gives `.env.local` precedence, and a leftover value there silently redirects the dev server *and* Vitest to another branch.
 4. `pnpm dev` — `push: true` syncs the schema from code. Integration tests (`pnpm test:int`) hit the same branch.
 5. Schema changed? Before opening the PR: `pnpm payload migrate:create <name>` and commit the migration. Hand-edit it down to only your change if the diff picks up unrelated noise, and keep DDL guarded (`IF NOT EXISTS`) so reruns are safe.
@@ -48,6 +49,7 @@ Why `ci-base` exists (instead of forking CI branches from `dev`): `dev` is push-
 **Sharp edges:**
 - Stop the dev server before switching git branches. If the checked-out code's schema is older than the connected branch's, `push: true` will interactively offer to **drop the newer columns and their data**.
 - Dev server runs on port 3000 only, one instance.
+- A **pooled** `DATABASE_URL` (host contains `-pooler`) causes intermittent `42P01 relation "..." does not exist` errors in dev: drizzle push introspection (dev-server startup/HMR) leaks `SET search_path` onto pgbouncer transaction-mode connections, other clients reuse those poisoned connections, and unqualified table names randomly stop resolving (observed 2026-07-24 as Better Auth sign-in failing while the frontend worked, then random pages 500ing). If a dev server throws "relation does not exist" on tables that exist, check for a `-pooler` host in `DATABASE_URL`, switch to the direct connection string, and restart the server.
 
 ## Flow 2 — PR CI (GitHub Actions)
 
