@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { HomePage } from '@/components/Home'
+import { resolveCalendarContent } from '@/components/Home/content'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 import { Suspense } from 'react'
@@ -26,9 +28,12 @@ type Args = {
 export default async function Page({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
 
+  const homeCalendar = await getCachedGlobal('home-calendar', 0, locale)()
+
   return (
     <HomePage
       locale={locale}
+      calendar={resolveCalendarContent(locale, homeCalendar)}
       newsSlot={
         <Suspense fallback={<NewsSectionSkeleton locale={locale} />}>
           <NewsSectionServer locale={locale} />

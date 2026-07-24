@@ -1,4 +1,5 @@
 import type { SiteLocale } from '@/utilities/locales'
+import type { HomeCalendar } from '@/payload-types'
 
 // Content sourced from ironsquad.org.ua (July 2026) — the platform is the
 // online arm of the «Залізна Зміна» project and must stay in sync with the
@@ -322,3 +323,32 @@ const content: Record<SiteLocale, HomeContent> = {
 }
 
 export const getHomeContent = (locale: SiteLocale) => content[locale]
+
+export type CalendarContent = HomeContent['calendar']
+
+// Overlays the `home-calendar` Payload global on the hardcoded content above:
+// per-field fallback for the section texts, and the hardcoded schedule when the
+// global has no events yet (never saved / cleared).
+export const resolveCalendarContent = (
+  locale: SiteLocale,
+  global: HomeCalendar | null | undefined,
+): CalendarContent => {
+  const fallback = content[locale].calendar
+
+  const events = (global?.events ?? []).map((event) => ({
+    month: event.month,
+    year: event.year,
+    range: event.range,
+    title: event.title,
+    description: event.description ?? '',
+    formUrl: event.formUrl,
+  }))
+
+  return {
+    tag: global?.tag || fallback.tag,
+    title: global?.title || fallback.title,
+    description: global?.description || fallback.description,
+    events: events.length > 0 ? events : fallback.events,
+    cta: global?.cta || fallback.cta,
+  }
+}

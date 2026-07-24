@@ -37,6 +37,7 @@ import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from 
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
+import { RowLabel as RowLabel_5edfebe28332895c4bcacd2ce1fbbb52 } from '@/HomeCalendar/RowLabel'
 import { LogoutButton as LogoutButton_5a568d0e24198ca3140489e0d330f424 } from 'payload-auth/better-auth/plugin/client'
 import { default as default_34253356f327048e5e1d0c8dd6259985 } from '@/components/admin/graphics/Icon'
 import { default as default_7290b7198794a8ea161f702320c1cd8a } from '@/components/admin/graphics/Logo'
@@ -91,6 +92,7 @@ export const importMap = {
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
+  "@/HomeCalendar/RowLabel#RowLabel": RowLabel_5edfebe28332895c4bcacd2ce1fbbb52,
   "payload-auth/better-auth/plugin/client#LogoutButton": LogoutButton_5a568d0e24198ca3140489e0d330f424,
   "@/components/admin/graphics/Icon#default": default_34253356f327048e5e1d0c8dd6259985,
   "@/components/admin/graphics/Logo#default": default_7290b7198794a8ea161f702320c1cd8a,
