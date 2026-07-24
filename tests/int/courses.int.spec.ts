@@ -146,6 +146,103 @@ describe('Courses', () => {
     })
   })
 
+  describe('steps validation (courses can never publish with zero steps)', () => {
+    async function expectStepsValidationError(promise: Promise<unknown>) {
+      let error: unknown
+      try {
+        await promise
+      } catch (e) {
+        error = e
+      }
+      expect(error, 'expected the operation to be rejected').toBeDefined()
+      expect((error as Error).name).toBe('ValidationError')
+      const paths = ((error as { data?: { errors?: { path: string }[] } }).data?.errors ?? []).map(
+        (fieldError) => fieldError.path,
+      )
+      expect(paths).toContain('steps')
+    }
+
+    it('draft save with zero steps is allowed (admin autosave workflow)', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: minimalCourseData('Draft Zero Steps Test', 0),
+        draft: true,
+      })
+
+      expect(course.id).toBeDefined()
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('non-draft create with zero steps is rejected', async () => {
+      await expectStepsValidationError(
+        payload.create({
+          collection: 'courses',
+          data: minimalCourseData('Create Zero Steps Test', 0),
+        }),
+      )
+    })
+
+    it('publishing a course with zero steps is rejected', async () => {
+      await expectStepsValidationError(
+        payload.create({
+          collection: 'courses',
+          data: {
+            ...minimalCourseData('Publish Zero Steps Test', 0),
+            _status: 'published',
+          },
+        }),
+      )
+    })
+
+    it('removing all steps from a published course is rejected', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Remove All Steps Test'),
+          _status: 'published',
+        },
+      })
+
+      await expectStepsValidationError(
+        payload.update({
+          collection: 'courses',
+          id: course.id,
+          data: { steps: [] },
+        }),
+      )
+
+      // The published version must be untouched by the rejected update.
+      const persisted = await payload.findByID({ collection: 'courses', id: course.id })
+      expect(persisted.steps).toHaveLength(1)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('deleting steps in a draft of a published course does not touch the published version', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Draft Steps Removal Test'),
+          _status: 'published',
+        },
+      })
+
+      // Admin deletes all steps → autosave stores it as a draft version only.
+      await payload.update({
+        collection: 'courses',
+        id: course.id,
+        data: { steps: [] },
+        draft: true,
+      })
+
+      const published = await payload.findByID({ collection: 'courses', id: course.id })
+      expect(published.steps).toHaveLength(1)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+  })
+
   describe('quiz validation (enabled quiz can never publish without questions)', () => {
     type QuizQuestions = NonNullable<NonNullable<Course['quiz']>['questions']>
 
