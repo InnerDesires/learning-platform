@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import type { SiteLocale } from '@/utilities/locales'
-import { getHomeContent } from './content'
+import { getHomeContent, type CalendarContent } from './content'
 import { HeroSection } from './Hero'
 import { AboutSection } from './About'
 import { CoursesSection } from './Courses'
@@ -12,11 +12,12 @@ import { ContactSection } from './Contact'
 
 type Props = {
   locale: SiteLocale
+  calendar: CalendarContent
   newsSlot: ReactNode
   coursesSlot: ReactNode
 }
 
-export function HomePage({ locale, newsSlot, coursesSlot }: Props) {
+export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
   const c = getHomeContent(locale)
 
   return (
@@ -32,7 +33,7 @@ export function HomePage({ locale, newsSlot, coursesSlot }: Props) {
         <div className="container">
           {newsSlot}
           <div id="calendar" className="scroll-mt-24">
-            <CalendarSection {...c.calendar} />
+            <CalendarSection {...calendar} />
           </div>
         </div>
       </div>

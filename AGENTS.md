@@ -1165,7 +1165,7 @@ For Cursor Cloud or headless runs, use **option 2**: set `NEON_API_KEY` in `.env
 Summary:
 
 1. Set `NEON_API_KEY` in `.env` (from Neon Console → dev-payload → Settings → API keys)
-2. Create branch and get connection string (ensure `NEON_API_KEY` is in the environment when running `neonctl`, e.g. via dotenv as above): `pnpm exec neonctl branches create --name cursor-<unique> --parent dev --project-id ancient-cell-80589995 --output json`, then `pnpm exec neonctl connection-string <BRANCH_ID> --pooled --project-id ancient-cell-80589995`, then write the connection string to `.env` as `DATABASE_URL`
+2. Create branch and get connection string (ensure `NEON_API_KEY` is in the environment when running `neonctl`, e.g. via dotenv as above): `pnpm exec neonctl branches create --name cursor-<unique> --parent dev --project-id ancient-cell-80589995 --output json`, then `pnpm exec neonctl connection-string <BRANCH_ID> --project-id ancient-cell-80589995` (direct/unpooled — never `--pooled`: pooled URLs cause intermittent "relation does not exist" errors under `push: true`, see [.cursor/rules/neon-branching.mdc](.cursor/rules/neon-branching.mdc)), then write the connection string to `.env` as `DATABASE_URL`
 3. Start the dev server with `pnpm dev`
 4. At session end, delete the branch with `pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995`
 
