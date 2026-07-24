@@ -60,9 +60,10 @@ pnpm lint             # ESLint
 
 ## Dev Server Rules
 
-- **Port 3000 only.** Never use 3001, 3002, etc.
-- Never run multiple instances simultaneously.
-- If port 3000 is not responding, check the Neon branch in `.env` first.
+- **One dev server per worktree.** Multiple instances may run simultaneously only when each runs from its own worktree and points to its own Neon branch (`DATABASE_URL` in that worktree's `.env`). Never run two servers from the same worktree or against the same DB branch.
+- **Port 3000 is the default.** If it's busy with another worktree's server, leave that server running and start yours on a free port (`.claude/launch.json` has `autoPort: true`; manually: `PORT=3001 pnpm dev`).
+- Non-3000 caveat: `NEXT_PUBLIC_SERVER_URL` and Better Auth `trustedOrigins` assume `localhost:3000`, so Google OAuth and form-based sign-in can fail on other ports. `GET /api/dev-login` (see [docs/dev-admin-login.md](docs/dev-admin-login.md)) signs in server-side and works on any port.
+- If the server is not responding, check the Neon branch in `.env` first.
 
 ## Database: Neon Branching
 
@@ -90,6 +91,17 @@ DATABASE_URL=<connection_string>
 ```bash
 pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
 ```
+
+## Dev Admin & One-Command Login
+
+Every dev DB branch (forked from the seeded `dev` parent) carries an admin
+account with a filled profile, a completed course (certificate-ready, quiz
+passed), an in-progress course, and comments. Full details: [docs/dev-admin-login.md](docs/dev-admin-login.md).
+
+- **Browser login (one navigation)**: `http://localhost:3000/api/dev-login` — signs in as the dev admin and sets session cookies. `?redirect=/admin` supported. Dev-only (404 on Vercel/production).
+- **CLI session (one command)**: `curl -si -c cookies.txt http://localhost:3000/api/dev-login`
+- **Credentials**: `dev-admin@example.com` / `dev-admin-password` (defined in `src/lib/auth/dev-credentials.ts`)
+- **Reset/seed the account**: `pnpm seed:dev-admin` (idempotent; needed only on branches created before 2026-07-24 or after destructive tests)
 
 ## Database: Push vs Migrations
 
