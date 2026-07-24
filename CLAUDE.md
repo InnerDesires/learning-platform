@@ -91,6 +91,17 @@ DATABASE_URL=<connection_string>
 pnpm exec neonctl branches delete <BRANCH_ID> --project-id ancient-cell-80589995
 ```
 
+## Dev Admin & One-Command Login
+
+Every dev DB branch (forked from the seeded `dev` parent) carries an admin
+account with a filled profile, a completed course (certificate-ready, quiz
+passed), an in-progress course, and comments. Full details: [docs/dev-admin-login.md](docs/dev-admin-login.md).
+
+- **Browser login (one navigation)**: `http://localhost:3000/api/dev-login` — signs in as the dev admin and sets session cookies. `?redirect=/admin` supported. Dev-only (404 on Vercel/production).
+- **CLI session (one command)**: `curl -si -c cookies.txt http://localhost:3000/api/dev-login`
+- **Credentials**: `dev-admin@example.com` / `dev-admin-password` (defined in `src/lib/auth/dev-credentials.ts`)
+- **Reset/seed the account**: `pnpm seed:dev-admin` (idempotent; needed only on branches created before 2026-07-24 or after destructive tests)
+
 ## Database: Push vs Migrations
 
 Full topology and rationale: [docs/database-workflow.md](docs/database-workflow.md).
