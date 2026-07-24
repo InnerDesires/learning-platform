@@ -3,6 +3,7 @@ import { APIError } from 'payload'
 
 import { admin } from '../access/admin'
 import { authenticated } from '../access/authenticated'
+import { rateLimitCreate } from '../hooks/rateLimitCreate'
 
 const adminOrOwn: Access = ({ req: { user } }) => {
   if (!user) return false
@@ -127,6 +128,9 @@ export const Enrollments: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
+      // One row per user×course is enforced below, but each attempt still does
+      // lookups and page revalidation — cap scripted enroll loops.
+      rateLimitCreate({ prefix: 'enroll-create', windowSeconds: 600, max: 30 }),
       async ({ data, operation, req }) => {
         // Non-admin API requests can only enroll themselves; bind before the
         // duplicate check so a spoofed user id can't dodge it. Local API calls

@@ -3,6 +3,7 @@ import { APIError } from 'payload'
 
 import { authenticated } from '../access/authenticated'
 import { anyone } from '../access/anyone'
+import { rateLimitCreate } from '../hooks/rateLimitCreate'
 
 const adminOrOwn: Access = ({ req: { user } }) => {
   if (!user) return false
@@ -34,6 +35,9 @@ export const Likes: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
+      // Duplicates are already rejected below, but rapid like/unlike toggling
+      // still costs a write + cache revalidation each — cap the rate.
+      rateLimitCreate({ prefix: 'like-create', windowSeconds: 60, max: 60 }),
       async ({ data, req, operation }) => {
         if (operation !== 'create' || !data) return data
 

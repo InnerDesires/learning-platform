@@ -5,6 +5,7 @@ import { Resend } from 'resend'
 import { buildOtpEmailHtml } from '@/lib/email/verification-otp'
 import { buildInviteEmailHtml } from '@/lib/email/admin-invite'
 import { consumePreVerified } from '@/lib/auth/pre-verified'
+import { isRateLimitEnabled } from '@/lib/rate-limit'
 
 function resolveBaseURL(): string {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
@@ -56,6 +57,31 @@ export const betterAuthOptions = {
     accountLinking: {
       enabled: true,
       trustedProviders: ['google', 'email-password'],
+    },
+  },
+  rateLimit: {
+    // Shared policy switch (see src/lib/rate-limit.ts): production-on,
+    // RATE_LIMIT=true opts dev in, RATE_LIMIT=false opts E2E's prod build out.
+    enabled: isRateLimitEnabled(),
+    window: 60,
+    max: 60,
+    // Vercel functions don't share memory, so counters must live in Postgres.
+    // payload-auth builds the matching `rateLimit` collection automatically
+    // (hidden, admin-only); the same table backs src/lib/rate-limit.ts.
+    storage: 'database',
+    customRules: {
+      // Credential brute force / signup flooding (per IP).
+      '/sign-in/email': { window: 60, max: 10 },
+      '/sign-up/email': { window: 60, max: 5 },
+      // Every OTP request sends a Resend email — strictest limits.
+      '/email-otp/send-verification-otp': { window: 60, max: 3 },
+      '/forget-password/email-otp': { window: 60, max: 3 },
+      '/sign-in/email-otp': { window: 60, max: 10 },
+      '/email-otp/verify-email': { window: 60, max: 10 },
+      '/email-otp/reset-password': { window: 60, max: 10 },
+      // Session polling is read-only and frequent (admin panel, client
+      // components) — a rate-limit row write per check would be pure overhead.
+      '/get-session': false,
     },
   },
   databaseHooks: {

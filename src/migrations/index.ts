@@ -18,6 +18,7 @@ import * as migration_20260724_120000_archive_block_collections from './20260724
 import * as migration_20260724_140000_xp_events from './20260724_140000_xp_events';
 import * as migration_20260724_160000_home_calendar_global from './20260724_160000_home_calendar_global';
 import * as migration_20260724_170000_audit_access_and_indexes from './20260724_170000_audit_access_and_indexes';
+import * as migration_20260724_190000_rate_limit from './20260724_190000_rate_limit';
 
 export const migrations = [
   {
@@ -119,5 +120,10 @@ export const migrations = [
     up: migration_20260724_170000_audit_access_and_indexes.up,
     down: migration_20260724_170000_audit_access_and_indexes.down,
     name: '20260724_170000_audit_access_and_indexes',
+  },
+  {
+    up: migration_20260724_190000_rate_limit.up,
+    down: migration_20260724_190000_rate_limit.down,
+    name: '20260724_190000_rate_limit',
   },
 ];
