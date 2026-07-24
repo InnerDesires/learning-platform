@@ -1,7 +1,7 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
-import type { User } from '@/payload-types'
+import type { Course, User } from '@/payload-types'
 import { minimalCourseData } from '../helpers/factories'
 import { populatePublishedAt } from '@/hooks/populatePublishedAt'
 
@@ -141,6 +141,157 @@ describe('Courses', () => {
       })
 
       expect(result.totalDocs).toBe(1)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+  })
+
+  describe('quiz validation (enabled quiz can never publish without questions)', () => {
+    type QuizQuestions = NonNullable<NonNullable<Course['quiz']>['questions']>
+
+    function quizQuestion(answerCount = 2): QuizQuestions[number] {
+      return {
+        question: 'What is 2 + 2?',
+        answers: Array.from({ length: answerCount }, (_, i) => ({
+          text: `Answer ${i + 1}`,
+          isCorrect: i === 0,
+        })),
+      }
+    }
+
+    function enabledQuiz(questions: QuizQuestions): Course['quiz'] {
+      return {
+        enabled: true,
+        title: 'Test Quiz',
+        passingScore: 70,
+        questions,
+      }
+    }
+
+    async function expectValidationErrorOn(path: string, promise: Promise<unknown>) {
+      let error: unknown
+      try {
+        await promise
+      } catch (e) {
+        error = e
+      }
+      expect(error, 'expected the operation to be rejected').toBeDefined()
+      expect((error as Error).name).toBe('ValidationError')
+      const paths = ((error as { data?: { errors?: { path: string }[] } }).data?.errors ?? []).map(
+        (fieldError) => fieldError.path,
+      )
+      expect(paths).toContain(path)
+    }
+
+    it('publishing with an enabled quiz and zero questions is rejected', async () => {
+      await expectValidationErrorOn(
+        'quiz.questions',
+        payload.create({
+          collection: 'courses',
+          data: {
+            ...minimalCourseData('Quiz Zero Questions Test'),
+            quiz: enabledQuiz([]),
+            _status: 'published',
+          },
+        }),
+      )
+    })
+
+    it('draft save with an enabled quiz and zero questions is allowed (admin autosave workflow)', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Quiz Draft Zero Questions Test'),
+          quiz: enabledQuiz([]),
+        },
+        draft: true,
+      })
+
+      expect(course.id).toBeDefined()
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('publishing with quiz disabled and no questions is allowed', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Quiz Disabled Test'),
+          quiz: { enabled: false, questions: [] },
+          _status: 'published',
+        },
+      })
+
+      expect(course._status).toBe('published')
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('publishing with an enabled quiz with a complete question succeeds', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Quiz Valid Test'),
+          quiz: enabledQuiz([quizQuestion()]),
+          _status: 'published',
+        },
+      })
+
+      expect(course._status).toBe('published')
+      expect(course.quiz?.questions).toHaveLength(1)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('publishing a question with zero answers is rejected', async () => {
+      await expectValidationErrorOn(
+        'quiz.questions.0.answers',
+        payload.create({
+          collection: 'courses',
+          data: {
+            ...minimalCourseData('Quiz Zero Answers Test'),
+            quiz: enabledQuiz([quizQuestion(0)]),
+            _status: 'published',
+          },
+        }),
+      )
+    })
+
+    it('publishing a question with a single answer is rejected (minRows: 2)', async () => {
+      await expectValidationErrorOn(
+        'quiz.questions.0.answers',
+        payload.create({
+          collection: 'courses',
+          data: {
+            ...minimalCourseData('Quiz One Answer Test'),
+            quiz: enabledQuiz([quizQuestion(1)]),
+            _status: 'published',
+          },
+        }),
+      )
+    })
+
+    it('enabling the quiz without questions on a published course is rejected', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('Quiz Enable Without Questions Test'),
+          _status: 'published',
+        },
+      })
+
+      await expectValidationErrorOn(
+        'quiz.questions',
+        payload.update({
+          collection: 'courses',
+          id: course.id,
+          data: { quiz: { enabled: true } },
+        }),
+      )
+
+      // The published version must be untouched by the rejected update.
+      const persisted = await payload.findByID({ collection: 'courses', id: course.id })
+      expect(persisted.quiz?.enabled).not.toBe(true)
 
       await payload.delete({ collection: 'courses', id: course.id })
     })
