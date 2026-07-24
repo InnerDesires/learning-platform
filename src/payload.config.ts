@@ -1,7 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { uk } from '@payloadcms/translations/languages/uk'
-import { en } from '@payloadcms/translations/languages/en'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -128,7 +127,9 @@ export default buildConfig({
   globals: [Header, Footer],
   i18n: {
     fallbackLanguage: 'uk',
-    supportedLanguages: { uk, en },
+    // uk only: with `en` listed, Payload ≥3.79 matches regional Accept-Language
+    // tags (en-US → en) and English-locale browsers get an English admin UI.
+    supportedLanguages: { uk },
     translations: {
       uk: {
         general: {
