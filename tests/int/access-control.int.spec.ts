@@ -112,4 +112,142 @@ describe('Access Control', () => {
       ).rejects.toThrow()
     })
   })
+
+  // Regression tests for the payload-skill access-control audit. Each asserts an
+  // enforced-access (overrideAccess: false) call — the path REST requests take —
+  // is blocked, while server actions (overrideAccess: true) keep working.
+  describe('Enrollments — progress fields are not owner-writable', () => {
+    it('owner cannot mark their own enrollment completed (overrideAccess: false)', async () => {
+      await expect(
+        payload.update({
+          collection: 'enrollments',
+          id: regularUserEnrollmentId,
+          data: { status: 'completed', quizPassed: true },
+          user: regularUser,
+          overrideAccess: false,
+        }),
+      ).rejects.toThrow()
+
+      const check = await payload.findByID({
+        collection: 'enrollments',
+        id: regularUserEnrollmentId,
+      })
+      expect(check.status).not.toBe('completed')
+      expect(check.quizPassed).not.toBe(true)
+    })
+
+    it('server-side progress update still works (overrideAccess: true)', async () => {
+      const updated = await payload.update({
+        collection: 'enrollments',
+        id: regularUserEnrollmentId,
+        data: { status: 'in_progress' },
+      })
+      expect(updated.status).toBe('in_progress')
+    })
+  })
+
+  describe('QuizAttempts — create is admin-only', () => {
+    it('learner cannot forge a passing attempt (overrideAccess: false)', async () => {
+      await expect(
+        payload.create({
+          collection: 'quiz-attempts',
+          data: {
+            user: regularUser.id,
+            course: courseId,
+            score: 100,
+            passed: true,
+            totalQuestions: 1,
+            correctAnswers: 1,
+            attemptNumber: 1,
+          },
+          user: regularUser,
+          overrideAccess: false,
+        }),
+      ).rejects.toThrow()
+    })
+  })
+
+  describe('Users — no privilege escalation', () => {
+    it('learner cannot escalate their own role to admin (overrideAccess: false)', async () => {
+      // payload-auth's self-update restricts non-admins to allowed fields; the
+      // role change is either rejected or stripped — never persisted.
+      await payload
+        .update({
+          collection: 'users',
+          id: regularUser.id,
+          data: { role: ['admin'] },
+          user: regularUser,
+          overrideAccess: false,
+        })
+        .catch(() => undefined)
+
+      const check = await payload.findByID({ collection: 'users', id: regularUser.id })
+      expect(check.role).toEqual(['learner'])
+    })
+
+    it("learner cannot update another user's profile (overrideAccess: false)", async () => {
+      await payload
+        .update({
+          collection: 'users',
+          id: otherUser.id,
+          data: { name: 'Hacked Name' },
+          user: regularUser,
+          overrideAccess: false,
+        })
+        .catch(() => undefined)
+
+      const check = await payload.findByID({ collection: 'users', id: otherUser.id })
+      expect(check.name).not.toBe('Hacked Name')
+    })
+  })
+
+  describe('Likes — delete is owner-or-admin', () => {
+    it("learner cannot delete another user's like (overrideAccess: false)", async () => {
+      const like = await payload.create({
+        collection: 'likes',
+        data: { user: regularUser.id, targetCollection: 'courses', targetId: courseId },
+      })
+
+      await expect(
+        payload.delete({
+          collection: 'likes',
+          id: like.id,
+          user: otherUser,
+          overrideAccess: false,
+        }),
+      ).rejects.toThrow()
+
+      const still = await payload.findByID({ collection: 'likes', id: like.id })
+      expect(still.id).toBe(like.id)
+
+      await payload.delete({ collection: 'likes', id: like.id })
+    })
+  })
+
+  describe('Globals — only admins can update header/footer', () => {
+    it('non-admin cannot update the header global (overrideAccess: false)', async () => {
+      await expect(
+        payload.updateGlobal({
+          slug: 'header',
+          data: { navItems: [] },
+          user: regularUser,
+          overrideAccess: false,
+        }),
+      ).rejects.toThrow()
+    })
+
+    it('admin can update the header global (overrideAccess: false)', async () => {
+      const updated = await payload.updateGlobal({
+        slug: 'header',
+        data: { navItems: [] },
+        user: adminUser,
+        overrideAccess: false,
+        // The afterChange revalidation hook calls revalidateTag, which needs a
+        // Next.js request store absent under vitest; this flag is the hook's
+        // own escape hatch and does not affect the access check under test.
+        context: { disableRevalidate: true },
+      })
+      expect(updated).toBeDefined()
+    })
+  })
 })

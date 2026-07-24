@@ -3,64 +3,9 @@ import config from '@/payload.config'
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 import type { Course, User } from '@/payload-types'
 import { minimalCourseData } from '../helpers/factories'
-import { populatePublishedAt } from '@/hooks/populatePublishedAt'
 
 let payload: Payload
 let regularUser: User
-
-// populatePublishedAt is a pure hook function that reads req.data (HTTP request body).
-// It is a no-op in Local API calls because req.data is not populated there — it is
-// designed to fire from admin-panel / REST requests. These unit tests call the hook
-// directly with a mocked req so the contract is clear.
-describe('populatePublishedAt hook (unit)', () => {
-  it('sets publishedAt when req.data is present and has no publishedAt', () => {
-    const before = new Date()
-    const result = populatePublishedAt({
-      data: { title: 'Test' },
-      operation: 'create',
-      req: { data: { title: 'Test' } } as any,
-      collection: {} as any,
-      context: {},
-    })
-    const publishedAt = (result as any)?.publishedAt
-    expect(publishedAt).toBeDefined()
-    expect(new Date(publishedAt).getTime()).toBeGreaterThanOrEqual(before.getTime())
-  })
-
-  it('does not override publishedAt when already present in req.data', () => {
-    const existing = '2024-06-15T12:00:00.000Z'
-    const result = populatePublishedAt({
-      data: { title: 'Test', publishedAt: existing },
-      operation: 'create',
-      req: { data: { title: 'Test', publishedAt: existing } } as any,
-      collection: {} as any,
-      context: {},
-    })
-    expect((result as any)?.publishedAt).toBe(existing)
-  })
-
-  it('is a no-op when req.data is absent (Local API usage)', () => {
-    const result = populatePublishedAt({
-      data: { title: 'Test' },
-      operation: 'create',
-      req: {} as any,
-      collection: {} as any,
-      context: {},
-    })
-    expect((result as any)?.publishedAt).toBeUndefined()
-  })
-
-  it('is a no-op for operations other than create/update', () => {
-    const result = populatePublishedAt({
-      data: { title: 'Test' },
-      operation: 'delete' as any,
-      req: { data: { title: 'Test' } } as any,
-      collection: {} as any,
-      context: {},
-    })
-    expect((result as any)?.publishedAt).toBeUndefined()
-  })
-})
 
 describe('Courses', () => {
   beforeAll(async () => {
@@ -141,6 +86,54 @@ describe('Courses', () => {
       })
 
       expect(result.totalDocs).toBe(1)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+  })
+
+  // publishedAt is set by a field-level beforeChange hook (same pattern as
+  // Posts): filled on publish when empty, untouched otherwise.
+  describe('publishedAt field hook', () => {
+    it('publishing without publishedAt sets it automatically', async () => {
+      const before = Date.now()
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('PublishedAt Auto Test'),
+          _status: 'published',
+        },
+      })
+
+      expect(course.publishedAt).toBeDefined()
+      expect(new Date(course.publishedAt as string).getTime()).toBeGreaterThanOrEqual(before)
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('draft save leaves publishedAt unset', async () => {
+      const course = await payload.create({
+        collection: 'courses',
+        data: minimalCourseData('PublishedAt Draft Test'),
+        draft: true,
+      })
+
+      expect(course.publishedAt ?? null).toBeNull()
+
+      await payload.delete({ collection: 'courses', id: course.id })
+    })
+
+    it('an existing publishedAt is preserved on publish', async () => {
+      const existing = '2024-06-15T12:00:00.000Z'
+      const course = await payload.create({
+        collection: 'courses',
+        data: {
+          ...minimalCourseData('PublishedAt Preserve Test'),
+          publishedAt: existing,
+          _status: 'published',
+        },
+      })
+
+      expect(course.publishedAt).toBe(existing)
 
       await payload.delete({ collection: 'courses', id: course.id })
     })

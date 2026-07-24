@@ -39,7 +39,6 @@ export default async function Page({ params: paramsPromise, searchParams: search
       collectionType: true,
       doc: true,
     },
-    pagination: false,
     ...(query
       ? {
           where: {

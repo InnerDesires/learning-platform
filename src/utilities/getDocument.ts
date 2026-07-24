@@ -12,6 +12,9 @@ async function getDocument(collection: Collection, slug: string, depth = 0) {
   const page = await payload.find({
     collection,
     depth,
+    // Anonymous access — for drafts-enabled collections this resolves to
+    // published-only, so cached lookups never leak draft documents.
+    overrideAccess: false,
     where: {
       slug: {
         equals: slug,

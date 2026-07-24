@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { link } from '@/fields/link'
+import { admin } from '@/access/admin'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
@@ -8,6 +9,7 @@ export const Header: GlobalConfig = {
   label: 'Хедер сайту',
   access: {
     read: () => true,
+    update: admin,
   },
   fields: [
     {

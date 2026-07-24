@@ -104,7 +104,7 @@ export default async function VerifyPage({ params }: Args) {
     user = null
   }
 
-  const userName = user?.name || user?.email || 'Unknown'
+  const userName = user?.name || 'Unknown'
   const courseTitle = course?.title || 'Unknown Course'
   const completedAt = enrollment.completedAt
     ? new Date(enrollment.completedAt)

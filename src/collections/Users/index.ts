@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
 import { admin } from '../../access/admin'
-import { authenticated } from '../../access/authenticated'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -11,8 +10,44 @@ export const Users: CollectionConfig = {
     admin: admin,
     create: admin,
     delete: admin,
-    read: authenticated,
-    update: authenticated,
+    // read/update are intentionally NOT set. payload-auth spreads this object
+    // over its own defaults, so leaving them out keeps the plugin's admin-or-self
+    // access with non-admin self-updates limited to allowed fields — a project
+    // override here would reopen role escalation via PATCH /api/users/:id.
+  },
+  hooks: {
+    beforeDelete: [
+      // These tables declare user_id/author_id NOT NULL while the FKs are
+      // ON DELETE SET NULL, so the user's rows must be removed first or the
+      // delete fails at the DB level.
+      async ({ id, req }) => {
+        await req.payload.delete({
+          collection: 'xp-events',
+          where: { user: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'quiz-attempts',
+          where: { user: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'enrollments',
+          where: { user: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'likes',
+          where: { user: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'comments',
+          where: { author: { equals: id } },
+          req,
+        })
+      },
+    ],
   },
   admin: {
     defaultColumns: ['name', 'email'],

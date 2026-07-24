@@ -113,6 +113,38 @@ export async function addComment(
   const payload = await getPayload({ config: configPromise })
   const userId = Number(session.user.id)
 
+  const target = await payload.find({
+    collection: targetCollection,
+    where: {
+      and: [{ id: { equals: targetId } }, { _status: { equals: 'published' } }],
+    },
+    limit: 1,
+    depth: 0,
+    select: {},
+  })
+  if (target.totalDocs === 0) {
+    return { success: false, error: 'INVALID_TARGET' }
+  }
+
+  if (parentId) {
+    const parent = await payload.find({
+      collection: 'comments',
+      where: {
+        and: [
+          { id: { equals: parentId } },
+          { targetCollection: { equals: targetCollection } },
+          { targetId: { equals: targetId } },
+        ],
+      },
+      limit: 1,
+      depth: 0,
+      select: {},
+    })
+    if (parent.totalDocs === 0) {
+      return { success: false, error: 'INVALID_TARGET' }
+    }
+  }
+
   const doc = await payload.create({
     collection: 'comments',
     data: {

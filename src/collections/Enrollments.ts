@@ -25,8 +25,17 @@ export const Enrollments: CollectionConfig = {
     create: authenticated,
     delete: admin,
     read: adminOrOwn,
-    update: adminOrOwn,
+    // Progress fields (status, completedSteps, quizPassed, …) are the basis for
+    // certificates and XP; all legit progress writes happen via server actions
+    // (Local API), so owner updates through REST would only enable forgery.
+    update: admin,
   },
+  indexes: [
+    {
+      fields: ['user', 'course'],
+      unique: true,
+    },
+  ],
   fields: [
     {
       name: 'user',
@@ -119,6 +128,17 @@ export const Enrollments: CollectionConfig = {
   hooks: {
     beforeValidate: [
       async ({ data, operation, req }) => {
+        // Non-admin API requests can only enroll themselves; bind before the
+        // duplicate check so a spoofed user id can't dodge it. Local API calls
+        // without a user (server actions) pass the id explicitly.
+        if (
+          operation === 'create' &&
+          data &&
+          req.user &&
+          !('role' in req.user && req.user.role?.includes('admin'))
+        ) {
+          data.user = req.user.id
+        }
         if (operation === 'create' && data?.user && data?.course) {
           const existing = await req.payload.find({
             collection: 'enrollments',

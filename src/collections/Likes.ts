@@ -1,7 +1,16 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Access } from 'payload'
+import { APIError } from 'payload'
 
 import { authenticated } from '../access/authenticated'
 import { anyone } from '../access/anyone'
+
+const adminOrOwn: Access = ({ req: { user } }) => {
+  if (!user) return false
+  if ('role' in user && user.role?.includes('admin')) return true
+  return {
+    user: { equals: user.id },
+  }
+}
 
 export const Likes: CollectionConfig = {
   slug: 'likes',
@@ -15,12 +24,25 @@ export const Likes: CollectionConfig = {
     create: authenticated,
     read: anyone,
     update: () => false,
-    delete: authenticated,
+    delete: adminOrOwn,
   },
+  indexes: [
+    {
+      fields: ['user', 'targetCollection', 'targetId'],
+      unique: true,
+    },
+  ],
   hooks: {
     beforeValidate: [
       async ({ data, req, operation }) => {
         if (operation !== 'create' || !data) return data
+
+        // Non-admin API requests can only like as themselves; bind before the
+        // duplicate check so a spoofed user id can't dodge it. Local API calls
+        // without a user (server actions) pass the id explicitly.
+        if (req.user && !('role' in req.user && req.user.role?.includes('admin'))) {
+          data.user = req.user.id
+        }
 
         const existing = await req.payload.find({
           collection: 'likes',
@@ -36,7 +58,6 @@ export const Likes: CollectionConfig = {
         })
 
         if (existing.totalDocs > 0) {
-          const { APIError } = await import('payload')
           throw new APIError('Already liked', 409)
         }
 

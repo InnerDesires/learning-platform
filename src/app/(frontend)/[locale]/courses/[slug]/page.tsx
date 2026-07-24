@@ -229,7 +229,9 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const result = await payload.find({
     collection: 'courses',
     locale,
-    where: { slug: { equals: slug } },
+    where: {
+      and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }],
+    },
     limit: 1,
     select: { title: true },
   })
