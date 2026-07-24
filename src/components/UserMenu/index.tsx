@@ -85,7 +85,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
 
   if (isPending) {
     return (
-      <div className="ml-1 h-9 w-9 rounded-full bg-muted animate-pulse" />
+      <div className="ml-1 h-11 w-11 rounded-full bg-muted animate-pulse lg:h-9 lg:w-9" />
     )
   }
 
@@ -93,7 +93,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
     return (
       <Link
         href={loginPath}
-        className="ml-1 flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-void/50 transition-colors hover:border-orange hover:shadow-[0_0_16px_rgb(249_140_31/0.22)]"
+        className="ml-1 flex h-11 w-11 items-center justify-center rounded-full border border-line-2 bg-void/50 transition-colors hover:border-orange hover:shadow-[0_0_16px_rgb(249_140_31/0.22)] lg:h-9 lg:w-9"
         aria-label={t.signIn}
       >
         <UserIcon className="h-4 w-4 text-fog" />
@@ -111,7 +111,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-11 w-11 flex-none rounded-full p-[2.5px] transition-shadow hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:h-9 lg:w-9"
         style={{
           // ring mirrors real progress to the next level (same math as /profile)
           background: `conic-gradient(from -90deg, var(--orange) 0 ${

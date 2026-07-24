@@ -162,6 +162,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             labels={{
               completed: t.courseCompleted,
               loginToEnroll: t.courseLoginToEnroll,
+              signIn: t.signIn,
               enroll: t.courseEnroll,
               continueLearning: t.courseContinueLearning,
               reviewMaterials: t.courseReviewMaterials,

@@ -2,7 +2,7 @@ import type { SiteLocale } from '@/utilities/locales'
 
 // Content sourced from ironsquad.org.ua (July 2026) — the platform is the
 // online arm of the «Залізна Зміна» project and must stay in sync with the
-// landing: stats, shifts calendar, partners, FAQ, contacts.
+// landing: stats, shifts calendar, partners, contacts.
 
 export const APPLY_FORM_URL = 'https://forms.gle/z2QhrPRL1uSKYU79A'
 export const LANDING_URL = 'https://www.ironsquad.org.ua'
@@ -52,12 +52,6 @@ type HomeContent = {
       formUrl: string
     }[]
     cta: string
-  }
-  faq: {
-    tag: string
-    title: string
-    items: { question: string; answer: string }[]
-    telegramCta: string
   }
   contact: {
     tag: string
@@ -178,47 +172,6 @@ const content: Record<SiteLocale, HomeContent> = {
       ],
       cta: 'Заповнити анкету',
     },
-    faq: {
-      tag: 'FAQ',
-      title: 'Часті запитання',
-      items: [
-        {
-          question: 'Які речі дати з собою дитині?',
-          answer:
-            'Перед початком зміни ми надсилаємо батькам список необхідних речей з урахуванням сезону: засоби особистої гігієни, гумові тапочки, плавки/купальник, нижня білизна, піжама, зручний одяг (спортивний костюм, футболки, шорти), головний убір, теплі речі, зручне спортивне взуття, вітровка з капюшоном або дощовик, індивідуальна аптечка.',
-        },
-        {
-          question: 'Багато активних ігор, як з травмами?',
-          answer:
-            'Наш проєкт — це справжня арена для пригод і змагань, де діти завжди намагаються перевершити один одного. Часто через цю велику конкурентність деякі подряпини можуть траплятися. Але не хвилюйтеся, наш лікар завжди готовий надати допомогу та підтримку!',
-        },
-        {
-          question: 'Ми відправляємо дитину вперше',
-          answer:
-            'Ми повністю розуміємо, що перша поїздка може бути хвилюючою для батьків і дітей. Радимо зазирнути в наш Instagram або інші соціальні мережі. А кваліфіковані супроводжуючі знайдуть підхід до кожної дитини!',
-        },
-        {
-          question: 'Коли і де можна подивитися фотографії?',
-          answer:
-            'Наш фотограф фіксує найяскравіші моменти в реальному часі. Фото та відео надсилаються до групи в Telegram по мірі їх обробки.',
-        },
-        {
-          question: 'Коли відбій?',
-          answer: 'Відбій о 22:00. Перед тим супроводжуючі допомагають дітям з підготовкою до сну.',
-        },
-        {
-          question: 'Повітряна тривога?',
-          answer:
-            'Як тільки супроводжуючому приходить сповіщення про тривогу, активності припиняються і всі прямують в надійне укриття на території.',
-        },
-        {
-          question: 'З якого віку можна стати учасником «Залізної Зміни»?',
-          answer:
-            'Наразі учасниками «Залізної Зміни» можуть стати підлітки віком від 14 до 17 років включно. Програма створена саме для цієї вікової категорії, щоб кожен учасник почувався комфортно та отримав максимум вражень від поїздки.',
-        },
-      ],
-      telegramCta: 'Задати питання в Telegram',
-    },
     contact: {
       tag: 'Контакти',
       title: 'Звʼяжіться з нами',
@@ -336,47 +289,6 @@ const content: Record<SiteLocale, HomeContent> = {
         },
       ],
       cta: 'Fill in the form',
-    },
-    faq: {
-      tag: 'FAQ',
-      title: 'Frequently asked questions',
-      items: [
-        {
-          question: 'What should my child pack?',
-          answer:
-            'Before each shift, we send parents a packing list for the season: toiletries, rubber slippers, swimwear, underwear, pajamas, comfortable clothes (tracksuit, t-shirts, shorts), hat, warm clothing, comfortable sneakers, windbreaker or raincoat, personal first aid kit.',
-        },
-        {
-          question: 'Many active games — what about injuries?',
-          answer:
-            "Our project is a real arena for adventures and competitions where kids always try to outdo each other. Due to this healthy competitiveness, some scratches may occur. But don't worry, our doctor is always ready to help!",
-        },
-        {
-          question: "We're sending our child for the first time",
-          answer:
-            'We fully understand that the first trip can be exciting for both parents and children. We recommend checking our Instagram or other social media. Our qualified chaperones will find the right approach to every child!',
-        },
-        {
-          question: 'Where can we see photos from the project?',
-          answer:
-            'Our photographer captures the brightest moments in real time. Photos and videos are sent to the Telegram group as they are processed.',
-        },
-        {
-          question: 'What time is lights out?',
-          answer: 'Lights out at 22:00. Before that, chaperones help kids prepare for bed.',
-        },
-        {
-          question: 'Air raid alerts?',
-          answer:
-            'As soon as the chaperone receives an alert notification, all activities stop and everyone heads to the reliable shelter on the premises.',
-        },
-        {
-          question: 'At what age can one join Iron Squad?',
-          answer:
-            'Currently, Iron Squad participants can be teenagers aged 14 to 17 inclusive. The program is designed specifically for this age group so that every participant feels comfortable and gets the most out of the trip.',
-        },
-      ],
-      telegramCta: 'Ask a question on Telegram',
     },
     contact: {
       tag: 'Contact',

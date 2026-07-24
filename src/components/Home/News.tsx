@@ -52,7 +52,7 @@ export function NewsSection({ tag, title, cta, items, locale }: Props) {
           action={
             <Link
               href={`${prefix}/posts`}
-              className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-[#C9C2B2] px-4.5 py-2 font-display text-xs font-semibold uppercase tracking-[0.1em] text-ink transition-colors hover:border-ember hover:text-ember"
+              className="inline-flex h-11 items-center gap-2 rounded-full border-[1.5px] border-[#C9C2B2] px-5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-ink transition-colors hover:border-ember hover:text-ember"
             >
               {cta}
               <ArrowRight className="h-3.5 w-3.5" />

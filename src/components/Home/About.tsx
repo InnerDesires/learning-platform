@@ -60,7 +60,7 @@ export function AboutSection({
                   href={LANDING_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-line-2 px-6 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+                  className="inline-flex h-11 items-center gap-2 rounded-full border-[1.5px] border-line-2 px-6 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
                 >
                   {cta}
                   <ArrowRight className="h-3.5 w-3.5" />

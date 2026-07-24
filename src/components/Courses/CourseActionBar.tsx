@@ -23,6 +23,7 @@ type Props = {
   labels: {
     completed: string
     loginToEnroll: string
+    signIn: string
     enroll: string
     continueLearning: string
     reviewMaterials: string
@@ -80,13 +81,16 @@ export function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, loca
       )}
       <div className="flex gap-3 items-center flex-wrap">
         {!isLoggedIn && (
-          <Button size="lg" asChild>
-            <Link
-              href={`${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${courseSlug}`)}`}
-            >
-              {labels.loginToEnroll}
-            </Link>
-          </Button>
+          <>
+            <Button size="lg" asChild>
+              <Link
+                href={`${localePrefix}/login?redirect=${encodeURIComponent(`${localePrefix}/courses/${courseSlug}`)}`}
+              >
+                {labels.signIn}
+              </Link>
+            </Button>
+            <span className="text-[13.5px] font-semibold text-fog">{labels.loginToEnroll}</span>
+          </>
         )}
         {isLoggedIn && !isEnrolled && (
           <EnrollButton

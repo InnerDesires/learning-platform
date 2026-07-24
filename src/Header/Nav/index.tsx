@@ -60,11 +60,11 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
         <button
           type="button"
           onClick={toggleMobile}
-          className="rounded-full p-2 text-fog transition-colors hover:bg-navy hover:text-cloud lg:hidden"
+          className="grid h-11 w-11 place-items-center rounded-full text-fog transition-colors hover:bg-navy hover:text-cloud lg:hidden"
           aria-label={mobileOpen ? t.menuClose : t.menuOpen}
           aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
         {navItems.map(({ link }, i) => (
@@ -83,7 +83,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
 
         <Link
           href={locale === 'en' ? '/en/search' : '/search'}
-          className="grid h-[34px] w-[34px] place-items-center rounded-full border border-transparent text-fog transition-colors hover:border-line-2 hover:bg-navy hover:text-cloud lg:ml-1"
+          className="grid h-11 w-11 place-items-center rounded-full border border-transparent text-fog transition-colors hover:border-line-2 hover:bg-navy hover:text-cloud lg:ml-1 lg:h-[34px] lg:w-[34px]"
           data-testid="header-search-link"
         >
           <span className="sr-only">{t.searchLabel}</span>
