@@ -40,6 +40,10 @@ export default defineConfig({
     env: {
       NEXT_PUBLIC_BETTER_AUTH_URL: 'http://localhost:3100',
       NEXT_PUBLIC_SERVER_URL: 'http://localhost:3100',
+      // E2E is a single-IP hammer on a production build (NODE_ENV=production
+      // would switch rate limiting on): registration specs alone exceed the
+      // per-recipient OTP cap. Limits have their own integration tests.
+      RATE_LIMIT: 'false',
     },
   },
 })

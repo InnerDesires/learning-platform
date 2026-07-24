@@ -1,10 +1,22 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
-import { describe, it, beforeAll, expect } from 'vitest'
+import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 
 import { checkRateLimit } from '@/lib/rate-limit'
 
 let payload: Payload
+
+// Rate limiting is off outside production; opt this process in (the flag is
+// read at call time) and restore afterwards so suites sharing the worker
+// process aren't throttled.
+const prevRateLimitFlag = process.env.RATE_LIMIT
+beforeAll(() => {
+  process.env.RATE_LIMIT = 'true'
+})
+afterAll(() => {
+  if (prevRateLimitFlag === undefined) delete process.env.RATE_LIMIT
+  else process.env.RATE_LIMIT = prevRateLimitFlag
+})
 
 const wipeKeys = async (like: string) => {
   await payload.delete({
@@ -94,7 +106,7 @@ describe('Rate limiting', () => {
           name: 'RL Admin',
           email: `rl-admin-${Date.now()}@test.local`,
           emailVerified: true,
-          role: 'admin',
+          role: ['admin'],
         },
       })
       const adminComment = await payload.create({

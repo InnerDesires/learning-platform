@@ -16,6 +16,20 @@ export type RateLimitResult =
   | { ok: true }
   | { ok: false; retryAfter: number }
 
+/**
+ * Single policy switch for BOTH limiters (Better Auth reads it in
+ * src/lib/auth/options.ts). Production-on by default; RATE_LIMIT=true opts a
+ * dev session in, RATE_LIMIT=false opts out even of a production build — E2E
+ * runs `next start` (NODE_ENV=production) from one runner IP and would
+ * otherwise trip the limits it has no business testing.
+ * Read at call time so tests can toggle it per process.
+ */
+export function isRateLimitEnabled(): boolean {
+  if (process.env.RATE_LIMIT === 'false') return false
+  if (process.env.RATE_LIMIT === 'true') return true
+  return process.env.NODE_ENV === 'production'
+}
+
 type RateLimitRow = { count: string | number; last_request: string | number }
 
 const STALE_ROW_AGE_MS = 1000 * 60 * 60 * 24 * 30
@@ -24,6 +38,8 @@ export async function checkRateLimit(
   payload: BasePayload,
   { key, windowSeconds, max }: { key: string; windowSeconds: number; max: number },
 ): Promise<RateLimitResult> {
+  if (!isRateLimitEnabled()) return { ok: true }
+
   const windowMs = windowSeconds * 1000
   const now = Date.now()
   const windowStartCutoff = now - windowMs

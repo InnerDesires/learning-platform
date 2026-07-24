@@ -5,6 +5,7 @@ import { Resend } from 'resend'
 import { buildOtpEmailHtml } from '@/lib/email/verification-otp'
 import { buildInviteEmailHtml } from '@/lib/email/admin-invite'
 import { consumePreVerified } from '@/lib/auth/pre-verified'
+import { isRateLimitEnabled } from '@/lib/rate-limit'
 
 function resolveBaseURL(): string {
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
@@ -59,9 +60,9 @@ export const betterAuthOptions = {
     },
   },
   rateLimit: {
-    // Better Auth only enables rate limiting in production by default; the env
-    // override lets local sessions and tests exercise the limiter.
-    enabled: process.env.NODE_ENV === 'production' || process.env.AUTH_RATE_LIMIT === 'true',
+    // Shared policy switch (see src/lib/rate-limit.ts): production-on,
+    // RATE_LIMIT=true opts dev in, RATE_LIMIT=false opts E2E's prod build out.
+    enabled: isRateLimitEnabled(),
     window: 60,
     max: 60,
     // Vercel functions don't share memory, so counters must live in Postgres.
