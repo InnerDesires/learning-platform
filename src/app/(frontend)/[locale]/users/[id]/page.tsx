@@ -203,7 +203,7 @@ export default async function PublicProfilePage({ params }: Args) {
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`${prefix}/courses/${course.slug}`}
-                      className="block truncate text-sm font-bold transition-colors hover:text-amber"
+                      className="block break-words text-sm font-bold transition-colors hover:text-amber"
                     >
                       {course.title}
                     </Link>
