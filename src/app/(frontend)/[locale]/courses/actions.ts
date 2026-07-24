@@ -4,7 +4,25 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
+import { STEP_XP, QUIZ_XP } from '@/utilities/xp'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
+import type { Payload } from 'payload'
+
+/**
+ * Timestamped XP log for period leaderboards; total XP stays derived from
+ * enrollments, so a failed log write must not fail the mutation that earned it.
+ */
+async function logXpEvent(
+  payload: Payload,
+  data: { user: number; course: number; kind: 'step' | 'quiz'; amount: number },
+) {
+  try {
+    await payload.create({ collection: 'xp-events', data })
+    revalidateTag('xp-leaderboard')
+  } catch (err) {
+    payload.logger.error({ err }, 'xp-events: failed to log XP award')
+  }
+}
 
 /** Bust cached course pages (both locales) after an enrollment mutation. */
 function revalidateCoursePages(slug: string) {
@@ -150,6 +168,13 @@ export async function completeStep(
       status: allComplete ? 'completed' : 'in_progress',
       ...(allComplete ? { completedAt: new Date().toISOString() } : {}),
     },
+  })
+
+  await logXpEvent(payload, {
+    user: Number(session.user.id),
+    course: courseId,
+    kind: 'step',
+    amount: STEP_XP,
   })
 
   revalidateCoursePages(course.slug)
@@ -337,6 +362,16 @@ export async function submitQuizAttempt(
       ...(passed ? { quizPassed: true } : {}),
     },
   })
+
+  // Quiz XP is awarded once — on the first passing attempt.
+  if (passed && !enrollmentDoc.quizPassed) {
+    await logXpEvent(payload, {
+      user: Number(session.user.id),
+      course: courseId,
+      kind: 'quiz',
+      amount: QUIZ_XP,
+    })
+  }
 
   revalidateCoursePages(course.slug)
 

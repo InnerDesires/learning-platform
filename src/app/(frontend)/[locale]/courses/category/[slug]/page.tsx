@@ -73,15 +73,18 @@ export default async function CourseCategoryPage({ params: paramsPromise }: Args
       <div className="relative overflow-hidden">
         {imageUrl && (
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-25"
+            className="absolute inset-0 bg-cover bg-center opacity-40"
             style={{ backgroundImage: `url(${imageUrl})` }}
           />
         )}
+        {/* Lighter at the top than the course hero so the category cover
+            actually reads through; still settles into solid void for the grid. */}
         <div
           className="absolute inset-0"
           style={{
-            background:
-              'radial-gradient(720px 440px at 85% 0%, rgb(4 40 113 / 0.5), transparent 60%), linear-gradient(180deg, rgb(34 52 88 / 0.86) 0%, var(--void) 100%)',
+            background: imageUrl
+              ? 'radial-gradient(720px 440px at 85% 0%, rgb(4 40 113 / 0.4), transparent 60%), linear-gradient(180deg, rgb(4 12 32 / 0.55) 0%, rgb(4 12 32 / 0.78) 55%, var(--void) 100%)'
+              : 'radial-gradient(720px 440px at 85% 0%, rgb(4 40 113 / 0.5), transparent 60%), linear-gradient(180deg, rgb(34 52 88 / 0.86) 0%, var(--void) 100%)',
           }}
         />
         <div className="relative container pb-10 pt-14 md:pt-16">

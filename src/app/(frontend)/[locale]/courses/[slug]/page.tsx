@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseActionBar } from '@/components/Courses/CourseActionBar'
+import { CompletedByTicker } from '@/components/Courses/CompletedByTicker'
 import { CourseProgressAndSteps } from '@/components/Courses/CourseProgressAndSteps'
 import { CourseUserStateProvider } from '@/components/Courses/CourseUserState'
 import type { Course, Media as MediaType } from '@/payload-types'
@@ -152,6 +153,12 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
               </span>
             )}
           </div>
+
+          <CompletedByTicker
+            courseId={course.id}
+            localePrefix={prefix}
+            label={t.tickerCompletedBy}
+          />
 
           <CourseActionBar
             courseId={course.id}

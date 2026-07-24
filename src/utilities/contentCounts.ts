@@ -18,7 +18,7 @@ type CountsByTarget = Record<number, number>
 
 export type CourseEnrollmentStats = { enrolledCount: number; completedCount: number }
 
-async function runRows<T>(query: SqlQuery): Promise<T[]> {
+export async function runRows<T>(query: SqlQuery): Promise<T[]> {
   const payload = await getPayload({ config: configPromise })
   const db = payload.db.drizzle as unknown as {
     execute: (q: SqlQuery) => Promise<T[] | { rows?: T[] }>

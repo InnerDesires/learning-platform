@@ -199,6 +199,17 @@ type FrontendMessages = {
   courseEnrolledCount: string
   courseCompletedCount: string
   courseReviewMaterials: string
+  tickerCompletedBy: string
+  leaderboardTitle: string
+  leaderboardEyebrow: string
+  leaderboardSub: string
+  leaderboardMetaTitle: string
+  leaderboardAllTime: string
+  leaderboardDay: string
+  leaderboardWeek: string
+  leaderboardMonth: string
+  leaderboardEmpty: string
+  footerLeaderboard: string
   quizTitle: string
   quizDescription: string
   quizPassingScore: string
@@ -500,6 +511,18 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseEnrolledCount: 'учнів',
     courseCompletedCount: 'завершили',
     courseReviewMaterials: 'Переглянути матеріали',
+    tickerCompletedBy: 'Завершили курс',
+    leaderboardTitle: 'Лідерборд',
+    leaderboardEyebrow: 'Рейтинг',
+    leaderboardSub:
+      'Найактивніші учні платформи. Проходь кроки та складай тести, щоб піднятися в рейтингу.',
+    leaderboardMetaTitle: 'Лідерборд | Залізна Зміна',
+    leaderboardAllTime: 'За весь час',
+    leaderboardDay: 'За день',
+    leaderboardWeek: 'За тиждень',
+    leaderboardMonth: 'За місяць',
+    leaderboardEmpty: 'За цей період поки немає нарахувань XP.',
+    footerLeaderboard: 'Лідерборд',
     quizTitle: 'Фінальний тест',
     quizDescription: 'Опис тесту',
     quizPassingScore: 'Прохідний бал',
@@ -801,6 +824,18 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     courseEnrolledCount: 'enrolled',
     courseCompletedCount: 'completed',
     courseReviewMaterials: 'Review materials',
+    tickerCompletedBy: 'Completed by',
+    leaderboardTitle: 'Leaderboard',
+    leaderboardEyebrow: 'Rankings',
+    leaderboardSub:
+      'The most active learners on the platform. Complete steps and pass quizzes to climb the ranks.',
+    leaderboardMetaTitle: 'Leaderboard | Iron Squad',
+    leaderboardAllTime: 'All time',
+    leaderboardDay: 'Past day',
+    leaderboardWeek: 'Past week',
+    leaderboardMonth: 'Past month',
+    leaderboardEmpty: 'No XP earned in this period yet.',
+    footerLeaderboard: 'Leaderboard',
     quizTitle: 'Final Quiz',
     quizDescription: 'Quiz Description',
     quizPassingScore: 'Passing Score',
