@@ -1022,59 +1022,57 @@ export interface Course {
   description?: string | null;
   heroImage?: (number | null) | Media;
   category?: (number | null) | CourseCategory;
-  steps?:
-    | (
-        | {
-            title: string;
-            content: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
+  steps: (
+    | {
+        title: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
               [k: string]: unknown;
-            };
-            /**
-             * Орієнтовний час проходження кроку в хвилинах.
-             */
-            duration?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'richTextStep';
-          }
-        | {
-            title: string;
-            description?: string | null;
-            youtubeUrl: string;
-            /**
-             * Орієнтовний час проходження кроку в хвилинах.
-             */
-            duration?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'youtubeVideoStep';
-          }
-        | {
-            title: string;
-            description?: string | null;
-            file: number | CourseFile;
-            /**
-             * Орієнтовний час проходження кроку в хвилинах.
-             */
-            duration?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'fileStep';
-          }
-      )[]
-    | null;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'richTextStep';
+      }
+    | {
+        title: string;
+        description?: string | null;
+        youtubeUrl: string;
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'youtubeVideoStep';
+      }
+    | {
+        title: string;
+        description?: string | null;
+        file: number | CourseFile;
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'fileStep';
+      }
+  )[];
   quiz?: {
     enabled?: boolean | null;
     title?: string | null;

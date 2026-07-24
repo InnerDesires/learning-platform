@@ -117,6 +117,11 @@ export const Courses: CollectionConfig = {
         singular: 'Крок',
         plural: 'Кроки',
       },
+      // required is what actually blocks publishing a course with zero steps:
+      // Payload skips minRows validation entirely when the array is empty and
+      // the field is not required. Drafts still save without steps (validation
+      // is skipped for draft/autosave saves), so the admin workflow is intact.
+      required: true,
       minRows: 1,
       blocks: [
         {
