@@ -1081,13 +1081,11 @@ export interface Course {
     questions?:
       | {
           question: string;
-          answers?:
-            | {
-                text: string;
-                isCorrect?: boolean | null;
-                id?: string | null;
-              }[]
-            | null;
+          answers: {
+            text: string;
+            isCorrect?: boolean | null;
+            id?: string | null;
+          }[];
           id?: string | null;
         }[]
       | null;

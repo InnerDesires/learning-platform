@@ -2,7 +2,7 @@ import type { CollectionConfig, Field } from 'payload'
 
 import { admin } from '../access/admin'
 import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
-import { slugField } from 'payload'
+import { slugField, validations } from 'payload'
 import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 import { populatePublishedAt } from '../hooks/populatePublishedAt'
 
@@ -258,6 +258,18 @@ export const Courses: CollectionConfig = {
             plural: 'Питання',
           },
           minRows: 1,
+          // Payload skips minRows validation entirely when an array is empty and
+          // the field is not required, so an enabled quiz could be published with
+          // zero questions. Unconditional `required: true` (the `steps` fix) would
+          // break courses without a quiz, so instead re-run the stock array
+          // validation with `required` switched on only when the quiz is enabled.
+          // Drafts still save without questions — validation is skipped for
+          // draft/autosave saves.
+          validate: (value, options) => {
+            const quizEnabled =
+              (options.siblingData as { enabled?: boolean } | null | undefined)?.enabled === true
+            return validations.array(value, { ...options, required: quizEnabled })
+          },
           admin: {
             condition: (data) => data?.quiz?.enabled === true,
           },
@@ -277,6 +289,10 @@ export const Courses: CollectionConfig = {
                 singular: 'Відповідь',
                 plural: 'Відповіді',
               },
+              // Same empty-array loophole as `steps`: minRows is not enforced on
+              // an empty optional array. A question always needs answers, so an
+              // unconditional `required` is correct here.
+              required: true,
               minRows: 2,
               fields: [
                 {
