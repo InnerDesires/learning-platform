@@ -14,6 +14,7 @@ import * as migration_20260721_140000_add_user_social_links from './20260721_140
 import * as migration_20260721_150000_add_user_about from './20260721_150000_add_user_about';
 import * as migration_20260721_233000_reconcile_schema_drift from './20260721_233000_reconcile_schema_drift';
 import * as migration_20260722_090000_add_user_hide_profile_comments from './20260722_090000_add_user_hide_profile_comments';
+import * as migration_20260724_120000_archive_block_collections from './20260724_120000_archive_block_collections';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20260722_090000_add_user_hide_profile_comments.up,
     down: migration_20260722_090000_add_user_hide_profile_comments.down,
     name: '20260722_090000_add_user_hide_profile_comments',
+  },
+  {
+    up: migration_20260724_120000_archive_block_collections.up,
+    down: migration_20260724_120000_archive_block_collections.down,
+    name: '20260724_120000_archive_block_collections',
   },
 ];

@@ -10,6 +10,8 @@ import {
 export const Archive: Block = {
   slug: 'archive',
   interfaceName: 'ArchiveBlock',
+  imageURL: '/block-thumbs/archive.svg',
+  imageAltText: 'Сітка карток із матеріалами колекції',
   fields: [
     {
       name: 'introContent',
@@ -55,17 +57,37 @@ export const Archive: Block = {
           label: 'Публікації',
           value: 'posts',
         },
+        {
+          label: 'Курси',
+          value: 'courses',
+        },
+        {
+          label: 'Категорії курсів',
+          value: 'course-categories',
+        },
       ],
     },
     {
       name: 'categories',
       type: 'relationship',
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        condition: (_, siblingData) =>
+          siblingData.populateBy === 'collection' && siblingData.relationTo === 'posts',
       },
       hasMany: true,
       label: 'Категорії для показу',
       relationTo: 'categories',
+    },
+    {
+      name: 'courseCategories',
+      type: 'relationship',
+      admin: {
+        condition: (_, siblingData) =>
+          siblingData.populateBy === 'collection' && siblingData.relationTo === 'courses',
+      },
+      hasMany: true,
+      label: 'Категорії курсів для показу',
+      relationTo: 'course-categories',
     },
     {
       name: 'limit',
@@ -85,7 +107,7 @@ export const Archive: Block = {
       },
       hasMany: true,
       label: 'Вибрані документи',
-      relationTo: ['posts'],
+      relationTo: ['posts', 'courses', 'course-categories'],
     },
   ],
   labels: {
