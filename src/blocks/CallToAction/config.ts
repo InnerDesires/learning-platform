@@ -11,6 +11,8 @@ import { linkGroup } from '../../fields/linkGroup'
 
 export const CallToAction: Block = {
   slug: 'cta',
+  imageURL: '/block-thumbs/cta.svg',
+  imageAltText: 'Текст із помітною кнопкою дії',
   interfaceName: 'CallToActionBlock',
   fields: [
     {

@@ -757,18 +757,153 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
+  relationTo?: ('posts' | 'courses' | 'course-categories') | null;
   categories?: (number | Category)[] | null;
+  courseCategories?: (number | CourseCategory)[] | null;
   limit?: number | null;
   selectedDocs?:
-    | {
-        relationTo: 'posts';
-        value: number | Post;
-      }[]
+    | (
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+        | {
+            relationTo: 'courses';
+            value: number | Course;
+          }
+        | {
+            relationTo: 'course-categories';
+            value: number | CourseCategory;
+          }
+      )[]
     | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-categories".
+ */
+export interface CourseCategory {
+  id: number;
+  title: string;
+  description?: string | null;
+  image?: (number | null) | Media;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "courses".
+ */
+export interface Course {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  description?: string | null;
+  heroImage?: (number | null) | Media;
+  category?: (number | null) | CourseCategory;
+  steps: (
+    | {
+        title: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'richTextStep';
+      }
+    | {
+        title: string;
+        description?: string | null;
+        youtubeUrl: string;
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'youtubeVideoStep';
+      }
+    | {
+        title: string;
+        description?: string | null;
+        file: number | CourseFile;
+        /**
+         * Орієнтовний час проходження кроку в хвилинах.
+         */
+        duration?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'fileStep';
+      }
+  )[];
+  quiz?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    passingScore?: number | null;
+    questions?:
+      | {
+          question: string;
+          answers: {
+            text: string;
+            isCorrect?: boolean | null;
+            id?: string | null;
+          }[];
+          id?: string | null;
+        }[]
+      | null;
+  };
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-files".
+ */
+export interface CourseFile {
+  id: number;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -966,130 +1101,6 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "course-categories".
- */
-export interface CourseCategory {
-  id: number;
-  title: string;
-  description?: string | null;
-  image?: (number | null) | Media;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "course-files".
- */
-export interface CourseFile {
-  id: number;
-  title?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "courses".
- */
-export interface Course {
-  id: number;
-  title: string;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  description?: string | null;
-  heroImage?: (number | null) | Media;
-  category?: (number | null) | CourseCategory;
-  steps: (
-    | {
-        title: string;
-        content: {
-          root: {
-            type: string;
-            children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        };
-        /**
-         * Орієнтовний час проходження кроку в хвилинах.
-         */
-        duration?: number | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'richTextStep';
-      }
-    | {
-        title: string;
-        description?: string | null;
-        youtubeUrl: string;
-        /**
-         * Орієнтовний час проходження кроку в хвилинах.
-         */
-        duration?: number | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'youtubeVideoStep';
-      }
-    | {
-        title: string;
-        description?: string | null;
-        file: number | CourseFile;
-        /**
-         * Орієнтовний час проходження кроку в хвилинах.
-         */
-        duration?: number | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'fileStep';
-      }
-  )[];
-  quiz?: {
-    enabled?: boolean | null;
-    title?: string | null;
-    description?: string | null;
-    passingScore?: number | null;
-    questions?:
-      | {
-          question: string;
-          answers: {
-            text: string;
-            isCorrect?: boolean | null;
-            id?: string | null;
-          }[];
-          id?: string | null;
-        }[]
-      | null;
-  };
-  publishedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1844,6 +1855,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   populateBy?: T;
   relationTo?: T;
   categories?: T;
+  courseCategories?: T;
   limit?: T;
   selectedDocs?: T;
   id?: T;

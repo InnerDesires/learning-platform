@@ -6,7 +6,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
-import RichText from '@/components/RichText'
+import RichTextWithArchive from '@/components/RichText/WithArchive'
 
 import type { Post } from '@/payload-types'
 
@@ -79,7 +79,12 @@ export default async function Post({ params: paramsPromise }: Args) {
 
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">
-          <RichText className="max-w-4xl mx-auto" data={post.content} enableGutter={false} />
+          <RichTextWithArchive
+            className="max-w-4xl mx-auto"
+            data={post.content}
+            enableGutter={false}
+            locale={locale}
+          />
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"

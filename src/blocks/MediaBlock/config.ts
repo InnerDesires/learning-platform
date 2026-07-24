@@ -3,6 +3,12 @@ import type { Block } from 'payload'
 export const MediaBlock: Block = {
   slug: 'mediaBlock',
   interfaceName: 'MediaBlock',
+  imageURL: '/block-thumbs/media.svg',
+  imageAltText: 'Зображення або відео з підписом',
+  labels: {
+    singular: 'Медіа-блок',
+    plural: 'Медіа-блоки',
+  },
   fields: [
     {
       name: 'mediaType',

@@ -9,6 +9,8 @@ import {
 
 export const FormBlock: Block = {
   slug: 'formBlock',
+  imageURL: '/block-thumbs/form.svg',
+  imageAltText: 'Форма з полями вводу та кнопкою надсилання',
   interfaceName: 'FormBlock',
   fields: [
     {
