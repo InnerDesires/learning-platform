@@ -29,6 +29,23 @@ export const Comments: CollectionConfig = {
     },
     delete: adminOrAuthor,
   },
+  hooks: {
+    beforeChange: [
+      // Non-admin API requests always comment as themselves — a client-supplied
+      // author would allow impersonation. Local API calls without a user
+      // (server actions) pass the author explicitly.
+      ({ data, operation, req }) => {
+        if (
+          operation === 'create' &&
+          req.user &&
+          !('role' in req.user && req.user.role?.includes('admin'))
+        ) {
+          data.author = req.user.id
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'body',
@@ -43,6 +60,7 @@ export const Comments: CollectionConfig = {
       relationTo: 'users',
       required: true,
       label: 'Автор',
+      index: true,
       admin: {
         readOnly: true,
       },
@@ -70,6 +88,7 @@ export const Comments: CollectionConfig = {
       type: 'relationship',
       relationTo: 'comments',
       label: 'Батьківський коментар',
+      index: true,
     },
   ],
   timestamps: true,

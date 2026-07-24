@@ -135,6 +135,15 @@ export async function completeStep(
     return { success: false, error: 'Немає доступу' }
   }
 
+  // The enrollment is the source of truth for which course is being completed —
+  // trusting the client's courseId would let a user complete a short course's
+  // steps against a different course's enrollment.
+  const enrollmentCourseId =
+    typeof enrollment.course === 'object' ? enrollment.course.id : enrollment.course
+  if (Number(enrollmentCourseId) !== Number(courseId)) {
+    return { success: false, error: 'Немає доступу' }
+  }
+
   if (enrollment.status === 'completed') {
     return { success: true, enrollment }
   }
@@ -147,18 +156,21 @@ export async function completeStep(
     return { success: true, enrollment }
   }
 
-  const newCompletedSteps = [...completedSteps, stepBlockId]
-
   const course = await payload.findByID({
     collection: 'courses',
-    id: courseId,
+    id: enrollmentCourseId,
     depth: 0,
   }) as Course
 
   // Compare against actual step ids (not counts) so stale ids of deleted
   // steps can never mark a course completed early.
   const stepIds = (course.steps ?? []).map((s) => s.id).filter((id): id is string => Boolean(id))
-  const allComplete = stepIds.length > 0 && stepIds.every((id) => newCompletedSteps.includes(id))
+  if (!stepIds.includes(stepBlockId)) {
+    return { success: false, error: 'Крок не знайдено' }
+  }
+
+  const newCompletedSteps = [...completedSteps, stepBlockId]
+  const allComplete = stepIds.every((id) => newCompletedSteps.includes(id))
 
   const updated = await payload.update({
     collection: 'enrollments',
@@ -172,7 +184,7 @@ export async function completeStep(
 
   await logXpEvent(payload, {
     user: Number(session.user.id),
-    course: courseId,
+    course: Number(enrollmentCourseId),
     kind: 'step',
     amount: STEP_XP,
   })
@@ -323,19 +335,7 @@ export async function submitQuizAttempt(
   const score = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0
   const passed = score >= passingScore
 
-  const existingAttempts = await payload.find({
-    collection: 'quiz-attempts',
-    where: {
-      and: [
-        { user: { equals: session.user.id } },
-        { course: { equals: courseId } },
-      ],
-    },
-    limit: 0,
-  })
-  const attemptNumber = existingAttempts.totalDocs + 1
-
-  await payload.create({
+  const attemptDoc = await payload.create({
     collection: 'quiz-attempts',
     data: {
       user: Number(session.user.id),
@@ -345,7 +345,9 @@ export async function submitQuizAttempt(
       totalQuestions,
       correctAnswers: correctCount,
       answers: gradedAnswers,
-      attemptNumber,
+      // Overwritten by the collection's beforeValidate hook, which counts
+      // prior attempts; the value here only satisfies the required field type.
+      attemptNumber: 0,
     },
   })
 
@@ -382,7 +384,7 @@ export async function submitQuizAttempt(
       passed,
       correctAnswers: correctCount,
       totalQuestions,
-      attemptNumber,
+      attemptNumber: attemptDoc.attemptNumber,
     },
   }
 }

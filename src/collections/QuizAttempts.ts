@@ -1,7 +1,6 @@
 import type { CollectionConfig, Access } from 'payload'
 
 import { admin } from '../access/admin'
-import { authenticated } from '../access/authenticated'
 
 const adminOrOwn: Access = ({ req: { user } }) => {
   if (!user) return false
@@ -20,7 +19,9 @@ export const QuizAttempts: CollectionConfig = {
     defaultColumns: ['user', 'course', 'score', 'passed', 'createdAt'],
   },
   access: {
-    create: authenticated,
+    // Attempts are graded and created server-side (Local API) — an open REST
+    // create would let users forge scores, so only admins may create directly.
+    create: admin,
     read: adminOrOwn,
     update: admin,
     delete: admin,
@@ -89,10 +90,12 @@ export const QuizAttempts: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [
+    // beforeValidate (not beforeChange) so the required attemptNumber is set
+    // before validation runs and callers never have to compute it.
+    beforeValidate: [
       async ({ data, operation, req }) => {
         if (operation === 'create' && data?.user && data?.course) {
-          const existing = await req.payload.find({
+          const existing = await req.payload.count({
             collection: 'quiz-attempts',
             where: {
               and: [
@@ -100,7 +103,6 @@ export const QuizAttempts: CollectionConfig = {
                 { course: { equals: data.course } },
               ],
             },
-            limit: 0,
             req,
           })
           data.attemptNumber = existing.totalDocs + 1

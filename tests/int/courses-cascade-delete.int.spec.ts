@@ -35,7 +35,7 @@ describe('Courses — cascade delete', () => {
     await payload.delete({ collection: 'users', id: userId })
   })
 
-  it('deleting a course removes all related enrollments, quiz-attempts, comments, and likes', async () => {
+  it('deleting a course removes all related enrollments, quiz-attempts, comments, likes, and xp-events', async () => {
     // Seed related records
     const enrollment = await payload.create({
       collection: 'enrollments',
@@ -74,14 +74,29 @@ describe('Courses — cascade delete', () => {
       },
     })
 
+    // xp_events.course_id is NOT NULL with an ON DELETE SET NULL FK — without a
+    // cascade delete, deleting a course with any XP event fails at the DB level.
+    const xpEvent = await payload.create({
+      collection: 'xp-events',
+      data: { user: userId, course: courseId, kind: 'quiz', amount: 100 },
+    })
+
     // Verify they all exist before deletion
     expect(enrollment.id).toBeDefined()
     expect(quizAttempt.id).toBeDefined()
     expect(comment.id).toBeDefined()
     expect(like.id).toBeDefined()
+    expect(xpEvent.id).toBeDefined()
 
-    // Delete the course — triggers beforeDelete cascade hook
+    // Delete the course — triggers beforeDelete cascade hook. This must not throw
+    // (the xp-events FK failure was the original bug).
     await payload.delete({ collection: 'courses', id: courseId })
+
+    const remainingXpEvents = await payload.find({
+      collection: 'xp-events',
+      where: { course: { equals: courseId } },
+    })
+    expect(remainingXpEvents.totalDocs).toBe(0)
 
     // All related records should be gone
     const remainingEnrollments = await payload.find({

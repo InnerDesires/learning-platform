@@ -4,7 +4,6 @@ import { admin } from '../access/admin'
 import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 import { slugField, validations } from 'payload'
 import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
-import { populatePublishedAt } from '../hooks/populatePublishedAt'
 
 // Орієнтовна тривалість кроку — показується учням у списках кроків («Відео · 8 хв»).
 const stepDurationField: Field = {
@@ -34,9 +33,15 @@ export const Courses: CollectionConfig = {
     update: admin,
   },
   hooks: {
-    beforeChange: [populatePublishedAt],
     beforeDelete: [
       async ({ id, req }) => {
+        // xp_events.course_id is NOT NULL with an ON DELETE SET NULL FK — the
+        // rows must be removed first or the whole delete fails at the DB level.
+        await req.payload.delete({
+          collection: 'xp-events',
+          where: { course: { equals: id } },
+          req,
+        })
         await req.payload.delete({
           collection: 'quiz-attempts',
           where: { course: { equals: id } },
@@ -320,6 +325,16 @@ export const Courses: CollectionConfig = {
       label: 'Дата публікації',
       admin: {
         position: 'sidebar',
+      },
+      hooks: {
+        beforeChange: [
+          ({ siblingData, value }) => {
+            if (siblingData._status === 'published' && !value) {
+              return new Date()
+            }
+            return value
+          },
+        ],
       },
     },
     {
