@@ -2,6 +2,7 @@ import type { CollectionConfig, Access } from 'payload'
 
 import { authenticated } from '../access/authenticated'
 import { anyone } from '../access/anyone'
+import { rateLimitCreate } from '../hooks/rateLimitCreate'
 
 const adminOrAuthor: Access = ({ req: { user } }) => {
   if (!user) return false
@@ -30,6 +31,11 @@ export const Comments: CollectionConfig = {
     delete: adminOrAuthor,
   },
   hooks: {
+    beforeValidate: [
+      // Comments are the only unbounded user-writable collection — throttle
+      // creation per author to keep spam floods out.
+      rateLimitCreate({ prefix: 'comment-create', userField: 'author', windowSeconds: 60, max: 10 }),
+    ],
     beforeChange: [
       // Non-admin API requests always comment as themselves — a client-supplied
       // author would allow impersonation. Local API calls without a user

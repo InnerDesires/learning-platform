@@ -1,9 +1,10 @@
 'use server'
 
-import { getPayload } from 'payload'
+import { APIError, getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { STEP_XP, QUIZ_XP } from '@/utilities/xp'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
 import type { Payload } from 'payload'
@@ -91,13 +92,21 @@ export async function enrollInCourse(courseId: number): Promise<{ success: boole
     return { success: true, enrollment: existing.docs[0] }
   }
 
-  const enrollment = await payload.create({
-    collection: 'enrollments',
-    data: {
-      user: Number(session.user.id),
-      course: courseId,
-    },
-  })
+  let enrollment: Enrollment
+  try {
+    enrollment = await payload.create({
+      collection: 'enrollments',
+      data: {
+        user: Number(session.user.id),
+        course: courseId,
+      },
+    })
+  } catch (err) {
+    if (err instanceof APIError && err.status === 429) {
+      return { success: false, error: 'Забагато запитів. Спробуйте пізніше.' }
+    }
+    throw err
+  }
 
   const course = (await payload.findByID({
     collection: 'courses',
@@ -262,6 +271,18 @@ export async function submitQuizAttempt(
   }
 
   const payload = await getPayload({ config: configPromise })
+
+  // Attempts are unbounded rows + server-side grading; quiz-attempts REST
+  // create is admin-only, so this action is the sole user path to throttle.
+  // 30/hour never touches a human retaking a quiz, only scripted floods.
+  const quizLimit = await checkRateLimit(payload, {
+    key: `quiz-submit:${session.user.id}`,
+    windowSeconds: 3600,
+    max: 30,
+  })
+  if (!quizLimit.ok) {
+    return { success: false, error: 'Забагато спроб. Спробуйте пізніше.' }
+  }
 
   const enrollment = await payload.find({
     collection: 'enrollments',

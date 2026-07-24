@@ -1,9 +1,12 @@
 'use server'
 
-import { getPayload, type Where } from 'payload'
+import { APIError, getPayload, type Where } from 'payload'
 import configPromise from '@payload-config'
 import { revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
+
+/** True when a Local API write was rejected by a rate-limit hook (429). */
+const isRateLimited = (err: unknown): boolean => err instanceof APIError && err.status === 429
 
 type TargetCollection = 'posts' | 'courses'
 type LikeTargetCollection = 'posts' | 'courses' | 'comments'
@@ -145,16 +148,22 @@ export async function addComment(
     }
   }
 
-  const doc = await payload.create({
-    collection: 'comments',
-    data: {
-      body: trimmed,
-      author: userId,
-      targetCollection,
-      targetId,
-      ...(parentId ? { parent: parentId } : {}),
-    },
-  })
+  let doc
+  try {
+    doc = await payload.create({
+      collection: 'comments',
+      data: {
+        body: trimmed,
+        author: userId,
+        targetCollection,
+        targetId,
+        ...(parentId ? { parent: parentId } : {}),
+      },
+    })
+  } catch (err) {
+    if (isRateLimited(err)) return { success: false, error: 'RATE_LIMITED' }
+    throw err
+  }
 
   const author = typeof doc.author === 'object' ? doc.author : null
 
@@ -306,14 +315,19 @@ export async function toggleLike(
       id: existing.docs[0]!.id,
     })
   } else {
-    await payload.create({
-      collection: 'likes',
-      data: {
-        user: userId,
-        targetCollection,
-        targetId,
-      },
-    })
+    try {
+      await payload.create({
+        collection: 'likes',
+        data: {
+          user: userId,
+          targetCollection,
+          targetId,
+        },
+      })
+    } catch (err) {
+      if (isRateLimited(err)) return { success: false, liked: false, count: 0, error: 'RATE_LIMITED' }
+      throw err
+    }
   }
 
   const { totalDocs: count } = await payload.count({

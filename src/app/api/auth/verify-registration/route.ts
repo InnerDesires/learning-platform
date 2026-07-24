@@ -3,24 +3,43 @@ import { Resend } from 'resend'
 import { getPayload } from '@/lib/payload'
 import { buildOtpEmailHtml } from '@/lib/email/verification-otp'
 import { markPreVerified } from '@/lib/auth/pre-verified'
+import { checkRateLimit, getClientIp, type RateLimitResult } from '@/lib/rate-limit'
+
+function tooManyRequests(result: Extract<RateLimitResult, { ok: false }>, error = 'Too many requests') {
+  return NextResponse.json(
+    { error },
+    { status: 429, headers: { 'Retry-After': String(result.retryAfter) } },
+  )
+}
 
 export async function POST(request: Request) {
   const body = await request.json()
   const { action } = body
 
-  if (action === 'send-otp') return handleSendOtp(body)
-  if (action === 'verify-otp') return handleVerifyOtp(body)
+  if (action === 'send-otp') return handleSendOtp(request, body)
+  if (action === 'verify-otp') return handleVerifyOtp(request, body)
 
   return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
 }
 
-async function handleSendOtp(body: { email?: string }) {
+async function handleSendOtp(request: Request, body: { email?: string }) {
   const email = body.email?.toLowerCase().trim()
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
   const payload = await getPayload()
+
+  // Each call sends a real email — throttle before any other work. Per-IP is
+  // generous (school computer labs share NAT); per-recipient is the strict one
+  // (3 sends per OTP lifetime stops inbox bombing of arbitrary addresses).
+  const ip = getClientIp(request)
+  if (ip) {
+    const perIp = await checkRateLimit(payload, { key: `otp-send:ip:${ip}`, windowSeconds: 600, max: 20 })
+    if (!perIp.ok) return tooManyRequests(perIp)
+  }
+  const perEmail = await checkRateLimit(payload, { key: `otp-send:email:${email}`, windowSeconds: 300, max: 3 })
+  if (!perEmail.ok) return tooManyRequests(perEmail)
 
   const existingUsers = await payload.find({
     collection: 'users',
@@ -51,7 +70,7 @@ async function handleSendOtp(body: { email?: string }) {
   return NextResponse.json({ success: true })
 }
 
-async function handleVerifyOtp(body: { email?: string; otp?: string }) {
+async function handleVerifyOtp(request: Request, body: { email?: string; otp?: string }) {
   const email = body.email?.toLowerCase().trim()
   const otp = body.otp?.trim()
 
@@ -60,6 +79,19 @@ async function handleVerifyOtp(body: { email?: string; otp?: string }) {
   }
 
   const payload = await getPayload()
+
+  // The per-record cap (3 attempts) resets with every fresh OTP, so on its own
+  // it allows unbounded guessing by re-requesting codes. These windows bound
+  // the overall guess rate. 'Too many attempts' is the error string the
+  // register form already translates.
+  const ip = getClientIp(request)
+  if (ip) {
+    const perIp = await checkRateLimit(payload, { key: `otp-verify:ip:${ip}`, windowSeconds: 600, max: 30 })
+    if (!perIp.ok) return tooManyRequests(perIp, 'Too many attempts')
+  }
+  const perEmail = await checkRateLimit(payload, { key: `otp-verify:email:${email}`, windowSeconds: 600, max: 10 })
+  if (!perEmail.ok) return tooManyRequests(perEmail, 'Too many attempts')
+
   const identifier = `email-verification-otp-${email}`
 
   // Find the verification record

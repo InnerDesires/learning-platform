@@ -58,6 +58,31 @@ export const betterAuthOptions = {
       trustedProviders: ['google', 'email-password'],
     },
   },
+  rateLimit: {
+    // Better Auth only enables rate limiting in production by default; the env
+    // override lets local sessions and tests exercise the limiter.
+    enabled: process.env.NODE_ENV === 'production' || process.env.AUTH_RATE_LIMIT === 'true',
+    window: 60,
+    max: 60,
+    // Vercel functions don't share memory, so counters must live in Postgres.
+    // payload-auth builds the matching `rateLimit` collection automatically
+    // (hidden, admin-only); the same table backs src/lib/rate-limit.ts.
+    storage: 'database',
+    customRules: {
+      // Credential brute force / signup flooding (per IP).
+      '/sign-in/email': { window: 60, max: 10 },
+      '/sign-up/email': { window: 60, max: 5 },
+      // Every OTP request sends a Resend email — strictest limits.
+      '/email-otp/send-verification-otp': { window: 60, max: 3 },
+      '/forget-password/email-otp': { window: 60, max: 3 },
+      '/sign-in/email-otp': { window: 60, max: 10 },
+      '/email-otp/verify-email': { window: 60, max: 10 },
+      '/email-otp/reset-password': { window: 60, max: 10 },
+      // Session polling is read-only and frequent (admin panel, client
+      // components) — a rate-limit row write per check would be pure overhead.
+      '/get-session': false,
+    },
+  },
   databaseHooks: {
     user: {
       create: {
