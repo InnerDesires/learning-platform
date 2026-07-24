@@ -16,6 +16,7 @@ import * as migration_20260721_233000_reconcile_schema_drift from './20260721_23
 import * as migration_20260722_090000_add_user_hide_profile_comments from './20260722_090000_add_user_hide_profile_comments';
 import * as migration_20260724_120000_archive_block_collections from './20260724_120000_archive_block_collections';
 import * as migration_20260724_140000_xp_events from './20260724_140000_xp_events';
+import * as migration_20260724_160000_home_calendar_global from './20260724_160000_home_calendar_global';
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20260724_140000_xp_events.up,
     down: migration_20260724_140000_xp_events.down,
     name: '20260724_140000_xp_events',
+  },
+  {
+    up: migration_20260724_160000_home_calendar_global.up,
+    down: migration_20260724_160000_home_calendar_global.down,
+    name: '20260724_160000_home_calendar_global',
   },
 ];
