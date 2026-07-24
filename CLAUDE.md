@@ -60,9 +60,10 @@ pnpm lint             # ESLint
 
 ## Dev Server Rules
 
-- **Port 3000 only.** Never use 3001, 3002, etc.
-- Never run multiple instances simultaneously.
-- If port 3000 is not responding, check the Neon branch in `.env` first.
+- **One dev server per worktree.** Multiple instances may run simultaneously only when each runs from its own worktree and points to its own Neon branch (`DATABASE_URL` in that worktree's `.env`). Never run two servers from the same worktree or against the same DB branch.
+- **Port 3000 is the default.** If it's busy with another worktree's server, leave that server running and start yours on a free port (`.claude/launch.json` has `autoPort: true`; manually: `PORT=3001 pnpm dev`).
+- Non-3000 caveat: `NEXT_PUBLIC_SERVER_URL` and Better Auth `trustedOrigins` assume `localhost:3000`, so Google OAuth and form-based sign-in can fail on other ports. `GET /api/dev-login` (see [docs/dev-admin-login.md](docs/dev-admin-login.md)) signs in server-side and works on any port.
+- If the server is not responding, check the Neon branch in `.env` first.
 
 ## Database: Neon Branching
 
