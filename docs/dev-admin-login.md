@@ -38,6 +38,13 @@ Navigating to that URL signs the browser in as the dev admin (Better Auth
 session cookies are set server-side) and redirects to `/`. Optional redirect
 target: `/api/dev-login?redirect=/admin`.
 
+**Self-healing**: when sign-in fails because the account doesn't exist (a
+branch created before the dev parent was seeded, a wiped database), the route
+runs the seed automatically and retries — so the first login works on any dev
+branch with no manual step. The fast path (account exists — the normal case,
+since branches inherit it from the seeded `dev` parent) does no seeding and
+takes ~0.5s; a cold auto-seed adds ~6s to that first request only.
+
 ### CLI / API testing (one command)
 
 ```bash
@@ -59,12 +66,19 @@ the whole session — pass it back on subsequent requests.
 
 ## Seeding
 
+Seeding is normally **automatic**: dev branches inherit the account from the
+seeded `dev` parent, and `/api/dev-login` seeds lazily when it's missing. Run
+the seed explicitly only to **reset** the admin's data after destructive
+testing, or to seed a database without booting the dev server:
+
 ```bash
-pnpm seed:dev-admin                      # seeds the branch in .env
+pnpm seed:dev-admin                      # seeds/resets the branch in .env
 DATABASE_URL=<url> pnpm seed:dev-admin   # seeds any other Neon branch
 ```
 
-The script ([scripts/seed-dev-admin.ts](../scripts/seed-dev-admin.ts)):
+The core logic lives in [src/lib/auth/seed-dev-admin.ts](../src/lib/auth/seed-dev-admin.ts)
+(shared by the CLI wrapper [scripts/seed-dev-admin.ts](../scripts/seed-dev-admin.ts)
+and the login route):
 
 - creates the user via Better Auth (`signUpEmail` + pre-verified email) if
   missing; if the email exists with a stale password it recreates the account
@@ -72,8 +86,8 @@ The script ([scripts/seed-dev-admin.ts](../scripts/seed-dev-admin.ts)):
   courses only if the database has fewer than two
 - is **idempotent** — reruns wipe only the dev admin's own enrollments, quiz
   attempts, comments and likes, then recreate them
-- loads `.env.local` + `.env` itself (Next-style precedence), so a plain
-  `DATABASE_URL=… pnpm seed:dev-admin` override works
+- the CLI wrapper loads `.env.local` + `.env` itself (Next-style precedence),
+  so a plain `DATABASE_URL=… pnpm seed:dev-admin` override works
 
 ## How this reaches every dev branch
 
@@ -82,10 +96,11 @@ project `ancient-cell-80589995`). Session branches are created with
 `--parent dev` (see CLAUDE.md), so they inherit the account and its data
 automatically — **no per-branch setup needed**.
 
-Only branches created **before** the parent was seeded (2026-07-24) lack the
-account — run `pnpm seed:dev-admin` once on those. The same applies if you ever
-wipe or badly mutate the admin's data during testing: rerunning the seed resets
-it to the canonical state.
+Branches created **before** the parent was seeded (2026-07-24) lack the
+account — there `/api/dev-login` auto-seeds on first hit, no manual step
+needed. If you ever wipe or badly mutate the admin's data during testing,
+`pnpm seed:dev-admin` resets it to the canonical state (auto-seed only fires
+when sign-in fails, not when data is merely mangled).
 
 ## Typical agent workflow
 
