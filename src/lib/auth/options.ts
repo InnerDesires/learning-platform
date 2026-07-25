@@ -8,10 +8,13 @@ import { consumePreVerified } from '@/lib/auth/pre-verified'
 import { isRateLimitEnabled } from '@/lib/rate-limit'
 
 function resolveBaseURL(): string {
+  // Explicit override wins: VERCEL_PROJECT_PRODUCTION_URL is the *shortest*
+  // production custom domain, which during a domain migration is the old one.
+  // Set this in Vercel for the production environment only, or previews break.
+  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   return 'http://localhost:3000'

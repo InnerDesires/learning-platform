@@ -109,7 +109,7 @@ async function ensureAdminUser(payload: PayloadAuth): Promise<User> {
       socialLinks: [
         { platform: 'telegram', url: 'https://t.me/zalizna_zmina' },
         { platform: 'youtube', url: 'https://www.youtube.com/@zalizna-zmina' },
-        { platform: 'website', url: 'https://platform.2cb.in.ua' },
+        { platform: 'website', url: 'https://platform.ironsquad.org.ua' },
       ],
     },
   })
