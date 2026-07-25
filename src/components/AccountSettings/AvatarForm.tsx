@@ -5,15 +5,81 @@ import { Camera, Trash2 } from 'lucide-react'
 import { authClient } from '@/lib/auth/client'
 import { updateAvatar, removeAvatar } from '@/actions/accountSettings'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { clearMyXpCache } from '@/utilities/myXpCache'
 import type { SiteLocale } from '@/utilities/locales'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_BYTES = 5 * 1024 * 1024
 
-/** The server action updates the user in the DB, but the session cookie cache
- *  (5 min) still holds the old snapshot. Force a fresh session read so the
- *  header and server components render the new image after reload. */
+/** Only `square` (500x500) is ever shown, so anything past this is wasted bytes. */
+const MAX_DIMENSION = 1024
+/** Stay well under the server action body limit (next.config.js) after multipart overhead. */
+const DOWNSCALE_ABOVE_BYTES = 768 * 1024
+/** Phone cameras hand over types the picker's `accept` list never asked for. */
+const EXTENSION_TYPES: Record<string, string> = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+  gif: 'image/gif',
+  heic: 'image/heic',
+  heif: 'image/heif',
+}
+
+/** Some Android pickers report an empty `type`; fall back to the extension. */
+const fileType = (file: File): string =>
+  file.type || EXTENSION_TYPES[file.name.split('.').pop()?.toLowerCase() ?? ''] || ''
+
+/**
+ * Re-encodes the picked image to a modest JPEG before it ever reaches the
+ * server action. A phone photo is routinely 2–5 MB, which blows past the
+ * server action body limit and fails as an opaque rejection — this keeps the
+ * upload at a couple hundred KB and normalises the type on the way.
+ *
+ * Returns the untouched file when re-encoding is not worth it or not possible;
+ * the caller still validates size, so a passthrough is always safe.
+ */
+async function shrinkForUpload(file: File): Promise<File> {
+  const type = fileType(file)
+
+  // Animated GIFs would be flattened to their first frame, and a small
+  // well-formed image has nothing to gain.
+  const isPlainRaster = type === 'image/jpeg' || type === 'image/png' || type === 'image/webp'
+  if (type === 'image/gif' || (isPlainRaster && file.size <= DOWNSCALE_ABOVE_BYTES)) return file
+
+  // `from-image` bakes in EXIF rotation, so portrait phone photos stay upright.
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  try {
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return file
+    // JPEG has no alpha channel, so transparency would otherwise come out black.
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', 0.9),
+    )
+    if (!blob || blob.size >= file.size) return file
+
+    const name = file.name.replace(/\.[^.]+$/, '') || 'avatar'
+    return new File([blob], `${name}.jpg`, { type: 'image/jpeg' })
+  } finally {
+    bitmap.close()
+  }
+}
+
+/** The server action updates the user in the DB, but two caches still hold the
+ *  old snapshot: the session cookie cache (5 min) and the header's myXp cache,
+ *  whose payload carries `image`. Clear both so the header avatar changes with
+ *  the rest of the page instead of lagging behind it by up to 5 minutes. */
 const refreshAndReload = async () => {
+  clearMyXpCache()
   await authClient.getSession({ query: { disableCookieCache: true } })
   window.location.reload()
 }
@@ -32,7 +98,11 @@ export const AvatarForm: React.FC<{
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
-    if (!ALLOWED_TYPES.includes(file.type)) {
+
+    const type = fileType(file)
+    // HEIC/HEIF are not accepted by the server, but iOS can decode them into a
+    // canvas — shrinkForUpload turns those into JPEG below.
+    if (!ALLOWED_TYPES.includes(type) && type !== 'image/heic' && type !== 'image/heif') {
       setError(t.settingsAvatarErrorType)
       return
     }
@@ -40,14 +110,31 @@ export const AvatarForm: React.FC<{
       setError(t.settingsAvatarErrorSize)
       return
     }
+
     setError(null)
     setBusy(true)
-    const formData = new FormData()
-    formData.append('file', file)
-    const result = await updateAvatar(formData)
-    if (result.success) {
-      await refreshAndReload()
-    } else {
+    try {
+      let prepared = file
+      try {
+        prepared = await shrinkForUpload(file)
+      } catch {
+        // Decoding failed (HEIC on a browser that cannot read it, corrupt file).
+        // Sending the original would only fail server-side with a vaguer error.
+        if (!ALLOWED_TYPES.includes(type)) {
+          setError(t.settingsAvatarErrorType)
+          setBusy(false)
+          return
+        }
+      }
+
+      const formData = new FormData()
+      formData.append('file', prepared)
+      const result = await updateAvatar(formData)
+
+      if (result.success) {
+        await refreshAndReload()
+        return
+      }
       setError(
         result.error === 'INVALID_TYPE'
           ? t.settingsAvatarErrorType
@@ -55,20 +142,28 @@ export const AvatarForm: React.FC<{
             ? t.settingsAvatarErrorSize
             : t.settingsErrorGeneric,
       )
-      setBusy(false)
+    } catch {
+      // A rejected server action (body too large, network drop, cold start
+      // timeout) used to leave the button stuck on "saving" with no message.
+      setError(t.settingsErrorGeneric)
     }
+    setBusy(false)
   }
 
   const handleRemove = async () => {
     setError(null)
     setBusy(true)
-    const result = await removeAvatar()
-    if (result.success) {
-      await refreshAndReload()
-    } else {
+    try {
+      const result = await removeAvatar()
+      if (result.success) {
+        await refreshAndReload()
+        return
+      }
       setError(t.settingsErrorGeneric)
-      setBusy(false)
+    } catch {
+      setError(t.settingsErrorGeneric)
     }
+    setBusy(false)
   }
 
   return (

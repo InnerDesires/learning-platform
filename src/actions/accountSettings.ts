@@ -41,6 +41,10 @@ export async function updateAvatar(formData: FormData): Promise<SettingsResult> 
     },
   })
 
+  // better-auth's `image` is a plain text column, so this is a snapshot: it will
+  // not follow a later change in how media is served. Avatars uploaded before
+  // the Blob CDN switch had to be rewritten by hand
+  // (src/migrations/20260724_200000_backfill_blob_urls.ts).
   const url = getMediaUrl(media.sizes?.square?.url ?? media.url)
   if (!url) return { success: false, error: 'UPLOAD_FAILED' }
 

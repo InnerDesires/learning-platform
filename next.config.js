@@ -9,6 +9,14 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...(process.env.DOCKER_BUILD === '1' && { output: 'standalone' }),
+  experimental: {
+    // Avatar uploads go through a server action and the UI allows 5 MB, but the
+    // default cap is 1 MB — every phone photo silently rejected the request.
+    // AvatarForm re-encodes before uploading, so this is only the ceiling for
+    // files that pass through untouched (GIFs). Vercel's own request body limit
+    // is 4.5 MB, which is the real cap in production.
+    serverActions: { bodySizeLimit: '5mb' },
+  },
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
