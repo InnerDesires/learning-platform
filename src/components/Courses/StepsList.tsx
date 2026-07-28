@@ -66,8 +66,11 @@ export const StepsList: React.FC<Props> = ({
   quiz,
   className,
 }) => {
+  // `truncate` makes titles nowrap, so an `auto` grid track would size to the
+  // longest one and push rows out of the card. `minmax(0,1fr)` plus `min-w-0`
+  // on the rows keeps them at the container width so titles truncate instead.
   return (
-    <nav className={cn('grid gap-2.5', className)}>
+    <nav className={cn('grid grid-cols-[minmax(0,1fr)] gap-2.5', className)}>
       {steps.map((step, i) => {
         const isActive = i === activeStepIndex
         const isComplete = completedSteps.includes(step.id ?? '')
@@ -78,12 +81,12 @@ export const StepsList: React.FC<Props> = ({
         const isClickable = linked || !!onStepClick
         const rowClass = compact
           ? cn(
-              'flex items-center gap-3 rounded-[10px] px-2.5 py-2 transition-colors',
+              'flex min-w-0 items-center gap-3 rounded-[10px] px-2.5 py-2 transition-colors',
               isActive ? 'bg-orange/12 text-cloud' : 'text-fog',
               isClickable && 'hover:bg-steel/10 hover:text-cloud',
             )
           : cn(
-              'flex items-center gap-4 rounded-xl border bg-card px-5 py-3.5 transition-colors',
+              'flex min-w-0 items-center gap-4 rounded-xl border bg-card px-5 py-3.5 transition-colors',
               isActive
                 ? 'border-orange bg-[linear-gradient(120deg,rgb(249_140_31/0.12),var(--navy))]'
                 : 'border-line',
@@ -230,11 +233,11 @@ export const StepsList: React.FC<Props> = ({
 
           const quizRowClass = compact
             ? cn(
-                'flex items-center gap-3 rounded-[10px] px-2.5 py-2 transition-colors',
+                'flex min-w-0 items-center gap-3 rounded-[10px] px-2.5 py-2 transition-colors',
                 isQuizLocked ? 'opacity-60' : 'text-fog hover:bg-steel/10 hover:text-cloud',
               )
             : cn(
-                'flex items-center gap-4 rounded-xl border bg-card px-5 py-3.5 transition-colors',
+                'flex min-w-0 items-center gap-4 rounded-xl border bg-card px-5 py-3.5 transition-colors',
                 isQuizLocked ? 'border-line opacity-70' : 'border-line hover:border-orange/55',
               )
 

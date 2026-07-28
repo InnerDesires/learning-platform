@@ -45,6 +45,21 @@ src/
 | `likes`          | Like records for content                   |
 | `media`          | Uploaded files (Vercel Blob)               |
 
+### Course completion
+
+An enrollment reaches `status: 'completed'` only when every current step id is in
+`completedSteps` **and**, on a course with a quiz enabled, `quizPassed` is true.
+The rule lives in `src/utilities/courseCompletion.ts` — call `isCourseComplete()`
+instead of re-deriving it.
+
+Certificates gate on `status === 'completed'` alone, so they inherit the quiz
+requirement rather than checking it again.
+
+Editing a course changes what "complete" means, so `syncCourseCompletions`
+(Courses `afterChange`) promotes enrollments that qualify under the new shape
+when a step or the quiz is removed. It never demotes — a certificate already
+earned stays valid if a quiz is added later.
+
 ## Dev Commands
 
 ```bash

@@ -124,7 +124,7 @@ export default async function CourseOverviewPage({ params: paramsPromise }: Args
             {course.title}
           </h1>
           {course.description && (
-            <p className="max-w-[60ch] text-[15.5px] leading-relaxed text-fog">
+            <p className="max-w-[70ch] text-[15.5px] leading-relaxed text-fog lg:max-w-[80ch]">
               {course.description}
             </p>
           )}

@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { STEP_XP, QUIZ_XP } from '@/utilities/xp'
+import { getStepIds, isCourseComplete } from '@/utilities/courseCompletion'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
 import type { Payload } from 'payload'
 
@@ -171,23 +172,27 @@ export async function completeStep(
     depth: 0,
   }) as Course
 
-  // Compare against actual step ids (not counts) so stale ids of deleted
-  // steps can never mark a course completed early.
-  const stepIds = (course.steps ?? []).map((s) => s.id).filter((id): id is string => Boolean(id))
+  const stepIds = getStepIds(course)
   if (!stepIds.includes(stepBlockId)) {
     return { success: false, error: 'Крок не знайдено' }
   }
 
   const newCompletedSteps = [...completedSteps, stepBlockId]
-  const allComplete = stepIds.every((id) => newCompletedSteps.includes(id))
+  // On a quiz course the last step is not the finish line — submitQuiz promotes
+  // the enrollment once the quiz is passed.
+  const complete = isCourseComplete({
+    course,
+    completedSteps: newCompletedSteps,
+    quizPassed: enrollment.quizPassed,
+  })
 
   const updated = await payload.update({
     collection: 'enrollments',
     id: enrollmentId,
     data: {
       completedSteps: newCompletedSteps,
-      status: allComplete ? 'completed' : 'in_progress',
-      ...(allComplete ? { completedAt: new Date().toISOString() } : {}),
+      status: complete ? 'completed' : 'in_progress',
+      ...(complete ? { completedAt: new Date().toISOString() } : {}),
     },
   })
 
@@ -375,6 +380,16 @@ export async function submitQuizAttempt(
   const enrollmentDoc = enrollment.docs[0]
   const currentBest = enrollmentDoc.bestQuizScore ?? 0
   const currentAttempts = enrollmentDoc.quizAttempts ?? 0
+  const completedSteps: string[] = Array.isArray(enrollmentDoc.completedSteps)
+    ? (enrollmentDoc.completedSteps as string[])
+    : []
+  const nowComplete =
+    enrollmentDoc.status !== 'completed' &&
+    isCourseComplete({
+      course,
+      completedSteps,
+      quizPassed: passed || enrollmentDoc.quizPassed,
+    })
 
   await payload.update({
     collection: 'enrollments',
@@ -383,6 +398,7 @@ export async function submitQuizAttempt(
       quizAttempts: currentAttempts + 1,
       ...(score > currentBest ? { bestQuizScore: score } : {}),
       ...(passed ? { quizPassed: true } : {}),
+      ...(nowComplete ? { status: 'completed', completedAt: new Date().toISOString() } : {}),
     },
   })
 
