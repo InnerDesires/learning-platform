@@ -52,6 +52,11 @@ export function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, loca
   const enrollmentQuizPassed = enrollment?.quizPassed ?? false
   const enrollmentBestScore = enrollment?.bestQuizScore ?? null
 
+  // Every step done but the quiz still open — the course cannot complete yet, so
+  // point at the quiz rather than back at the material.
+  const quizPending =
+    !!quizEnabled && !enrollmentQuizPassed && steps.length > 0 && firstIncompleteIndex === -1
+
   const hasTags = isCompleted || (isCompleted && quizEnabled && enrollmentQuizPassed)
 
   return (
@@ -99,11 +104,16 @@ export function CourseActionBar({ courseId, courseSlug, steps, quizEnabled, loca
             label={labels.enroll}
           />
         )}
-        {isEnrolled && !isCompleted && (
+        {isEnrolled && !isCompleted && !quizPending && (
           <Button size="lg" asChild>
             <Link href={`${localePrefix}/courses/${courseSlug}/steps/${continueStepIndex}`}>
               {labels.continueLearning}
             </Link>
+          </Button>
+        )}
+        {isEnrolled && quizPending && (
+          <Button size="lg" asChild>
+            <Link href={`${localePrefix}/courses/${courseSlug}/quiz`}>{labels.quizTakeQuiz}</Link>
           </Button>
         )}
         {isCompleted && (
