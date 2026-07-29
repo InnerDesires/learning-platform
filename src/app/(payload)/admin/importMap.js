@@ -31,6 +31,7 @@ import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloa
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { CourseJsonImport as CourseJsonImport_62a749ef9cd0a67d2b95983ba52f2a6e } from '@/components/admin/CourseJsonImport'
 import { default as default_5a937244eefab579b90d1060bfc1a2f8 } from '@/components/admin/CourseDeleteConfirmation'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
@@ -51,6 +52,7 @@ import { ForgotPassword as ForgotPassword_5afe2312a68aef77a0242fe42f239ed0 } fro
 import { ResetPassword as ResetPassword_5afe2312a68aef77a0242fe42f239ed0 } from 'payload-auth/better-auth/plugin/rsc'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+/** @type import('payload').ImportMap */
 export const importMap = {
   "@/components/admin/InviteUserButton#InviteUserButton": InviteUserButton_db1e3c40ba5cdfab870875497fa544c4,
   "payload-auth/better-auth/plugin/client#AdminButtons": AdminButtons_5a568d0e24198ca3140489e0d330f424,
@@ -85,6 +87,7 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@/components/admin/CourseJsonImport#CourseJsonImport": CourseJsonImport_62a749ef9cd0a67d2b95983ba52f2a6e,
   "@/components/admin/CourseDeleteConfirmation#default": default_5a937244eefab579b90d1060bfc1a2f8,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
