@@ -140,6 +140,8 @@ export const betterAuthOptions = {
   ],
 } satisfies BetterAuthOptions
 
+const DEFAULT_USER_ROLE = 'learner'
+
 export const betterAuthPluginOptions = {
   disabled: false,
   hidePluginCollections: true,
@@ -147,10 +149,24 @@ export const betterAuthPluginOptions = {
     slug: 'users',
     hidden: false,
     adminRoles: ['admin'],
-    defaultRole: 'learner',
+    defaultRole: DEFAULT_USER_ROLE,
     defaultAdminRole: 'admin',
-    roles: ['learner', 'admin'],
+    roles: [DEFAULT_USER_ROLE, 'admin'],
     allowedFields: ['name'],
+    // payload-auth builds `role` as a hasMany select but copies `defaultRole`
+    // in as a bare string. Payload applies that default, then the Drizzle write
+    // layer drops it — it only writes select-hasMany rows when the value is an
+    // array (@payloadcms/drizzle transform/write/traverseFields.js), silently.
+    // Result: every user created through Better Auth (email, Google, invites)
+    // landed with an empty role. Re-shape the default into an array.
+    collectionOverrides: ({ collection }) => ({
+      ...collection,
+      fields: collection.fields.map((field) =>
+        field.type === 'select' && field.name === 'role'
+          ? { ...field, defaultValue: [DEFAULT_USER_ROLE] }
+          : field,
+      ),
+    }),
   },
   accounts: {
     slug: 'accounts',
