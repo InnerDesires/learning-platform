@@ -119,10 +119,13 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
           className="mb-6"
         />
 
-        {/* Two-column layout on desktop */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main content */}
-          <div className="order-1 min-w-0 flex-1">
+        {/*
+          Two-column layout on desktop. The title sits in its own grid row so the
+          step body and the steps sidebar both start on row 2 — their tops line up.
+        */}
+        <div className="grid grid-cols-1 gap-x-8 lg:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
+          {/* Title + meta — spans only the content column */}
+          <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <h1 className="heading-display mb-2.5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
 
             <div className="mb-5 flex flex-wrap items-center gap-2.5 text-[12px] font-semibold text-steel">
@@ -137,7 +140,10 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
               </span>
               {!isStepCompleted && <XpChip xp={STEP_XP} />}
             </div>
+          </div>
 
+          {/* Main content */}
+          <div className="min-w-0 lg:col-start-1 lg:row-start-2">
             <div className="mb-8">
               {step.blockType === 'richTextStep' && step.content && (
                 <RichText data={step.content} enableGutter={false} />
@@ -213,7 +219,7 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
           </div>
 
           {/* Sidebar steps list — visible on desktop */}
-          <aside className="order-2 w-full flex-shrink-0 lg:w-72 xl:w-80">
+          <aside className="mt-8 w-full min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-0">
             <div className="rounded-2xl border border-line bg-card p-4 lg:sticky lg:top-24">
               <h3 className="mb-3.5 px-1 font-display text-xs font-semibold uppercase tracking-[0.2em] text-fog">
                 {t.courseSteps}
