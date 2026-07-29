@@ -5,6 +5,7 @@ import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 import { slugField, validations } from 'payload'
 import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 import { syncCourseCompletions } from '../hooks/syncCourseCompletions'
+import { revalidateCourse, revalidateCourseDelete } from '../hooks/revalidateCourse'
 
 // Орієнтовна тривалість кроку — показується учням у списках кроків («Відео · 8 хв»).
 const stepDurationField: Field = {
@@ -34,7 +35,8 @@ export const Courses: CollectionConfig = {
     update: admin,
   },
   hooks: {
-    afterChange: [syncCourseCompletions],
+    afterChange: [syncCourseCompletions, revalidateCourse],
+    afterDelete: [revalidateCourseDelete],
     beforeDelete: [
       async ({ id, req }) => {
         // xp_events.course_id is NOT NULL with an ON DELETE SET NULL FK — the
