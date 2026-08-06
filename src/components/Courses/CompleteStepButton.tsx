@@ -12,7 +12,6 @@ type Props = {
   stepBlockId: string
   courseId: number
   courseSlug: string
-  /** Ordered block ids of all course steps — used to find the first incomplete step. */
   stepIds: string[]
   completedSteps: string[]
   isLastStep: boolean
@@ -77,8 +76,6 @@ export const CompleteStepButton: React.FC<Props> = ({
         return
       }
 
-      // The quiz only opens once every step is done — otherwise continue with
-      // the first step that still needs finishing.
       const firstIncomplete = isCourseCompleted
         ? -1
         : stepIds.findIndex((id) => !latestCompleted.includes(id))
@@ -88,7 +85,6 @@ export const CompleteStepButton: React.FC<Props> = ({
     })
   }
 
-  // Promise the quiz only when this press actually opens it.
   const label = !isLastStep
     ? nextLabel
     : quizEnabled

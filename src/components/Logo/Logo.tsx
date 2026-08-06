@@ -8,7 +8,6 @@ interface Props {
   priority?: 'auto' | 'high' | 'low'
 }
 
-/** Official Iron Squad emblem (circular badge). Roughly square — size via height. */
 export const Logo = (props: Props) => {
   const { alt, className, loading = 'eager', priority = 'high' } = props
 

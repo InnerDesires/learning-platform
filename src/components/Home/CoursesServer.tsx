@@ -7,7 +7,6 @@ type Props = {
   locale: SiteLocale
 }
 
-/** Latest three published courses for the home page strip. */
 export async function CoursesGridServer({ locale }: Props) {
   const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({

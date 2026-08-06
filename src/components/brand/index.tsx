@@ -2,27 +2,23 @@ import React from 'react'
 import { Zap } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
-/** Railway-track motif shown under section headings. */
 export const Rails: React.FC<{ className?: string }> = ({ className }) => (
   <div className={cn('rails', className)} aria-hidden="true">
     <i />
   </div>
 )
 
-/** Orange overline label above a section heading. */
 export const Eyebrow: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className,
 }) => <span className={cn('eyebrow', className)}>{children}</span>
 
-/** Scoreboard XP chip: ⚡ +NNN XP */
 export const XpChip: React.FC<{ xp: number; className?: string }> = ({ xp, className }) => (
   <span className={cn('xp-chip num', className)}>
     <Zap fill="currentColor" strokeWidth={0} aria-hidden="true" />+{xp} XP
   </span>
 )
 
-/** Reward pill shown on course/quiz heroes: ⚡ label · +NNN XP */
 export const RewardPill: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className,
@@ -33,9 +29,6 @@ export const RewardPill: React.FC<{ children: React.ReactNode; className?: strin
   </span>
 )
 
-/**
- * Standard page header: eyebrow + big display h1 + rails + optional sub line.
- */
 export const PageHead: React.FC<{
   eyebrow?: React.ReactNode
   title: React.ReactNode
@@ -54,10 +47,6 @@ export const PageHead: React.FC<{
   </div>
 )
 
-/**
- * Standard section header: eyebrow + display heading + rails, with an
- * optional action slot on the right.
- */
 export const SectionHead: React.FC<{
   eyebrow?: React.ReactNode
   title: React.ReactNode

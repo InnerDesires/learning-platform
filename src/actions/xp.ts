@@ -10,11 +10,9 @@ export type MyXp = {
   level: number
   intoLevel: number
   span: number
-  /** Avatar URL from the users doc — the better-auth session payload omits `image`. */
   image: string | null
 }
 
-/** Total XP and level for the signed-in user (30 XP/step, 100 XP/passed quiz). */
 export async function getMyXp(): Promise<MyXp | null> {
   const session = await getSession().catch(() => null)
   if (!session?.user) return null

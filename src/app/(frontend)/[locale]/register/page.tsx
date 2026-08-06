@@ -16,7 +16,6 @@ export default async function RegisterPage({ params, searchParams }: Args) {
   const { redirect: redirectParam } = await searchParams
 
   const home = locale === defaultLocale ? '/' : `/${locale}`
-  // sanitized return path; undefined keeps each form's own default
   const redirectTo = redirectParam ? safeRedirectPath(redirectParam, home) : undefined
 
   const session = await getSession()

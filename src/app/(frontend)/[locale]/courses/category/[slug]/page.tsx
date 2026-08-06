@@ -13,8 +13,6 @@ import { getCatalogData } from '@/lib/courses/getCatalogData'
 import { plural } from '@/utilities/plural'
 import type { Media as MediaType } from '@/payload-types'
 
-// Session-free on the server (viewer progress loads client-side in CourseGrid),
-// so category pages serve from the ISR cache like the main catalog.
 export const revalidate = 300
 
 export async function generateStaticParams() {
@@ -77,8 +75,6 @@ export default async function CourseCategoryPage({ params: paramsPromise }: Args
             style={{ backgroundImage: `url(${imageUrl})` }}
           />
         )}
-        {/* Lighter at the top than the course hero so the category cover
-            actually reads through; still settles into solid void for the grid. */}
         <div
           className="absolute inset-0"
           style={{

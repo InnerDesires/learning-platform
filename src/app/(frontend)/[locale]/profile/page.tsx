@@ -77,7 +77,6 @@ export default async function ProfilePage({ params }: Args) {
     }),
   ])
 
-  // XP scoreboard: 30 XP per completed step, 100 XP per passed final quiz.
   let stepsDone = 0
   let quizzesPassed = 0
   for (const enrollment of enrollments.docs) {
@@ -113,7 +112,6 @@ export default async function ProfilePage({ params }: Args) {
   return (
     <div className="container max-w-2xl py-16">
       <div className="mb-8 flex flex-col items-center gap-4">
-        {/* avatar with XP level ring */}
         <div
           className="h-24 w-24 rounded-full p-[4px]"
           style={{
@@ -186,7 +184,6 @@ export default async function ProfilePage({ params }: Args) {
         </div>
       </div>
 
-      {/* XP progress to next level */}
       <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-6">
         <div className="mb-2 flex items-center justify-between text-[11px] font-bold uppercase tracking-[0.1em] text-fog">
           <span>{t.profileToNextLevel}</span>
@@ -219,7 +216,6 @@ export default async function ProfilePage({ params }: Args) {
         </div>
       </div>
 
-      {/* courses in progress */}
       <h2 className={sectionHeading}>{t.profileMyCourses}</h2>
       {inProgress.length === 0 && completed.length === 0 ? (
         <div className="rounded-2xl border border-line bg-card p-8 text-center">
@@ -277,7 +273,6 @@ export default async function ProfilePage({ params }: Args) {
         </div>
       )}
 
-      {/* certificates */}
       {completed.length > 0 && (
         <>
           <h2 className={sectionHeading}>{t.profileCertificates}</h2>
@@ -323,7 +318,6 @@ export default async function ProfilePage({ params }: Args) {
         </>
       )}
 
-      {/* recent quiz attempts */}
       {recentAttempts.docs.length > 0 && (
         <>
           <h2 className={sectionHeading}>{t.profileRecentQuizzes}</h2>
@@ -370,7 +364,6 @@ export default async function ProfilePage({ params }: Args) {
         </>
       )}
 
-      {/* account info */}
       <div className="mt-10 space-y-5 rounded-2xl border border-line bg-card p-6">
         <div className="flex items-center gap-3">
           <Mail className="h-5 w-5 shrink-0 text-orange" />

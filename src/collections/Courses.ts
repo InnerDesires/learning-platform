@@ -7,7 +7,6 @@ import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
 import { syncCourseCompletions } from '../hooks/syncCourseCompletions'
 import { revalidateCourse, revalidateCourseDelete } from '../hooks/revalidateCourse'
 
-// Орієнтовна тривалість кроку — показується учням у списках кроків («Відео · 8 хв»).
 const stepDurationField: Field = {
   name: 'duration',
   type: 'number',

@@ -4,12 +4,8 @@ import type { ConstructedBetterAuthPluginOptions } from './options'
 import { markPreVerified } from './pre-verified'
 import { DEV_ADMIN } from './dev-credentials'
 
-/**
- * Core of the dev-admin seed, shared by `scripts/seed-dev-admin.ts` (explicit
- * reset via `pnpm seed:dev-admin`) and `GET /api/dev-login` (lazy auto-seed
- * when the account is missing). Dev/test databases only — both callers are
- * disabled in production. See docs/dev-admin-login.md.
- */
+// Dev/test databases only — shared by `pnpm seed:dev-admin` and /api/dev-login's lazy
+// auto-seed. Both callers are disabled in production. See docs/dev-admin-login.md.
 export type PayloadAuth = Awaited<
   ReturnType<typeof getPayloadAuth<ConstructedBetterAuthPluginOptions>>
 >
@@ -57,7 +53,6 @@ async function findAdmin(payload: PayloadAuth): Promise<User | undefined> {
   return docs[0]
 }
 
-/** Remove every document the dev admin owns so reruns start from a clean slate. */
 async function resetAdminActivity(payload: PayloadAuth, userId: number): Promise<void> {
   await payload.delete({ collection: 'enrollments', where: { user: { equals: userId } } })
   await payload.delete({ collection: 'quiz-attempts', where: { user: { equals: userId } } })
@@ -163,7 +158,6 @@ async function createDemoCourse(payload: PayloadAuth, index: number): Promise<Co
   })) as Course
 }
 
-/** Published courses with steps, oldest first; demo courses fill any shortfall. */
 async function ensureCourses(payload: PayloadAuth): Promise<Course[]> {
   const { docs } = await payload.find({
     collection: 'courses',
@@ -298,10 +292,6 @@ async function seedComments(
   return created
 }
 
-/**
- * Full seed: ensure the account with fixed credentials, reset its activity,
- * recreate enrollments (one completed, one in progress), quiz attempt, comments.
- */
 export async function seedDevAdmin(payload: PayloadAuth): Promise<SeedDevAdminSummary> {
   const admin = await ensureAdminUser(payload)
   const courses = await ensureCourses(payload)

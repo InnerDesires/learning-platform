@@ -33,7 +33,6 @@ type Props = {
   className?: string
 }
 
-// Fallback covers extracted from the approved design prototype.
 const FALLBACK_COVERS = [
   '/illustrations/course-leadership.svg',
   '/illustrations/course-first-aid.svg',
@@ -104,7 +103,6 @@ export const CourseCard: React.FC<Props> = ({
           {description && (
             <p className="line-clamp-2 text-[12.5px] leading-relaxed text-fog">{description}</p>
           )}
-          {/* single line always: lower-priority chips hide as the card narrows */}
           <div className="@container mt-auto flex flex-nowrap items-center gap-3.5 overflow-hidden whitespace-nowrap border-t border-line pt-3 text-[11.5px] font-semibold text-fog">
             <span className="num flex flex-none items-center gap-1.5">
               <Rows3 className="h-3.5 w-3.5 flex-none" />

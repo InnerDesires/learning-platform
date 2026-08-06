@@ -9,12 +9,10 @@ interface LikeButtonProps {
   targetCollection: LikeTargetCollection
   targetId: number
   isAuthenticated: boolean
-  /** When false, the like-state request is deferred (e.g. until scrolled into view). */
   active?: boolean
   initialLiked?: boolean
   initialCount?: number
   size?: 'sm' | 'md'
-  /** Guests are sent here (login with a redirect back) instead of a dead disabled button. */
   loginUrl?: string
   loginPromptLabel?: string
 }

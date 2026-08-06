@@ -9,7 +9,6 @@ export type Props = {
   posts: CardPostData[]
   likesCountMap?: Record<number, number>
   commentsCountMap?: Record<number, number>
-  /** Optional label per collection type, shown as a chip on each card (used on search results). */
   typeLabels?: Partial<Record<CardRelationTo, string>>
 }
 

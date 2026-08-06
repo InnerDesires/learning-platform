@@ -1,6 +1,5 @@
-/** In-memory store of emails that passed OTP verification during registration.
- *  Uses globalThis to survive HMR reloads in dev mode.
- *  Set by the verify-registration API route, checked by databaseHooks in auth options. */
+// Emails that passed OTP verification during registration. On globalThis so it survives
+// HMR reloads in dev.
 const globalStore = globalThis as unknown as {
   __preVerifiedEmails?: Map<string, number>
 }

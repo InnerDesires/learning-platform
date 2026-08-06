@@ -76,7 +76,6 @@ export default async function PublicProfilePage({ params }: Args) {
     depth: 1,
   })
 
-  // Same XP math as the private profile page.
   let stepsDone = 0
   let quizzesPassed = 0
   for (const enrollment of enrollments.docs) {
@@ -102,7 +101,6 @@ export default async function PublicProfilePage({ params }: Args) {
   return (
     <div className="container max-w-2xl py-16">
       <div className="mb-8 flex flex-col items-center gap-4">
-        {/* avatar with XP level ring */}
         <div
           className="h-24 w-24 rounded-full p-[4px]"
           style={{
@@ -158,7 +156,6 @@ export default async function PublicProfilePage({ params }: Args) {
         )}
       </div>
 
-      {/* stats */}
       <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-6">
         <div className="grid grid-cols-3 gap-3 text-center">
           <div>
@@ -182,7 +179,6 @@ export default async function PublicProfilePage({ params }: Args) {
         </div>
       </div>
 
-      {/* completed courses — no scores, no certificate downloads */}
       {completed.length > 0 && (
         <>
           <h2 className="heading-display mb-4 mt-10 text-xl tracking-[0.06em]">
@@ -218,14 +214,12 @@ export default async function PublicProfilePage({ params }: Args) {
         </>
       )}
 
-      {/* latest comments — streamed after first paint so they never block the page */}
       {user.hideProfileComments !== true && (
         <Suspense fallback={<ProfileLatestCommentsSkeleton />}>
           <ProfileLatestComments userId={user.id} locale={locale} />
         </Suspense>
       )}
 
-      {/* joined date */}
       {joinedDate && (
         <div className="mt-10 flex items-center gap-3 rounded-2xl border border-line bg-card p-6">
           <Calendar className="h-5 w-5 shrink-0 text-orange" />

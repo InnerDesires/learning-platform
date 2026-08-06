@@ -3,15 +3,8 @@ import { sql } from '@payloadcms/db-postgres'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 
-/**
- * Site-wide aggregate counters (likes, comments, enrollments) computed with
- * grouped SQL instead of fetching rows and counting in JS. Each aggregate is
- * one GROUP BY over a small table and is shared across requests via
- * unstable_cache, so per-request cost is a cache read, not a table scan.
- *
- * Counts here are display-only and may lag by up to the revalidate window;
- * live per-user state (liked/not liked) is fetched client-side.
- */
+// Counts here are display-only and may lag by up to the revalidate window; live
+// per-user state (liked/not liked) is fetched client-side.
 
 type SqlQuery = ReturnType<typeof sql>
 type CountsByTarget = Record<number, number>
@@ -88,13 +81,10 @@ const enrollmentStatsCache = unstable_cache(
   { revalidate: 60, tags: ['course-enrollment-stats'] },
 )
 
-/** Likes per document for a whole collection, cached across requests. */
 export const getCachedLikesCounts = (targetCollection: 'posts' | 'courses') =>
   likesCountsCache(targetCollection)()
 
-/** Comments per document for a whole collection, cached across requests. */
 export const getCachedCommentsCounts = (targetCollection: 'posts' | 'courses') =>
   commentsCountsCache(targetCollection)()
 
-/** Enrolled/completed totals per course, cached across requests. */
 export const getCachedEnrollmentStats = () => enrollmentStatsCache()

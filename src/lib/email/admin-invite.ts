@@ -1,4 +1,3 @@
-/** Ukrainian admin-invite email, matching the OTP email's house style. */
 export function buildInviteEmailHtml(url: string): string {
   return `<!DOCTYPE html>
 <html lang="uk">

@@ -1,4 +1,3 @@
-// Instant skeleton shown while an article renders — mirrors the PostHero layout.
 export default function Loading() {
   return (
     <article className="animate-pulse pb-16">

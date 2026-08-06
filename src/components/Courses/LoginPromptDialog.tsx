@@ -17,10 +17,6 @@ type Props = {
   }
 }
 
-/**
- * Modal shown to guests who tap a course step: explains that steps require an
- * account and links to /login with a redirect back to the course page.
- */
 export function LoginPromptDialog({ open, onClose, loginHref, labels }: Props) {
   const loginLinkRef = useRef<HTMLAnchorElement>(null)
 

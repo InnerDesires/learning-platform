@@ -31,9 +31,6 @@ export const Pages: CollectionConfig<'pages'> = {
     read: authenticatedOrPublished,
     update: admin,
   },
-  // This config controls what's populated by default when a page is referenced
-  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
-  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'pages'>
   defaultPopulate: {
     title: true,
     slug: true,
@@ -109,10 +106,8 @@ export const Pages: CollectionConfig<'pages'> = {
               overrides: { label: 'Мета-опис' },
             }),
             PreviewField({
-              // if the `generateUrl` function is configured
               hasGenerateFn: true,
 
-              // field paths to match the target field for data
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),

@@ -21,8 +21,6 @@ import { ShareButtons } from '@/components/ShareButtons'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getFrontendMessages } from '@/utilities/i18n'
 
-// Refresh periodically so the baked-in like/comment counts don't go stale;
-// content edits still revalidate immediately via the collection hook.
 export const revalidate = 600
 
 export async function generateStaticParams() {

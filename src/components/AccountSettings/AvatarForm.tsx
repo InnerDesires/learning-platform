@@ -31,13 +31,10 @@ const fileType = (file: File): string =>
   file.type || EXTENSION_TYPES[file.name.split('.').pop()?.toLowerCase() ?? ''] || ''
 
 /**
- * Re-encodes the picked image to a modest JPEG before it ever reaches the
- * server action. A phone photo is routinely 2–5 MB, which blows past the
- * server action body limit and fails as an opaque rejection — this keeps the
- * upload at a couple hundred KB and normalises the type on the way.
- *
- * Returns the untouched file when re-encoding is not worth it or not possible;
- * the caller still validates size, so a passthrough is always safe.
+ * A phone photo is routinely 2–5 MB, which blows past the server action body limit and
+ * fails as an opaque rejection, so re-encode to a modest JPEG first. Returns the
+ * untouched file when that is not worth it or not possible — the caller still validates
+ * size, so a passthrough is always safe.
  */
 async function shrinkForUpload(file: File): Promise<File> {
   const type = fileType(file)
@@ -74,10 +71,8 @@ async function shrinkForUpload(file: File): Promise<File> {
   }
 }
 
-/** The server action updates the user in the DB, but two caches still hold the
- *  old snapshot: the session cookie cache (5 min) and the header's myXp cache,
- *  whose payload carries `image`. Clear both so the header avatar changes with
- *  the rest of the page instead of lagging behind it by up to 5 minutes. */
+// Two caches still hold the old snapshot after the server action writes: the session
+// cookie cache (5 min) and the header's myXp cache, whose payload carries `image`.
 const refreshAndReload = async () => {
   clearMyXpCache()
   await authClient.getSession({ query: { disableCookieCache: true } })
@@ -143,8 +138,6 @@ export const AvatarForm: React.FC<{
             : t.settingsErrorGeneric,
       )
     } catch {
-      // A rejected server action (body too large, network drop, cold start
-      // timeout) used to leave the button stuck on "saving" with no message.
       setError(t.settingsErrorGeneric)
     }
     setBusy(false)

@@ -29,18 +29,12 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-/**
- * `pg-connection-string` currently treats sslmode `prefer`/`require`/`verify-ca`
- * as aliases for `verify-full`, but warns that this changes in pg v9. Make the
- * current (stronger) behavior explicit so we keep full verification and silence
- * the deprecation warning. Neon serves a publicly-trusted cert, so verify-full works.
- */
+// `pg-connection-string` treats sslmode `prefer`/`require`/`verify-ca` as aliases for
+// `verify-full` today but warns that pg v9 changes this; make it explicit. Neon serves a
+// publicly-trusted cert, so verify-full works.
 const normalizeDatabaseURL = (url: string): string =>
   url.replace(/([?&]sslmode=)(prefer|require|verify-ca)\b/i, '$1verify-full')
 
-// Every Neon branch has its own endpoint host, so logging the host answers
-// "which database am I actually connected to?" at a glance (multiple env
-// files and per-session branches make this easy to get wrong silently).
 try {
   const dbHost = new URL(process.env.DATABASE_URL || '').hostname
   console.log(`[payload] DATABASE_URL host: ${dbHost}`)
@@ -100,7 +94,6 @@ export default buildConfig({
       ],
     },
   },
-  // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
@@ -136,10 +129,7 @@ export default buildConfig({
     translations: {
       uk: {
         general: {
-          // «Створення нового {{label}}» clashes with feminine/plural labels
-          // (e.g. «нового Форма») — a case-neutral wording avoids that.
           creatingNewLabel: 'Створення: {{label}}',
-          // Core uk translation says «Налаштування Payload» — strip the vendor name.
           payloadSettings: 'Налаштування панелі',
         },
         // The redirects plugin ships no uk translations, and with fallbackLanguage=uk
@@ -164,8 +154,6 @@ export default buildConfig({
     fallback: true,
   },
   plugins,
-  // Same Resend account Better Auth uses for OTP emails (src/lib/auth/options.ts).
-  // Without the key (CI), Payload falls back to logging emails to console.
   email: process.env.RESEND_API_KEY
     ? resendAdapter({
         defaultFromAddress: process.env.EMAIL_FROM || 'onboarding@resend.dev',
@@ -181,15 +169,11 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
         if (req.user) return true
 
         const secret = process.env.CRON_SECRET
         if (!secret) return false
 
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
         const authHeader = req.headers.get('authorization')
         return authHeader === `Bearer ${secret}`
       },

@@ -10,8 +10,6 @@ import {
   getCachedPeriodLeaderboard,
 } from '@/utilities/leaderboard'
 
-// The leaderboard is the same for everyone, so it can be served from the ISR
-// cache; XP-awarding mutations revalidate the `xp-leaderboard` tag.
 export const revalidate = 300
 
 export function generateStaticParams() {

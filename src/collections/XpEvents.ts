@@ -2,13 +2,9 @@ import type { CollectionConfig } from 'payload'
 
 import { admin } from '../access/admin'
 
-/**
- * Append-only log of XP awards (step completed, final quiz passed).
- *
- * Total XP stays derived from enrollments (see src/utilities/xp.ts); this log
- * exists so period leaderboards («XP за день/тиждень/місяць») can be computed —
- * enrollments store which steps are done but not when.
- */
+// Append-only log of XP awards. Total XP stays derived from enrollments (src/utilities/xp.ts);
+// this log exists only so period leaderboards can be computed — enrollments store which
+// steps are done but not when.
 export const XpEvents: CollectionConfig = {
   slug: 'xp-events',
   labels: { singular: 'Подія XP', plural: 'Події XP' },

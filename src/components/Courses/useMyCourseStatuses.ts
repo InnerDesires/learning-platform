@@ -6,11 +6,6 @@ import { getMyCourseStatuses, type MyCourseStatuses } from '@/app/(frontend)/[lo
 
 const NO_STATUSES: MyCourseStatuses = { completed: [], inProgress: [] }
 
-/**
- * The signed-in user's completed / in-progress course ids, fetched after
- * hydration so pages rendering course cards can stay in the shared ISR cache.
- * Guests never trigger the request.
- */
 export function useMyCourseStatuses(): MyCourseStatuses {
   const { data: session } = useSession()
   const [statuses, setStatuses] = useState<MyCourseStatuses>(NO_STATUSES)

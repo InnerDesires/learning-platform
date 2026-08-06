@@ -1,7 +1,5 @@
-/**
- * Only allow same-site relative paths for post-auth redirects — anything else
- * (absolute URLs, protocol-relative //host, backslash tricks) falls back.
- */
+// Only same-site relative paths are allowed — absolute URLs, protocol-relative //host and
+// backslash tricks all fall back.
 export const safeRedirectPath = (
   value: string | null | undefined,
   fallback: string,

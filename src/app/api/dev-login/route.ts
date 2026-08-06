@@ -3,19 +3,6 @@ import { getPayload } from '@/lib/payload'
 import { DEV_ADMIN } from '@/lib/auth/dev-credentials'
 import { seedDevAdmin } from '@/lib/auth/seed-dev-admin'
 
-/**
- * Dev-only auto-login: signs in as the dev admin and sets the Better Auth
- * session cookies, then redirects. One request logs a browser in —
- * `open http://localhost:3000/api/dev-login`.
- *
- * Self-healing: when sign-in fails (fresh/wiped database without the account),
- * it runs the dev-admin seed and retries — so the first login on any dev
- * branch works without a manual seeding step. The account normally pre-exists
- * via the seeded dev parent Neon branch, making the fast path seed-free.
- *
- * Never available on Vercel. Local production builds (pnpm dev:prod) must
- * opt in with ALLOW_DEV_LOGIN=1. See docs/dev-admin-login.md.
- */
 function devLoginEnabled(): boolean {
   if (process.env.VERCEL) return false
   return process.env.NODE_ENV !== 'production' || process.env.ALLOW_DEV_LOGIN === '1'
@@ -38,7 +25,6 @@ export async function GET(request: Request) {
   let authResponse = await signIn(payload)
 
   if (!authResponse.ok) {
-    // Account missing (or stale password) — seed it, then retry once.
     payload.logger.info('dev-login: sign-in failed, running dev-admin seed')
     try {
       pendingSeed ??= seedDevAdmin(payload).finally(() => {

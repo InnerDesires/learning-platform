@@ -3,8 +3,6 @@ import type { GlobalConfig } from 'payload'
 import { getHomeContent } from '@/components/Home/content'
 import { revalidateHomeCalendar } from './hooks/revalidateHomeCalendar'
 
-// Admin form defaults mirror the hardcoded landing content (content.ts), so the
-// first save starts from what the site already shows.
 const defaults = (locale: unknown) => getHomeContent(locale === 'en' ? 'en' : 'uk').calendar
 
 export const HomeCalendar: GlobalConfig = {

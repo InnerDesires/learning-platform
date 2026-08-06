@@ -31,7 +31,6 @@ export const RegisterForm: React.FC<{
   // fragment (e.g. #comments) only rides on the client-side navigation below.
   const serverCallbackURL = callbackURL.split('#')[0] || '/'
 
-  // Resend cooldown timer
   useEffect(() => {
     if (resendCooldown <= 0) return
     const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000)
@@ -94,7 +93,6 @@ export const RegisterForm: React.FC<{
         return
       }
 
-      // OTP verified — create the account
       setStep('creating')
       const { error: signUpError } = await authClient.signUp.email({
         name,
@@ -142,7 +140,6 @@ export const RegisterForm: React.FC<{
     ? `/${locale === 'uk' ? '' : locale + '/'}login?redirect=${encodeURIComponent(redirectTo)}`
     : `/${locale === 'uk' ? '' : locale + '/'}login`
 
-  // Step 3: Creating account (loading screen)
   if (step === 'creating') {
     return (
       <div className="mx-auto w-full max-w-md text-center">
@@ -151,7 +148,6 @@ export const RegisterForm: React.FC<{
     )
   }
 
-  // Step 2: OTP verification
   if (step === 'otp') {
     return (
       <div className="mx-auto w-full max-w-md">
@@ -206,7 +202,6 @@ export const RegisterForm: React.FC<{
     )
   }
 
-  // Step 1: Credentials form
   return (
     <div className="mx-auto w-full max-w-md">
       <h1 className="heading-display mb-2 text-center text-3xl">{t.registerTitle}</h1>

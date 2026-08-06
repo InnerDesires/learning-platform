@@ -28,7 +28,6 @@ export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
       </CoursesSection>
       <AboutSection {...c.about} />
 
-      {/* warm diagonal band: news + shifts calendar */}
       <div id="news" className="band on-paper mt-14 scroll-mt-24">
         <div className="container">
           {newsSlot}

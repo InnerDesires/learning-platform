@@ -1,4 +1,3 @@
-// Instant skeleton shown while a course overview renders — mirrors its layout.
 export default function Loading() {
   return (
     <div className="animate-pulse pb-16">

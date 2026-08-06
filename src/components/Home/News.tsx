@@ -28,7 +28,6 @@ type Props = {
   locale: string
 }
 
-// Fallback covers extracted from the approved design prototype.
 export const POST_FALLBACK_COVERS = [
   '/illustrations/post-shift-recap.svg',
   '/illustrations/post-enrollment.svg',

@@ -15,7 +15,6 @@ export default async function LoginPage({ params, searchParams }: Args) {
   const { locale } = await params
   const { redirect: redirectParam, reset } = await searchParams
   const home = locale === defaultLocale ? '/' : `/${locale}`
-  // sanitized return path; undefined keeps each form's own default
   const redirectTo = redirectParam ? safeRedirectPath(redirectParam, home) : undefined
 
   const session = await getSession()

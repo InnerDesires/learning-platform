@@ -73,7 +73,6 @@ export const betterAuthOptions = {
     // (hidden, admin-only); the same table backs src/lib/rate-limit.ts.
     storage: 'database',
     customRules: {
-      // Credential brute force / signup flooding (per IP).
       '/sign-in/email': { window: 60, max: 10 },
       '/sign-up/email': { window: 60, max: 5 },
       // Every OTP request sends a Resend email — strictest limits.

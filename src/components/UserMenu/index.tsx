@@ -71,7 +71,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
   const isEn = locale === 'en'
   const profilePath = isEn ? '/en/profile' : '/profile'
   const pathname = usePathname()
-  // send the visitor back to where they were after signing in
   const loginPath = `${isEn ? '/en' : ''}/login?redirect=${encodeURIComponent(pathname)}`
 
   useEffect(() => {
@@ -119,7 +118,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
         onClick={() => setOpen((v) => !v)}
         className="flex h-9 w-9 flex-none rounded-full p-[2.5px] transition-shadow hover:shadow-[0_0_16px_rgb(249_140_31/0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         style={{
-          // ring mirrors real progress to the next level (same math as /profile)
           background: `conic-gradient(from -90deg, var(--orange) 0 ${
             xp ? Math.round((xp.intoLevel / xp.span) * 100) : 0
           }%, var(--blue-line) 0 100%)`,
@@ -189,10 +187,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ locale, open: controlledOpen
 const mobileRowClass =
   'flex w-full items-center gap-2.5 rounded-lg px-4 py-3 text-sm font-medium text-fog no-underline transition-colors hover:bg-navy hover:text-cloud hover:no-underline'
 
-/**
- * Inline user section for the mobile hamburger panel — same functionality as
- * the avatar dropdown (profile, settings, sign out / sign in).
- */
 export const UserMenuMobileSection: React.FC<{
   locale: SiteLocale
   onNavigate?: () => void

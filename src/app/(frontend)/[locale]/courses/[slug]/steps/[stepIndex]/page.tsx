@@ -99,7 +99,6 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
   return (
     <div className="pt-10 pb-16">
       <div className="container max-w-7xl">
-        {/* Top bar */}
         <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
           <Link
             href={`${prefix}/courses/${slug}`}
@@ -124,7 +123,6 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
           step body and the steps sidebar both start on row 2 — their tops line up.
         */}
         <div className="grid grid-cols-1 gap-x-8 lg:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
-          {/* Title + meta — spans only the content column */}
           <div className="min-w-0 lg:col-start-1 lg:row-start-1">
             <h1 className="heading-display mb-2.5 text-[clamp(24px,3vw,34px)]">{stepTitle}</h1>
 
@@ -142,7 +140,6 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="min-w-0 lg:col-start-1 lg:row-start-2">
             <div className="mb-8">
               {step.blockType === 'richTextStep' && step.content && (
@@ -178,7 +175,6 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
               )}
             </div>
 
-            {/* Navigation footer */}
             {isLastStep && quizEnabled && !quizReady && (
               <p className="mb-3 flex items-center justify-end gap-1.5 text-[11.5px] font-semibold uppercase tracking-[0.08em] text-steel">
                 <Lock className="h-3.5 w-3.5 flex-none" />
@@ -218,7 +214,6 @@ export default async function StepViewerPage({ params: paramsPromise }: Args) {
             </div>
           </div>
 
-          {/* Sidebar steps list — visible on desktop */}
           <aside className="mt-8 w-full min-w-0 lg:col-start-2 lg:row-start-2 lg:mt-0">
             <div className="rounded-2xl border border-line bg-card p-4 lg:sticky lg:top-24">
               <h3 className="mb-3.5 px-1 font-display text-xs font-semibold uppercase tracking-[0.2em] text-fog">

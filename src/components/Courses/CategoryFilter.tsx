@@ -15,7 +15,6 @@ type Props = {
   allLabel: string
 }
 
-/** Chip style for horizontal filter rows (course categories, leaderboard periods). */
 export const filterPill = (active: boolean) =>
   cn(
     'shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 font-display text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors md:px-4 md:py-2 md:text-xs md:tracking-[0.1em]',
@@ -27,8 +26,6 @@ export const filterPill = (active: boolean) =>
 export const CategoryFilter: React.FC<Props> = ({ categories, selectedCategory, onSelect, allLabel }) => {
   const activeRef = useRef<HTMLButtonElement>(null)
 
-  // When a filtered view is deep-linked, bring the active chip into view
-  // inside the mobile scroll row.
   useEffect(() => {
     activeRef.current?.scrollIntoView({ block: 'nearest', inline: 'center' })
   }, [])

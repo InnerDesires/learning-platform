@@ -30,7 +30,6 @@ interface CommentItemProps {
   onDelete: (commentId: number) => Promise<boolean>
   depth?: number
   loginUrl?: string
-  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
   userProfileBase?: string
 }
 

@@ -5,7 +5,6 @@ import configPromise from '@payload-config'
 import { revalidateTag } from 'next/cache'
 import { getSession } from '@/lib/auth/getSession'
 
-/** True when a Local API write was rejected by a rate-limit hook (429). */
 const isRateLimited = (err: unknown): boolean => err instanceof APIError && err.status === 429
 
 type TargetCollection = 'posts' | 'courses'
@@ -249,7 +248,6 @@ export type LikeInfo = {
   count: number
 }
 
-/** Invalidate the cached grouped counts (src/utilities/contentCounts.ts) after a write. */
 function revalidateCounts(kind: 'likes' | 'comments', targetCollection: LikeTargetCollection) {
   if (targetCollection === 'posts' || targetCollection === 'courses') {
     revalidateTag(`${kind}-counts-${targetCollection}`)

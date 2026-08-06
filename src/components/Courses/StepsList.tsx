@@ -31,7 +31,6 @@ type Props = {
   completedSteps: string[]
   activeStepIndex?: number
   linked?: boolean
-  /** When set (and not linked), step rows become buttons — used to prompt guests to log in */
   onStepClick?: (index: number) => void
   completedLabel: string
   stepsLabel: string

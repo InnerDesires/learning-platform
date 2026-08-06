@@ -2,14 +2,9 @@ import { APIError, type CollectionBeforeValidateHook } from 'payload'
 
 import { checkRateLimit } from '@/lib/rate-limit'
 
-/**
- * Per-user create throttle for user-generated content. Lives on the collection
- * so both write paths — REST API (req.user) and server actions (Local API,
- * user id passed in data) — go through one choke point.
- *
- * Admin-panel operations are exempt; system writes without a user id in either
- * place (seeds, hooks) pass through untouched.
- */
+// Lives on the collection so both write paths — REST (req.user) and server actions
+// (Local API, user id in data) — go through one choke point. Admin operations and system
+// writes without a user id (seeds, hooks) pass through.
 export const rateLimitCreate = ({
   prefix,
   userField = 'user',
