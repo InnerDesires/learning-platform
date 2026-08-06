@@ -30,9 +30,9 @@ export type LexicalRoot = {
   root: LexicalNode
 }
 
-const textNode = (text: string, format = 0): LexicalNode => ({
+const textNode = (text: string): LexicalNode => ({
   detail: 0,
-  format,
+  format: 0,
   mode: 'normal',
   style: '',
   text,
@@ -40,24 +40,7 @@ const textNode = (text: string, format = 0): LexicalNode => ({
   version: 1,
 })
 
-/** Splits `текст **жирний** текст` into plain and bold text nodes. */
-const inlineNodes = (line: string): LexicalNode[] => {
-  const nodes: LexicalNode[] = []
-  let cursor = 0
-
-  for (const match of line.matchAll(/\*\*(.+?)\*\*/g)) {
-    const start = match.index ?? 0
-    if (start > cursor) nodes.push(textNode(line.slice(cursor, start)))
-    nodes.push(textNode(match[1], 1))
-    cursor = start + match[0].length
-  }
-
-  if (cursor < line.length) nodes.push(textNode(line.slice(cursor)))
-
-  return nodes.length > 0 ? nodes : [textNode(line)]
-}
-
-const elementNode = (type: string, children: LexicalNode[], extra: Record<string, unknown> = {}) =>
+const elementNode = (type: string, children: LexicalNode[]) =>
   ({
     children,
     direction: 'ltr',
@@ -65,44 +48,31 @@ const elementNode = (type: string, children: LexicalNode[], extra: Record<string
     indent: 0,
     type,
     version: 1,
-    ...extra,
   }) satisfies LexicalNode
 
-const paragraphNode = (lines: string[], format = 0): LexicalNode => {
+const paragraphNode = (lines: string[]): LexicalNode => {
   const children: LexicalNode[] = []
 
   lines.forEach((line, index) => {
     if (index > 0) children.push({ type: 'linebreak', version: 1 })
-    children.push(...(format === 0 ? inlineNodes(line) : [textNode(line, format)]))
+    children.push(textNode(line))
   })
 
   return elementNode('paragraph', children)
 }
 
-const listNode = (items: string[], listType: 'bullet' | 'number'): LexicalNode =>
-  elementNode(
-    'list',
-    items.map((item, index) =>
-      elementNode('listitem', inlineNodes(item), { value: index + 1 }),
-    ),
-    { listType, start: 1, tag: listType === 'bullet' ? 'ul' : 'ol' },
-  )
-
-const BULLET_ITEM = /^[-*•]\s+/
-const NUMBERED_ITEM = /^\d+[.)]\s+/
-const QUOTE_LINE = /^>\s+/
-const HEADING_LINE = /^#{1,6}\s+/
-
 /**
- * Converts plain text (with a little markdown) into a Lexical editor state.
+ * Converts plain text into a Lexical editor state: a blank line starts a new
+ * paragraph, a single newline is a line break inside one.
  *
- * The course editor runs `defaultLexical`, which has no heading feature — markdown
- * headings become bold paragraphs rather than nodes the editor cannot render.
+ * Plain text only — no markdown. Formatting is the editor's job, and guessing
+ * at lists/headings/bold produced nodes that did not always match what the
+ * course editor's feature set can render.
  */
 export function textToLexical(input: string | string[]): LexicalRoot {
   const source = (Array.isArray(input) ? input.join('\n\n') : input).replace(/\r\n/g, '\n')
 
-  const blocks = source
+  const children: LexicalNode[] = source
     .split(/\n\s*\n/)
     .map((block) =>
       block
@@ -111,35 +81,7 @@ export function textToLexical(input: string | string[]): LexicalRoot {
         .filter(Boolean),
     )
     .filter((lines) => lines.length > 0)
-
-  const children: LexicalNode[] = blocks.map((lines) => {
-    if (lines.every((line) => BULLET_ITEM.test(line))) {
-      return listNode(
-        lines.map((line) => line.replace(BULLET_ITEM, '')),
-        'bullet',
-      )
-    }
-
-    if (lines.every((line) => NUMBERED_ITEM.test(line))) {
-      return listNode(
-        lines.map((line) => line.replace(NUMBERED_ITEM, '')),
-        'number',
-      )
-    }
-
-    if (lines.every((line) => QUOTE_LINE.test(line))) {
-      return elementNode(
-        'quote',
-        inlineNodes(lines.map((line) => line.replace(QUOTE_LINE, '')).join(' ')),
-      )
-    }
-
-    if (lines.length === 1 && HEADING_LINE.test(lines[0])) {
-      return paragraphNode([lines[0].replace(HEADING_LINE, '')], 1)
-    }
-
-    return paragraphNode(lines.map((line) => line.replace(HEADING_LINE, '')))
-  })
+    .map(paragraphNode)
 
   // Payload rejects an empty root — always keep at least one paragraph.
   if (children.length === 0) children.push(paragraphNode(['']))
@@ -228,6 +170,12 @@ export type ImportedStep =
       title: string
       youtubeUrl: string
     }
+
+export type ImportedCourse = {
+  description?: string
+  steps: ImportedStep[]
+  title?: string
+}
 
 const STEP_TYPE_ALIASES: Record<string, ImportedStep['blockType']> = {
   file: 'fileStep',
@@ -332,7 +280,7 @@ const parseStep = (entry: unknown, index: number): ParseResult<ImportedStep> => 
 }
 
 /** Accepts `[...]`, `{ "steps": [...] }` or `{ "course": { "steps": [...] } }`. */
-export function parseStepsJson(raw: string): ParseResult<ImportedStep[]> {
+export function parseStepsJson(raw: string): ParseResult<ImportedCourse> {
   const parsed = parseRawJson(raw)
   if (!parsed.ok) return parsed
 
@@ -357,7 +305,18 @@ export function parseStepsJson(raw: string): ParseResult<ImportedStep[]> {
     else errors.push(...result.errors)
   })
 
-  return errors.length > 0 ? { errors, ok: false } : { ok: true, value: steps }
+  if (errors.length > 0) return { errors, ok: false }
+
+  const course: ImportedCourse = { steps }
+
+  // Course-level fields are optional — a bare array of steps stays valid, and the
+  // quiz keeps its own panel.
+  if (isRecord(container)) {
+    course.title = readString(container, ['title', 'name'])
+    course.description = readString(container, ['description', 'summary'])
+  }
+
+  return { ok: true, value: course }
 }
 
 // ---------------------------------------------------------------------------
@@ -502,11 +461,13 @@ export const STEPS_PROMPT = `Ти — методист онлайн-курсів
 
 Схема:
 {
+  "title": "Назва курсу",
+  "description": "Короткий опис курсу (2–3 речення)",
   "steps": [
     {
       "type": "text",
       "title": "Заголовок текстового кроку",
-      "content": "Перший абзац.\\n\\nДругий абзац.\\n\\n- пункт списку\\n- ще один пункт",
+      "content": "Перший абзац.\\n\\nДругий абзац.",
       "duration": 8
     },
     {
@@ -520,10 +481,12 @@ export const STEPS_PROMPT = `Ти — методист онлайн-курсів
 }
 
 Правила:
-- "type" — лише "text" або "video". Обидва поля "title" обовʼязкові.
-- "content" (обовʼязкове для "text") — звичайний текст: абзаци розділяй порожнім рядком (\\n\\n), марковані списки — рядками "- ...", нумеровані — "1. ...", цитати — "> ...", жирний текст — **так**. Заголовки всередині кроку не використовуй.
+- "title" і "description" курсу — заповнюють назву та опис курсу. Якщо їх не вказати, поточні значення залишаться без змін.
+- "type" — лише "text" або "video". Поле "title" кроку обовʼязкове.
+- "content" (обовʼязкове для "text") — ЛИШЕ звичайний текст, без markdown-розмітки: без заголовків (#), списків ("- ", "1. "), цитат (">") та виділення (**). Абзаци розділяй порожнім рядком (\\n\\n). Форматування редагується вже в адмінці.
 - "duration" — необовʼязкове, ціле число хвилин від 1 до 600.
 - Крок "video" додавай лише з реальним YouTube-посиланням, яке тобі надали. Не вигадуй URL.
+- Питання фінального тесту сюди НЕ додавай — для них є окрема панель імпорту.
 - Уся мова контенту — українська.`
 
 export const QUIZ_PROMPT = `Ти — методист онлайн-курсів. Згенеруй питання фінального тесту у форматі JSON для імпорту в адмінку навчальної платформи.

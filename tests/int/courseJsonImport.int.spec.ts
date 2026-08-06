@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { ImportedQuiz, ImportedStep } from '@/utilities/courseJsonImport'
+import type { ImportedQuiz } from '@/utilities/courseJsonImport'
 
 import { parseQuizJson, parseStepsJson, textToLexical } from '@/utilities/courseJsonImport'
 
@@ -30,44 +30,25 @@ describe('textToLexical', () => {
     expect(root.children?.[0].type).toBe('paragraph')
   })
 
-  it('converts "- " blocks into a bullet list', () => {
+  // Plain text only: markdown is passed through verbatim rather than guessed at,
+  // so the editor's own feature set stays the single source of truth on formatting.
+  it('leaves markdown syntax as literal paragraph text', () => {
     const { root } = textToLexical('- перший\n- другий')
-    const list = root.children?.[0]
 
-    expect(list?.type).toBe('list')
-    expect(list?.listType).toBe('bullet')
-    expect(list?.tag).toBe('ul')
-    expect(list?.children).toHaveLength(2)
-    expect(list?.children?.[0].type).toBe('listitem')
-    expect(list?.children?.[1].children?.[0].text).toBe('другий')
-  })
-
-  it('converts "1. " blocks into a numbered list', () => {
-    const { root } = textToLexical('1. перший\n2. другий')
-
-    expect(root.children?.[0].listType).toBe('number')
-    expect(root.children?.[0].tag).toBe('ol')
-  })
-
-  it('converts "> " blocks into a quote', () => {
-    const { root } = textToLexical('> цитата')
-
-    expect(root.children?.[0].type).toBe('quote')
-  })
-
-  it('marks **bold** spans with format 1', () => {
-    const { root } = textToLexical('звичайний **жирний** текст')
-    const children = root.children?.[0].children ?? []
-
-    expect(children.map((node) => node.text)).toEqual(['звичайний ', 'жирний', ' текст'])
-    expect(children.map((node) => node.format)).toEqual([0, 1, 0])
-  })
-
-  it('renders markdown headings as bold paragraphs (no heading feature in the editor)', () => {
-    const { root } = textToLexical('## Заголовок')
-
+    expect(root.children).toHaveLength(1)
     expect(root.children?.[0].type).toBe('paragraph')
-    expect(root.children?.[0].children?.[0]).toMatchObject({ format: 1, text: 'Заголовок' })
+    expect(root.children?.[0].children?.[0].text).toBe('- перший')
+  })
+
+  it('produces only paragraphs, line breaks and unformatted text', () => {
+    const { root } = textToLexical('## Заголовок\n\n> цитата\n\n1. пункт\n\n**жирний**')
+    const types = (root.children ?? []).map((node) => node.type)
+    const formats = (root.children ?? []).flatMap((node) =>
+      (node.children ?? []).map((child) => child.format),
+    )
+
+    expect(types).toEqual(['paragraph', 'paragraph', 'paragraph', 'paragraph'])
+    expect(new Set(formats)).toEqual(new Set([0]))
   })
 
   it('keeps single newlines inside a block as line breaks', () => {
@@ -86,13 +67,13 @@ describe('textToLexical', () => {
 
 describe('parseStepsJson', () => {
   it('parses a text step from the documented schema', () => {
-    const steps = expectOk(
+    const { steps } = expectOk(
       parseStepsJson(
         JSON.stringify({
           steps: [{ content: 'Тіло кроку.', duration: 8, title: 'Вступ', type: 'text' }],
         }),
       ),
-    ) as ImportedStep[]
+    )
 
     expect(steps).toHaveLength(1)
     expect(steps[0]).toMatchObject({ blockType: 'richTextStep', duration: 8, title: 'Вступ' })
@@ -100,15 +81,32 @@ describe('parseStepsJson', () => {
   })
 
   it('accepts a bare array as well as a { steps } wrapper', () => {
-    const steps = expectOk(
+    const course = expectOk(
       parseStepsJson(JSON.stringify([{ content: 'Текст', title: 'Крок', type: 'text' }])),
     )
 
-    expect(steps).toHaveLength(1)
+    expect(course.steps).toHaveLength(1)
+    expect(course.title).toBeUndefined()
+    expect(course.description).toBeUndefined()
+  })
+
+  it('picks up the course title and description alongside the steps', () => {
+    const course = expectOk(
+      parseStepsJson(
+        JSON.stringify({
+          description: 'Опис курсу',
+          steps: [{ content: 'Текст', title: 'Крок', type: 'text' }],
+          title: 'Назва курсу',
+        }),
+      ),
+    )
+
+    expect(course).toMatchObject({ description: 'Опис курсу', title: 'Назва курсу' })
+    expect(course.steps).toHaveLength(1)
   })
 
   it('strips a ```json code fence', () => {
-    const steps = expectOk(
+    const { steps } = expectOk(
       parseStepsJson('```json\n{"steps":[{"type":"text","title":"Крок","content":"Текст"}]}\n```'),
     )
 
@@ -117,7 +115,7 @@ describe('parseStepsJson', () => {
 
   it('passes an already-Lexical content object through untouched', () => {
     const content = { root: { children: [], direction: 'ltr', format: '', indent: 0, type: 'root', version: 1 } }
-    const steps = expectOk(
+    const { steps } = expectOk(
       parseStepsJson(JSON.stringify({ steps: [{ content, title: 'Крок', type: 'text' }] })),
     )
 
@@ -125,7 +123,7 @@ describe('parseStepsJson', () => {
   })
 
   it('parses a video step and rejects a non-YouTube URL', () => {
-    const steps = expectOk(
+    const { steps } = expectOk(
       parseStepsJson(
         JSON.stringify({
           steps: [
@@ -149,7 +147,7 @@ describe('parseStepsJson', () => {
   })
 
   it('infers the block type when "type" is missing', () => {
-    const steps = expectOk(
+    const { steps } = expectOk(
       parseStepsJson(
         JSON.stringify([
           { title: 'Текст', content: 'Абзац' },

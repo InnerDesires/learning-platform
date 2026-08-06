@@ -3,7 +3,7 @@
 import { toast, useForm } from '@payloadcms/ui'
 import { useCallback, useMemo, useState } from 'react'
 
-import type { ImportedQuiz, ImportedStep } from '@/utilities/courseJsonImport'
+import type { ImportedCourse, ImportedQuiz } from '@/utilities/courseJsonImport'
 
 import {
   parseQuizJson,
@@ -91,7 +91,7 @@ export const CourseJsonImport: React.FC<Props> = ({ target = 'steps' }) => {
 
   const importedCount = parsed?.ok
     ? target === 'steps'
-      ? (parsed.value as ImportedStep[]).length
+      ? (parsed.value as ImportedCourse).steps.length
       : (parsed.value as ImportedQuiz).questions.length
     : 0
 
@@ -120,11 +120,15 @@ export const CourseJsonImport: React.FC<Props> = ({ target = 'steps' }) => {
         let nextData: Record<string, unknown>
 
         if (target === 'steps') {
-          const imported = parsed.value as ImportedStep[]
+          const imported = parsed.value as ImportedCourse
           const existing = Array.isArray(data.steps) ? data.steps : []
           nextData = {
             ...data,
-            steps: mode === 'append' ? [...existing, ...imported] : imported,
+            // Course title/description are optional in the JSON — only overwrite
+            // what was actually provided.
+            ...(imported.title ? { title: imported.title } : {}),
+            ...(imported.description ? { description: imported.description } : {}),
+            steps: mode === 'append' ? [...existing, ...imported.steps] : imported.steps,
           }
         } else {
           const imported = parsed.value as ImportedQuiz
