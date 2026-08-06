@@ -51,6 +51,7 @@ import { ForgotPassword as ForgotPassword_5afe2312a68aef77a0242fe42f239ed0 } fro
 import { ResetPassword as ResetPassword_5afe2312a68aef77a0242fe42f239ed0 } from 'payload-auth/better-auth/plugin/rsc'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
+/** @type import('payload').ImportMap */
 export const importMap = {
   "@/components/admin/InviteUserButton#InviteUserButton": InviteUserButton_db1e3c40ba5cdfab870875497fa544c4,
   "payload-auth/better-auth/plugin/client#AdminButtons": AdminButtons_5a568d0e24198ca3140489e0d330f424,
