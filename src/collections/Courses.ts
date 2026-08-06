@@ -4,6 +4,7 @@ import { admin } from '../access/admin'
 import { authenticatedOrPublished } from '../access/authenticatedOrPublished'
 import { slugField, validations } from 'payload'
 import { cyrillicSlugify } from '../utilities/cyrillicSlugify'
+import { YOUTUBE_URL_REGEX } from '../utilities/courseJsonImport'
 import { syncCourseCompletions } from '../hooks/syncCourseCompletions'
 import { revalidateCourse, revalidateCourseDelete } from '../hooks/revalidateCourse'
 
@@ -119,6 +120,19 @@ export const Courses: CollectionConfig = {
       label: 'Категорія',
     },
     {
+      name: 'stepsJsonImport',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: {
+            path: '@/components/admin/CourseJsonImport',
+            exportName: 'CourseJsonImport',
+            clientProps: { target: 'steps' },
+          },
+        },
+      },
+    },
+    {
       name: 'steps',
       type: 'blocks',
       label: 'Кроки курсу',
@@ -178,9 +192,7 @@ export const Courses: CollectionConfig = {
               label: 'YouTube URL',
               validate: (value: string | null | undefined) => {
                 if (!value) return true
-                const ytRegex =
-                  /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|shorts\/)|youtu\.be\/)/
-                if (!ytRegex.test(value)) {
+                if (!YOUTUBE_URL_REGEX.test(value)) {
                   return 'Введіть коректне YouTube посилання'
                 }
                 return true
@@ -228,6 +240,19 @@ export const Courses: CollectionConfig = {
           type: 'checkbox',
           defaultValue: false,
           label: 'Увімкнути тест',
+        },
+        {
+          name: 'quizJsonImport',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: {
+                path: '@/components/admin/CourseJsonImport',
+                exportName: 'CourseJsonImport',
+                clientProps: { target: 'quiz' },
+              },
+            },
+          },
         },
         {
           name: 'title',
@@ -303,6 +328,30 @@ export const Courses: CollectionConfig = {
               // unconditional `required` is correct here.
               required: true,
               minRows: 2,
+              // A question with no correct answer is unanswerable — every attempt
+              // scores zero on it and the course can never be completed. Nothing
+              // else enforces this, so run the stock length validation first and
+              // then check the rows. `value` is the row array both on the server
+              // and in admin form state; the check is skipped when the quiz is off
+              // so stale questions can't block saving a course without a test.
+              validate: (value, options) => {
+                const lengthResult = validations.array(value, options)
+                if (lengthResult !== true) return lengthResult
+
+                const quizEnabled =
+                  (options.data as { quiz?: { enabled?: boolean } } | undefined)?.quiz?.enabled ===
+                  true
+                if (!quizEnabled || !Array.isArray(value)) return true
+
+                const hasCorrect = value.some(
+                  (answer) => (answer as { isCorrect?: boolean } | null)?.isCorrect === true,
+                )
+                if (!hasCorrect) {
+                  return 'Позначте щонайменше одну правильну відповідь.'
+                }
+
+                return true
+              },
               fields: [
                 {
                   name: 'text',
