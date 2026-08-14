@@ -5,6 +5,7 @@ export const searchIndexedCollections: CollectionSlug[] = [
   'courses',
   'course-categories',
   'pages',
+  'events',
 ]
 
 // @payloadcms/plugin-search writes localized search fields only for the locale of

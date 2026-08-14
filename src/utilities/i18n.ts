@@ -305,6 +305,49 @@ type FrontendMessages = {
   forgotResetting: string
   forgotSuccess: string
   forgotErrorGeneric: string
+  eventsTitle: string
+  eventsMetaTitle: string
+  eventsEyebrow: string
+  eventsSub: string
+  eventsUpcoming: string
+  eventsPast: string
+  eventsEmptyUpcoming: string
+  eventsEmptyPast: string
+  eventsNextEvent: string
+  eventsAll: string
+  eventOnline: string
+  eventOffline: string
+  eventToday: string
+  eventFinished: string
+  eventEnroll: string
+  eventUnenroll: string
+  eventUnenrollConfirm: string
+  eventEnrolledBadge: string
+  eventFull: string
+  eventSeatsLeft: string
+  eventParticipantsPlural: string
+  eventLoginToEnroll: string
+  eventSignIn: string
+  eventBackToEvents: string
+  eventLocationTitle: string
+  eventOpenMap: string
+  eventJoinTitle: string
+  eventJoin: string
+  eventJoinHint: string
+  eventJoinLocked: string
+  eventAddToCalendar: string
+  eventGoogleCalendar: string
+  eventDownloadIcs: string
+  eventStartLabel: string
+  eventEndLabel: string
+  eventStartsInDaysPlural: string
+  eventStartsInHoursPlural: string
+  eventStartsInMinutesPlural: string
+  eventStartsInSuffix: string
+  eventStartsNow: string
+  profileUpcomingEvents: string
+  profileNoUpcomingEvents: string
+  eventsBlockSeeAll: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -621,6 +664,49 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     forgotResetting: 'Зберігаємо…',
     forgotSuccess: 'Пароль змінено. Тепер ви можете увійти.',
     forgotErrorGeneric: 'Не вдалося скинути пароль. Перевірте код і спробуйте ще раз.',
+    eventsTitle: 'Події',
+    eventsMetaTitle: 'Події | Залізна Зміна',
+    eventsEyebrow: 'Календар',
+    eventsSub: 'Зустрічі, табори та онлайн-зміни спільноти — реєструйся та приєднуйся.',
+    eventsUpcoming: 'Майбутні',
+    eventsPast: 'Минулі',
+    eventsEmptyUpcoming: 'Найближчих подій поки немає — зазирни згодом.',
+    eventsEmptyPast: 'Минулих подій ще немає.',
+    eventsNextEvent: 'Найближча подія',
+    eventsAll: 'Всі події',
+    eventOnline: 'Онлайн',
+    eventOffline: 'Офлайн',
+    eventToday: 'Сьогодні',
+    eventFinished: 'Завершилась',
+    eventEnroll: 'Зареєструватися',
+    eventUnenroll: 'Скасувати реєстрацію',
+    eventUnenrollConfirm: 'Скасувати вашу реєстрацію на цю подію?',
+    eventEnrolledBadge: 'Ви зареєстровані',
+    eventFull: 'Вільних місць немає',
+    eventSeatsLeft: 'Залишилось місць:',
+    eventParticipantsPlural: 'учасник|учасники|учасників',
+    eventLoginToEnroll: 'Увійдіть, щоб зареєструватися на подію',
+    eventSignIn: 'Увійти',
+    eventBackToEvents: 'До всіх подій',
+    eventLocationTitle: 'Місце проведення',
+    eventOpenMap: 'Відкрити мапу',
+    eventJoinTitle: 'Онлайн-зустріч',
+    eventJoin: 'Приєднатися',
+    eventJoinHint: 'Посилання на зустріч доступне після реєстрації.',
+    eventJoinLocked: 'Зареєструйтесь, щоб отримати посилання на зустріч',
+    eventAddToCalendar: 'Додати в календар',
+    eventGoogleCalendar: 'Google Календар',
+    eventDownloadIcs: 'Файл .ics',
+    eventStartLabel: 'Початок',
+    eventEndLabel: 'Завершення',
+    eventStartsInDaysPlural: 'день|дні|днів',
+    eventStartsInHoursPlural: 'година|години|годин',
+    eventStartsInMinutesPlural: 'хвилина|хвилини|хвилин',
+    eventStartsInSuffix: 'до початку',
+    eventStartsNow: 'Вже триває',
+    profileUpcomingEvents: 'Мої події',
+    profileNoUpcomingEvents: 'Ви поки не зареєстровані на жодну подію.',
+    eventsBlockSeeAll: 'Всі події',
   },
   en: {
     searchTitle: 'Search',
@@ -934,6 +1020,49 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     forgotResetting: 'Saving…',
     forgotSuccess: 'Password changed. You can now log in.',
     forgotErrorGeneric: 'Could not reset password. Check the code and try again.',
+    eventsTitle: 'Events',
+    eventsMetaTitle: 'Events | Iron Squad',
+    eventsEyebrow: 'Calendar',
+    eventsSub: 'Community meetups, camps and online sessions — register and join in.',
+    eventsUpcoming: 'Upcoming',
+    eventsPast: 'Past',
+    eventsEmptyUpcoming: 'No upcoming events yet — check back soon.',
+    eventsEmptyPast: 'No past events yet.',
+    eventsNextEvent: 'Next event',
+    eventsAll: 'All events',
+    eventOnline: 'Online',
+    eventOffline: 'In person',
+    eventToday: 'Today',
+    eventFinished: 'Finished',
+    eventEnroll: 'Register',
+    eventUnenroll: 'Cancel registration',
+    eventUnenrollConfirm: 'Cancel your registration for this event?',
+    eventEnrolledBadge: 'You are registered',
+    eventFull: 'No seats left',
+    eventSeatsLeft: 'Seats left:',
+    eventParticipantsPlural: 'participant|participants|participants',
+    eventLoginToEnroll: 'Sign in to register for this event',
+    eventSignIn: 'Sign in',
+    eventBackToEvents: 'All events',
+    eventLocationTitle: 'Location',
+    eventOpenMap: 'Open map',
+    eventJoinTitle: 'Online meeting',
+    eventJoin: 'Join',
+    eventJoinHint: 'The meeting link becomes available after you register.',
+    eventJoinLocked: 'Register to get the meeting link',
+    eventAddToCalendar: 'Add to calendar',
+    eventGoogleCalendar: 'Google Calendar',
+    eventDownloadIcs: '.ics file',
+    eventStartLabel: 'Start',
+    eventEndLabel: 'End',
+    eventStartsInDaysPlural: 'day|days|days',
+    eventStartsInHoursPlural: 'hour|hours|hours',
+    eventStartsInMinutesPlural: 'minute|minutes|minutes',
+    eventStartsInSuffix: 'to start',
+    eventStartsNow: 'Happening now',
+    profileUpcomingEvents: 'My events',
+    profileNoUpcomingEvents: 'You are not registered for any events yet.',
+    eventsBlockSeeAll: 'All events',
   },
 }
 
