@@ -18,11 +18,9 @@ export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages'
 export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null
   publishedAt?: string | null
-  /** Id of the underlying document (search results only) — used for category deep links. */
   docId?: number | null
 }
 
-// Fallback covers extracted from the approved design prototype.
 const FALLBACK_COVERS = [
   '/illustrations/post-shift-recap.svg',
   '/illustrations/post-enrollment.svg',

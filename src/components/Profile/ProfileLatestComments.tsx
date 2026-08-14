@@ -8,8 +8,6 @@ import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { plural } from '@/utilities/plural'
 
-// One window of recent comments is enough for the profile teaser; per-page
-// "and N more" counts are computed within it rather than with extra queries.
 const COMMENTS_WINDOW = 30
 const MAX_PAGES = 5
 
@@ -18,9 +16,6 @@ type Props = {
   locale: SiteLocale
 }
 
-// Streams in behind <Suspense> on the public profile page: everything runs in
-// the same serverless invocation (no extra API routes / function calls), and
-// every query selects only the columns the UI renders.
 export async function ProfileLatestComments({ userId, locale }: Props) {
   const payload = await getPayload()
   const t = getFrontendMessages(locale)
@@ -125,7 +120,6 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
     })
   }
 
-  // Drop comments whose target was deleted or unpublished.
   const items = topGroups.flatMap((group) => {
     const target = targets.get(`${group.latest.targetCollection}:${group.latest.targetId}`)
     return target ? [{ group, target }] : []

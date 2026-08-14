@@ -6,10 +6,6 @@ import { Logo } from './Logo'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { cn } from '@/utilities/ui'
 
-/**
- * Brand lockup: official emblem + two-tone display wordmark with the
- * "Платформа" sub-label. Used in the header and footer.
- */
 export const Brand: React.FC<{
   locale: SiteLocale
   size?: 'md' | 'lg'

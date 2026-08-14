@@ -25,7 +25,6 @@ interface InteractionClientProps {
   targetCollection: 'posts' | 'courses'
   targetId: number
   loginUrl: string
-  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
   userProfileBase: string
   labels: Labels
 }
@@ -37,8 +36,6 @@ export function InteractionClient({
   userProfileBase,
   labels,
 }: InteractionClientProps) {
-  // Auth state comes from the client session so the embedding page can stay
-  // statically cached for guests and members alike.
   const { data: session } = useSession()
   const user = session?.user
   const isAuthenticated = Boolean(user)
@@ -47,8 +44,6 @@ export function InteractionClient({
     user && 'role' in user && (user as { role?: string[] }).role?.includes('admin'),
   )
 
-  // Comments/likes only load once the section is near the viewport — page
-  // views that never scroll down here don't pay for the data requests.
   const rootRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(false)
   useEffect(() => {
@@ -65,7 +60,6 @@ export function InteractionClient({
   }, [active])
 
   return (
-    // #comments — post-login redirects land here so the user resumes the action in place
     <div id="comments" ref={rootRef} className="scroll-mt-24">
       <div className="flex items-center gap-4 pt-4 pb-4 pl-2">
         <LikeButton

@@ -7,13 +7,8 @@ import type { CourseCompletion } from '@/utilities/leaderboard'
 
 const REFRESH_MS = 60_000
 
-/** Constant scroll speed so short and long lists feel the same. */
 const SPEED_PX_PER_S = 35
 
-/**
- * Live «completed by» running line for the course hero. Fetched client-side
- * (and refreshed on an interval) so the page itself stays statically cached.
- */
 export const CompletedByTicker: React.FC<{
   courseId: number
   localePrefix: string

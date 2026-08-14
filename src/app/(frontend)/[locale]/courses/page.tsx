@@ -9,8 +9,6 @@ import { CategoryCarousels } from '@/components/Courses/CategoryCarousels'
 import { PageHead } from '@/components/brand'
 import { getCatalogData } from '@/lib/courses/getCatalogData'
 
-// The catalog is the same for everyone — per-user progress badges are fetched
-// client-side (useMyCourseStatuses), so this page can be served from the ISR cache.
 export const revalidate = 300
 
 export function generateStaticParams() {

@@ -19,9 +19,6 @@ import { RewardPill } from '@/components/brand'
 import { courseXp } from '@/utilities/xp'
 import { plural } from '@/utilities/plural'
 
-// Per-user state (enrollment, progress) is fetched client-side via
-// CourseUserStateProvider, so the page itself is the same for everyone and
-// can be served from the ISR cache. Enrollment mutations revalidate it by path.
 export const revalidate = 300
 
 export async function generateStaticParams() {

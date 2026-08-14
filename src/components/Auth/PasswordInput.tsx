@@ -4,12 +4,10 @@ import React, { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 
 type Props = Omit<React.ComponentProps<'input'>, 'type'> & {
-  /** aria-labels for the toggle button */
   showLabel: string
   hideLabel: string
 }
 
-/** Password field with a show/hide toggle. Keeps the same id/name/autofill contract as a plain input. */
 export const PasswordInput: React.FC<Props> = ({ showLabel, hideLabel, className, ...props }) => {
   const [visible, setVisible] = useState(false)
 

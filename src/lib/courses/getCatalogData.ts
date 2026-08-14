@@ -12,13 +12,8 @@ export type CatalogData = {
   courseStats: Record<number, CourseStats>
 }
 
-/**
- * Published courses (optionally narrowed by `where`) together with per-course
- * aggregate stats. Deliberately session-free — the viewer's own progress is
- * fetched client-side (useMyCourseStatuses) — so pages built on this stay in
- * the shared ISR cache. Counters come from the cached grouped queries in
- * src/utilities/contentCounts.ts, not per-request table scans.
- */
+// Deliberately session-free — the viewer's own progress is fetched client-side
+// (useMyCourseStatuses) — so pages built on this stay in the shared ISR cache.
 export async function getCatalogData({
   payload,
   locale,

@@ -22,10 +22,6 @@ function extractYouTubeId(url: string): string | null {
   return null
 }
 
-/**
- * Click-to-load facade: renders only the YouTube thumbnail until the user
- * presses play, so pages don't pay the full YT iframe cost up front.
- */
 export const YouTubeEmbed: React.FC<Props> = ({ url, title = 'YouTube video' }) => {
   const [activated, setActivated] = useState(false)
   const videoId = extractYouTubeId(url)

@@ -1,10 +1,7 @@
 import type { SiteLocale } from '@/utilities/locales'
 
-/**
- * Pick the correct plural form for a count.
- * `forms` is pipe-separated: uk expects «one|few|many» («крок|кроки|кроків»),
- * en expects "one|other" ("step|steps").
- */
+// `forms` is pipe-separated: uk expects «one|few|many» («крок|кроки|кроків»), en expects
+// "one|other" ("step|steps").
 export const plural = (locale: SiteLocale, count: number, forms: string): string => {
   const parts = forms.split('|')
   if (locale === 'uk') {

@@ -2,14 +2,10 @@ import { sql } from '@payloadcms/db-postgres'
 import type { BasePayload } from 'payload'
 
 /**
- * Fixed-window rate limiter shared across serverless instances, backed by the
- * Better Auth `rate_limit` table (created for `rateLimit.storage: 'database'`
- * in src/lib/auth/options.ts — Better Auth uses it for /api/auth/*, this
- * helper for everything else; key prefixes keep the two disjoint).
- *
- * One atomic upsert both counts the request and resets expired windows, so
- * concurrent lambdas can't double-count or clobber each other. `last_request`
- * stores the window start (epoch ms).
+ * Fixed-window limiter backed by the Better Auth `rate_limit` table — Better Auth uses it
+ * for /api/auth/*, this helper for everything else; key prefixes keep the two disjoint.
+ * One atomic upsert both counts the request and resets expired windows, so concurrent
+ * lambdas can't double-count. `last_request` stores the window start (epoch ms).
  */
 
 export type RateLimitResult =
@@ -17,12 +13,10 @@ export type RateLimitResult =
   | { ok: false; retryAfter: number }
 
 /**
- * Single policy switch for BOTH limiters (Better Auth reads it in
- * src/lib/auth/options.ts). Production-on by default; RATE_LIMIT=true opts a
- * dev session in, RATE_LIMIT=false opts out even of a production build — E2E
- * runs `next start` (NODE_ENV=production) from one runner IP and would
- * otherwise trip the limits it has no business testing.
- * Read at call time so tests can toggle it per process.
+ * Single policy switch for BOTH limiters (Better Auth reads it too). Production-on by
+ * default; RATE_LIMIT=true opts a dev session in, RATE_LIMIT=false opts out even of a
+ * production build — E2E runs `next start` from one runner IP. Read at call time so tests
+ * can toggle it per process.
  */
 export function isRateLimitEnabled(): boolean {
   if (process.env.RATE_LIMIT === 'false') return false

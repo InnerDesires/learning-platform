@@ -24,10 +24,6 @@ const roleLabels: Record<string, string> = {
 
 type SelectOption = { label: string; value: string }
 
-/**
- * Ukrainian replacement for payload-auth's hardcoded-English AdminInviteButton.
- * Reuses the plugin's server endpoints; only the UI strings differ.
- */
 export function InviteUserButton({ roles }: { roles: OptionObject[] }) {
   const [role, setRole] = useState<SelectOption | undefined>(undefined)
   const [email, setEmail] = useState('')
@@ -43,7 +39,6 @@ export function InviteUserButton({ roles }: { roles: OptionObject[] }) {
     },
   } = useConfig()
 
-  // Only render the invite button in the users list view.
   const pathname = usePathname()
   if (pathname !== `${adminRoute}/collections/${userSlug}`) return null
 

@@ -1,10 +1,7 @@
 import React from 'react'
 
-/**
- * Iron Squad brand lockup for the admin panel (login screen and loading views).
- * Inline styles only — admin pages don't load the frontend Tailwind bundle,
- * and `--theme-text` keeps the wordmark legible in both admin themes.
- */
+// Inline styles only — admin pages don't load the frontend Tailwind bundle, and
+// `--theme-text` keeps the wordmark legible in both admin themes.
 const Logo: React.FC = () => {
   return (
     <div

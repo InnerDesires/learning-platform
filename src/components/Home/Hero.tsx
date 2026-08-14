@@ -34,7 +34,6 @@ export function HeroSection({
 
   return (
     <section className="relative overflow-hidden pb-24 pt-20 md:pb-28 md:pt-24">
-      {/* brand-blue glow + orange ember */}
       <div
         className="absolute inset-0"
         style={{
@@ -43,7 +42,6 @@ export function HeroSection({
         }}
         aria-hidden="true"
       />
-      {/* landing echo: orange diagonal sliver on the right edge */}
       <div
         className="pointer-events-none absolute inset-y-0 right-0 hidden w-[38%] md:block"
         style={{
@@ -103,7 +101,6 @@ export function HeroSection({
           </FadeIn>
         </div>
 
-        {/* stats scoreboard */}
         <div className="grid gap-3.5">
           {stats.map((stat, i) => (
             <FadeIn key={stat.label} delay={300 + i * 120}>

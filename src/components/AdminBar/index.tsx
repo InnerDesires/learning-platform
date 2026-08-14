@@ -14,7 +14,6 @@ import './index.scss'
 
 const baseClass = 'admin-bar'
 
-/** Collections an admin touches daily; `create` adds a quick «+» link. */
 const quickLinks = [
   { create: true, icon: GraduationCap, label: 'Курси', slug: 'courses' },
   { create: true, icon: Newspaper, label: 'Публікації', slug: 'posts' },
@@ -33,10 +32,6 @@ type MeUser = {
   role?: ('admin' | 'learner')[] | null
 }
 
-/**
- * Slim bar shown above the site header to logged-in admins only: quick links
- * into the CMS (courses, posts, pages, users) plus create shortcuts.
- */
 export const AdminBar: React.FC<AdminBarProps> = ({ adminBarProps }) => {
   const preview = adminBarProps?.preview ?? false
   const [isAdmin, setIsAdmin] = useState(false)

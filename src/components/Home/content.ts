@@ -326,9 +326,6 @@ export const getHomeContent = (locale: SiteLocale) => content[locale]
 
 export type CalendarContent = HomeContent['calendar']
 
-// Overlays the `home-calendar` Payload global on the hardcoded content above:
-// per-field fallback for the section texts, and the hardcoded schedule when the
-// global has no events yet (never saved / cleared).
 export const resolveCalendarContent = (
   locale: SiteLocale,
   global: HomeCalendar | null | undefined,

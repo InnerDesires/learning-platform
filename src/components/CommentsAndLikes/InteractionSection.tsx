@@ -8,15 +8,9 @@ interface InteractionSectionProps {
   targetCollection: 'posts' | 'courses'
   targetId: number
   locale: SiteLocale
-  /** Path of the page hosting this section — guests return here (at #comments) after login. */
   redirectPath?: string
 }
 
-/**
- * Likes + comments block. Deliberately session-free on the server: auth state
- * is derived client-side (useSession) and data loads lazily once the section
- * scrolls into view, so pages embedding it can be statically cached.
- */
 export function InteractionSection({
   targetCollection,
   targetId,

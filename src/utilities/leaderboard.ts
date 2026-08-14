@@ -4,13 +4,8 @@ import { unstable_cache } from 'next/cache'
 import { runRows } from '@/utilities/contentCounts'
 import { STEP_XP, QUIZ_XP } from '@/utilities/xp'
 
-/**
- * Leaderboard aggregates, computed with grouped SQL like the counters in
- * contentCounts.ts. All-time XP is derived from enrollments (the source of
- * truth for XP); period XP comes from the timestamped xp_events log, which
- * only spans since the log was introduced. XP-awarding mutations revalidate
- * the `xp-leaderboard` tag, so the revalidate window is just a backstop.
- */
+// All-time XP is derived from enrollments (the source of truth for XP); period XP comes
+// from the xp_events log, which only spans since the log was introduced.
 
 export type LeaderboardEntry = {
   userId: number
@@ -82,10 +77,8 @@ const periodLeaderboardCache = (period: LeaderboardPeriod) =>
     { revalidate: 300, tags: ['xp-leaderboard'] },
   )
 
-/** Top users by derived total XP, cached across requests. */
 export const getCachedAllTimeLeaderboard = () => allTimeLeaderboardCache()
 
-/** Top users by XP logged within the rolling period, cached across requests. */
 export const getCachedPeriodLeaderboard = (period: LeaderboardPeriod) =>
   periodLeaderboardCache(period)()
 
@@ -120,10 +113,8 @@ const courseCompletionsCache = (courseId: number) =>
       }))
     },
     [`course-completions-${courseId}`],
-    // Enrollment mutations already revalidate this tag (courses/actions.ts).
     { revalidate: 60, tags: ['course-enrollment-stats'] },
   )
 
-/** Latest users who completed a course (for the course-page ticker). */
 export const getCachedCourseCompletions = (courseId: number) =>
   courseCompletionsCache(courseId)()

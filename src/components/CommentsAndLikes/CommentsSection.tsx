@@ -34,11 +34,9 @@ interface CommentsSectionProps {
   isAuthenticated: boolean
   currentUserId: number | null
   isAdmin: boolean
-  /** When false, loading the comment list is deferred (e.g. until scrolled into view). */
   active?: boolean
   labels: Labels
   loginUrl: string
-  /** Locale-aware base path for public profiles, e.g. "/users" or "/en/users". */
   userProfileBase: string
 }
 

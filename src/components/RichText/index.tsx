@@ -59,7 +59,6 @@ type Props = {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
-  /** Override the JSX converters, e.g. to add server-only block renderers. */
   converters?: JSXConvertersFunction<NodeTypes>
 } & React.HTMLAttributes<HTMLDivElement>
 

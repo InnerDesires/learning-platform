@@ -57,7 +57,6 @@ const networks = (
   },
 ]
 
-/** Share row for articles: social intents + copy link (+ native share when available). */
 export const ShareButtons: React.FC<Props> = ({ url, title, label, copyLabel, copiedLabel }) => {
   const [copied, setCopied] = useState(false)
   const [canNativeShare, setCanNativeShare] = useState(false)

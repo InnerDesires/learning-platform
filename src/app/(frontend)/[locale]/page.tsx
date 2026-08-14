@@ -10,9 +10,8 @@ import { NewsSectionServer, NewsSectionSkeleton } from '@/components/Home/NewsSe
 import { CoursesGridServer, CoursesGridSkeleton } from '@/components/Home/CoursesServer'
 import { CategoryCarousels } from '@/components/Courses/CategoryCarousels'
 
-// Home has no per-request personalization on the server — safe to serve from ISR cache.
-// generateStaticParams is required for that: without it, a dynamic-segment route
-// is rendered per request and `revalidate` has no effect.
+// generateStaticParams is required for `revalidate` to take effect: without it a
+// dynamic-segment route is rendered per request.
 export const revalidate = 300
 
 export function generateStaticParams() {

@@ -19,7 +19,6 @@ type Props = {
   attempts: QuizAttempt[]
   labels: Labels
   locale?: SiteLocale
-  /** When set, passed attempts get a certificate download link. */
   certificateHref?: string
 }
 

@@ -5,14 +5,7 @@ import { useSession } from '@/lib/auth/client'
 import { getEnrollment } from '@/app/(frontend)/[locale]/courses/actions'
 import type { Enrollment } from '@/payload-types'
 
-/**
- * Per-user course state, fetched once per course page after hydration.
- * Keeping this client-side lets the course overview page render from the
- * shared ISR cache; guests never trigger the enrollment request.
- */
-
 type CourseUserState = {
-  /** true until the session (and enrollment, when logged in) is resolved */
   loading: boolean
   isLoggedIn: boolean
   enrollment: Enrollment | null

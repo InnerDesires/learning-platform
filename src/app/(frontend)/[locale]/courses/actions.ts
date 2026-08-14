@@ -10,10 +10,8 @@ import { getStepIds, isCourseComplete } from '@/utilities/courseCompletion'
 import type { Course, Enrollment, QuizAttempt } from '@/payload-types'
 import type { Payload } from 'payload'
 
-/**
- * Timestamped XP log for period leaderboards; total XP stays derived from
- * enrollments, so a failed log write must not fail the mutation that earned it.
- */
+// Total XP stays derived from enrollments, so a failed log write must not fail the
+// mutation that earned it.
 async function logXpEvent(
   payload: Payload,
   data: { user: number; course: number; kind: 'step' | 'quiz'; amount: number },
@@ -26,14 +24,12 @@ async function logXpEvent(
   }
 }
 
-/** Bust cached course pages (both locales) after an enrollment mutation. */
 function revalidateCoursePages(slug: string) {
   for (const prefix of ['', '/en']) {
     revalidatePath(`${prefix}/courses/${slug}`)
     revalidatePath(`${prefix}/courses/${slug}/steps/[stepIndex]`, 'page')
     revalidatePath(`${prefix}/courses/${slug}/quiz`)
   }
-  // Cached aggregate counters (src/utilities/contentCounts.ts)
   revalidateTag('course-enrollment-stats')
 }
 
@@ -42,10 +38,6 @@ export type MyCourseStatuses = {
   inProgress: number[]
 }
 
-/**
- * Course ids the signed-in user has completed / started. Fetched client-side
- * so the catalog page itself can stay statically cached for everyone.
- */
 export async function getMyCourseStatuses(): Promise<MyCourseStatuses> {
   const session = await getSession().catch(() => null)
   if (!session?.user) return { completed: [], inProgress: [] }
@@ -225,8 +217,6 @@ export async function getEnrollment(
       ],
     },
     limit: 1,
-    // Consumed client-side (CourseUserState) — ids are enough, don't populate
-    // the full user/course docs into the response.
     depth: 0,
   })
 

@@ -56,7 +56,6 @@ async function handleSendOtp(request: Request, body: { email?: string }) {
     body: { email, type: 'email-verification' },
   })
 
-  // Send the OTP email via Resend (skipped when API key is not configured, e.g. in CI/tests)
   if (process.env.RESEND_API_KEY) {
     const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
@@ -94,7 +93,6 @@ async function handleVerifyOtp(request: Request, body: { email?: string; otp?: s
 
   const identifier = `email-verification-otp-${email}`
 
-  // Find the verification record
   const records = await payload.find({
     collection: 'verifications',
     where: { identifier: { equals: identifier } },
@@ -123,7 +121,6 @@ async function handleVerifyOtp(request: Request, body: { email?: string; otp?: s
   }
 
   if (storedOtp !== otp) {
-    // Increment attempt counter
     await payload.update({
       collection: 'verifications',
       id: record.id,
@@ -132,7 +129,6 @@ async function handleVerifyOtp(request: Request, body: { email?: string; otp?: s
     return NextResponse.json({ error: 'Invalid OTP' }, { status: 400 })
   }
 
-  // OTP valid — mark email as pre-verified and clean up
   markPreVerified(email)
   await payload.delete({ collection: 'verifications', id: record.id })
 

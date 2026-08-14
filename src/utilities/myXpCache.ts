@@ -1,11 +1,5 @@
 import type { MyXp } from '@/actions/xp'
 
-/**
- * Session-scoped cache for the header XP pill so it doesn't cost a server
- * round trip on every full page load. Mutations that award XP (step
- * completion, quiz pass) clear it explicitly.
- */
-
 const KEY = 'myXp:v1'
 const TTL_MS = 5 * 60 * 1000
 

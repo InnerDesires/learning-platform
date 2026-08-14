@@ -23,13 +23,9 @@ type CMSLinkType = {
   url?: string | null
 }
 
-/**
- * CMS-managed links store locale-less internal paths (/posts, /page-slug), so
- * keep the viewer's locale by prefixing internal hrefs with /en on /en pages.
- * External URLs, anchors and already-prefixed hrefs pass through untouched.
- * (During prerender the default locale renders under the internal /uk/* path,
- * which is not `/en`, so those pages correctly get unprefixed hrefs.)
- */
+// CMS links store locale-less internal paths (/posts, /page-slug), so prefix them with
+// /en on /en pages. During prerender the default locale renders under the internal /uk/*
+// path, which is not `/en`, so those pages correctly get unprefixed hrefs.
 const localizeHref = (href: string, pathname: string): string => {
   const isEnglish = pathname === '/en' || pathname.startsWith('/en/')
   if (!isEnglish) return href
@@ -67,7 +63,6 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const size = appearance === 'link' ? 'clear' : sizeFromProps
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
-  /* Ensure we don't break any styles set by richText */
   if (appearance === 'inline') {
     return (
       <Link className={cn(className)} href={href} {...newTabProps}>

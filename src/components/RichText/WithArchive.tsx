@@ -12,13 +12,8 @@ type Props = {
   locale?: SiteLocale
 } & Omit<React.ComponentProps<typeof RichText>, 'converters'>
 
-/**
- * Server-only variant of RichText that can also render the Archive block
- * (card grids of posts / courses / course categories) embedded in post
- * content. Kept out of the shared RichText component because the Archive
- * renderer pulls in the Payload Local API, which must never end up in a
- * client bundle (RichText is imported by client components).
- */
+// Server-only: the Archive renderer pulls in the Payload Local API, which must never end
+// up in a client bundle, so it stays out of the shared RichText component.
 export default function RichTextWithArchive({ locale, ...rest }: Props) {
   const converters: JSXConvertersFunction<
     NodeTypes | SerializedBlockNode<ArchiveBlockProps>

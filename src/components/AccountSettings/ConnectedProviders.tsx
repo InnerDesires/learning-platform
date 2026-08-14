@@ -60,7 +60,6 @@ export const ConnectedProviders: React.FC<{
       setError(t.settingsErrorGeneric)
       setBusy(false)
     }
-    // On success the browser redirects to Google.
   }
 
   const handleDisconnectGoogle = async () => {

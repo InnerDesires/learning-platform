@@ -61,7 +61,6 @@ export const FileEmbed: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Download bar */}
       <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap px-1">
         <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
           {pdf ? (

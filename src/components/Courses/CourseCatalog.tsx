@@ -25,8 +25,6 @@ export const CourseCatalog: React.FC<Props> = ({ courses, categories, courseStat
   const router = useRouter()
   const pathname = usePathname()
 
-  // Per-user progress badges load after hydration so the page itself can be
-  // served from the shared ISR cache. Guests never trigger the request.
   const myStatuses = useMyCourseStatuses()
 
   // The active filter lives in ?category= so filtered views can be shared,

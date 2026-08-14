@@ -1,6 +1,5 @@
 import type { CollectionAfterChangeHook, CollectionSlug, Plugin, TypedLocale } from 'payload'
 
-/** Collections indexed by the search plugin — single source for both the plugin config and the locale backfill. */
 export const searchIndexedCollections: CollectionSlug[] = [
   'posts',
   'courses',

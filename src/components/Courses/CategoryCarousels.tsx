@@ -17,12 +17,6 @@ type CategoryGroup = {
   courses: CourseCardData[]
 }
 
-/**
- * A handful of randomly picked course categories, each rendered as a
- * horizontally scrollable strip of course cards linking to the category page.
- * Session-free on purpose so it stays safe inside ISR-cached pages (home);
- * the random pick re-rolls on each render / cache regeneration.
- */
 export async function CategoryCarousels({
   locale,
   count = 3,

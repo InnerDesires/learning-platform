@@ -19,7 +19,6 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       revalidateTag('pages-sitemap')
     }
 
-    // If the page was previously published, we need to revalidate the old path
     if (previousDoc?._status === 'published' && doc._status !== 'published') {
       const oldPath = previousDoc.slug === 'home' ? '/' : `/${previousDoc.slug}`
 

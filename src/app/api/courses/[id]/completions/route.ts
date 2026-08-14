@@ -1,9 +1,7 @@
 import { getCachedCourseCompletions } from '@/utilities/leaderboard'
 
-/**
- * Public projection of who completed a course (name/avatar only), consumed by
- * the course-page ticker. Enrollment docs themselves stay admin-or-own.
- */
+// Public projection of who completed a course (name/avatar only) — enrollment docs
+// themselves stay admin-or-own.
 export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },

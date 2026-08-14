@@ -7,11 +7,6 @@ import { useRef, useEffect, useState } from 'react'
 const formatNumber = (n: number): string =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 
-/**
- * Count-up number. The real value is server-rendered so it is always correct
- * even without JS; the 0→value count-up runs only as a client enhancement
- * when the number scrolls into view.
- */
 export function StatCounter({ value, suffix }: { value: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
   const [display, setDisplay] = useState(() => formatNumber(value))

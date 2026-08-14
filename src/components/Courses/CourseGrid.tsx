@@ -12,10 +12,6 @@ type Props = {
   className?: string
 }
 
-/**
- * Plain course-card grid with client-side per-user progress badges, for
- * ISR-cached pages that don't need the catalog's category filter.
- */
 export const CourseGrid: React.FC<Props> = ({ courses, courseStats, locale, className }) => {
   const myStatuses = useMyCourseStatuses()
 

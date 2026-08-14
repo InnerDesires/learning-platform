@@ -78,7 +78,6 @@ export const HeaderNav: React.FC<{ data: HeaderType; locale: SiteLocale }> = ({ 
   return (
     <div ref={rootRef} className="contents">
       <nav className="flex items-center gap-0.5" aria-label={t.projectName}>
-        {/* mobile: a single hamburger holds nav, search, account, and language */}
         <button
           type="button"
           onClick={toggleMobile}

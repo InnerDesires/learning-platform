@@ -6,12 +6,9 @@ import { getStepIds, isCourseComplete } from '@/utilities/courseCompletion'
 const completionSignature = (course: Course) =>
   `${course.quiz?.enabled === true}|${getStepIds(course).join(',')}`
 
-/**
- * Dropping the quiz or a step lowers the bar for finishing a course, which would
- * otherwise strand enrollments that already meet the new requirements at
- * `in_progress`. Promote those; never demote, so certificates already earned
- * survive a later edit.
- */
+// Dropping the quiz or a step lowers the bar for finishing a course, so promote
+// enrollments that now qualify. Never demote — certificates already earned survive a
+// later edit.
 export const syncCourseCompletions: CollectionAfterChangeHook<Course> = async ({
   doc,
   previousDoc,

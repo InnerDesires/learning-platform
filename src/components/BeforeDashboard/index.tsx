@@ -5,7 +5,6 @@ import './index.scss'
 
 const baseClass = 'before-dashboard'
 
-/** Quick links into the collections admins touch daily, plus live counts. */
 const quickStats = [
   { slug: 'courses', label: 'Курси' },
   { slug: 'users', label: 'Користувачі' },

@@ -26,7 +26,6 @@ export const ForgotPasswordForm: React.FC<{
 
   const loginHref = `/${locale === 'uk' ? '' : locale + '/'}login`
 
-  // Resend cooldown timer
   useEffect(() => {
     if (resendCooldown <= 0) return
     const timer = setTimeout(() => setResendCooldown((c) => c - 1), 1000)
@@ -88,7 +87,6 @@ export const ForgotPasswordForm: React.FC<{
     router.refresh()
   }
 
-  // Step 2: OTP + new password
   if (step === 'reset') {
     return (
       <div className="mx-auto w-full max-w-md">
@@ -159,7 +157,6 @@ export const ForgotPasswordForm: React.FC<{
     )
   }
 
-  // Step 1: Email entry
   return (
     <div className="mx-auto w-full max-w-md">
       <h1 className="heading-display mb-2 text-center text-3xl">{t.forgotTitle}</h1>
