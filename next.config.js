@@ -29,6 +29,14 @@ const nextConfig = {
     // is 4.5 MB, which is the real cap in production.
     serverActions: { bodySizeLimit: '5mb' },
   },
+  // The admin docs viewer reads docs/admin-panel/**/*.md from the filesystem at
+  // runtime; dynamic fs paths are invisible to Vercel's file tracing, so the
+  // whole tree must be included explicitly for both the admin view and the
+  // search-index route.
+  outputFileTracingIncludes: {
+    '/admin/[[...segments]]': ['./docs/admin-panel/**/*'],
+    '/api/admin-docs/search-index': ['./docs/admin-panel/**/*'],
+  },
   images: {
     remotePatterns: [
       ...selfOrigins.map((item) => {
