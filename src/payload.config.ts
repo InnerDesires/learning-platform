@@ -66,8 +66,8 @@ export default buildConfig({
     meta: {
       description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',
       icons: [
-        { type: 'image/png', rel: 'icon', url: '/favicon-192.png' },
-        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+        { type: 'image/png', rel: 'icon', url: '/favicon-192.png?v=2' },
+        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png?v=2' },
       ],
       openGraph: {
         description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',

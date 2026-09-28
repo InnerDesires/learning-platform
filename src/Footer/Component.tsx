@@ -8,7 +8,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { CMSLink } from '@/components/Link'
 import { Brand } from '@/components/Logo/Brand'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
-import { Rails } from '@/components/brand'
+import { AccentLine } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getHomeContent } from '@/components/Home/content'
 
@@ -36,7 +36,7 @@ export async function Footer({ locale }: { locale: SiteLocale }) {
         >
           {t.brandName1} {t.brandName2}
         </div>
-        <Rails />
+        <AccentLine />
 
         <div className="grid gap-10 py-9 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
           <div>

@@ -8,7 +8,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { Search } from '@/search/Component'
 import PageClient from './page.client'
 import { CardPostData } from '@/components/Card'
-import { Rails } from '@/components/brand'
+import { AccentLine } from '@/components/brand'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { getCachedCommentsCounts, getCachedLikesCounts } from '@/utilities/contentCounts'
 
@@ -115,7 +115,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
           >
             {t.searchTitle}
           </h1>
-          <Rails className="mx-auto mt-4" />
+          <AccentLine className="mx-auto mt-4" />
           <div className="mt-8 w-full max-w-[50rem]">
             <Search />
           </div>
