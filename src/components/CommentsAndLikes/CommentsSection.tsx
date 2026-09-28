@@ -10,7 +10,7 @@ import {
 import { CommentForm } from './CommentForm'
 import { CommentItem } from './CommentItem'
 
-type TargetCollection = 'posts' | 'courses'
+type TargetCollection = 'posts' | 'courses' | 'events'
 
 interface Labels {
   title: string

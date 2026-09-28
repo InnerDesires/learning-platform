@@ -5,6 +5,7 @@ import React from 'react'
 
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
+import { getPreviewAwareServerURL } from '@/utilities/getURL'
 import { PageHead } from '@/components/brand'
 import { EventsExplorer } from '@/components/Events/EventsExplorer'
 import type { EventCardData } from '@/components/Events/EventCard'
@@ -65,5 +66,16 @@ export default async function EventsPage({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale } = await paramsPromise
   const t = getFrontendMessages(locale)
-  return { title: t.eventsMetaTitle }
+  const base = getPreviewAwareServerURL()
+  const url = `${base}${locale === 'en' ? '/en' : ''}/events`
+  return {
+    title: t.eventsMetaTitle,
+    description: t.eventsSub,
+    alternates: {
+      canonical: url,
+      languages: { uk: `${base}/events`, en: `${base}/en/events` },
+    },
+    robots: process.env.VERCEL_ENV === 'preview' ? { index: false, follow: false } : undefined,
+    openGraph: { title: t.eventsMetaTitle, description: t.eventsSub, url },
+  }
 }

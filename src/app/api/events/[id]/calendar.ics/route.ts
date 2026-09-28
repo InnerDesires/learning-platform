@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 import type { Event } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getPreviewAwareServerURL } from '@/utilities/getURL'
 import { getEventTimes } from '@/utilities/eventTime'
 
 const icsEscape = (value: string): string =>
@@ -43,7 +43,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     ? new Date(startsAt.getTime() + 60 * 60 * 1000)
     : endsAt
 
-  const eventUrl = `${getServerSideURL()}/events/${event.slug}`
+  const eventUrl = `${getPreviewAwareServerURL()}/events/${encodeURIComponent(event.slug)}`
   const location = event.locationType === 'local' ? event.address || '' : eventUrl
   const description = [event.description, eventUrl].filter(Boolean).join('\n\n')
 

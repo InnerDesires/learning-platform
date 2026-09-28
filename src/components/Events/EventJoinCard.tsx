@@ -63,7 +63,7 @@ export function EventJoinCard({ locale, isPast }: Props) {
       {loading ? (
         <div className="mt-5 h-11 w-44 animate-pulse rounded-full bg-navy-2" />
       ) : enrolled && meetingLink ? (
-        <div className="mt-5 space-y-2.5">
+        <div className="mt-5">
           <a
             href={meetingLink}
             target="_blank"
@@ -74,7 +74,6 @@ export function EventJoinCard({ locale, isPast }: Props) {
             {t.eventJoin}
             <ExternalLink className="h-4 w-4" />
           </a>
-          <p className="break-all text-[12px] text-fog">{meetingLink}</p>
         </div>
       ) : (
         <p className="mt-5 flex items-center gap-2 text-[13px] font-semibold text-fog">

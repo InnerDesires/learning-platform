@@ -340,6 +340,8 @@ type FrontendMessages = {
   eventDownloadIcs: string
   eventStartLabel: string
   eventEndLabel: string
+  eventScheduleTitle: string
+  eventTimeZone: string
   eventStartsInDaysPlural: string
   eventStartsInHoursPlural: string
   eventStartsInMinutesPlural: string
@@ -699,6 +701,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventDownloadIcs: 'Файл .ics',
     eventStartLabel: 'Початок',
     eventEndLabel: 'Завершення',
+    eventScheduleTitle: 'Коли і де',
+    eventTimeZone: 'За київським часом',
     eventStartsInDaysPlural: 'день|дні|днів',
     eventStartsInHoursPlural: 'година|години|годин',
     eventStartsInMinutesPlural: 'хвилина|хвилини|хвилин',
@@ -1055,6 +1059,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventDownloadIcs: '.ics file',
     eventStartLabel: 'Start',
     eventEndLabel: 'End',
+    eventScheduleTitle: 'When and where',
+    eventTimeZone: 'Kyiv time',
     eventStartsInDaysPlural: 'day|days|days',
     eventStartsInHoursPlural: 'hour|hours|hours',
     eventStartsInMinutesPlural: 'minute|minutes|minutes',

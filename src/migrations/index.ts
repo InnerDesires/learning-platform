@@ -22,6 +22,7 @@ import * as migration_20260724_190000_rate_limit from './20260724_190000_rate_li
 import * as migration_20260724_200000_backfill_blob_urls from './20260724_200000_backfill_blob_urls';
 import * as migration_20260729_100000_backfill_user_roles from './20260729_100000_backfill_user_roles';
 import * as migration_20260815_120000_events from './20260815_120000_events';
+import * as migration_20260928_120000_event_interactions from './20260928_120000_event_interactions';
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20260815_120000_events.up,
     down: migration_20260815_120000_events.down,
     name: '20260815_120000_events',
+  },
+  {
+    up: migration_20260928_120000_event_interactions.up,
+    down: migration_20260928_120000_event_interactions.down,
+    name: '20260928_120000_event_interactions',
   },
 ];

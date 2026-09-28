@@ -5,15 +5,17 @@ import React from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, CalendarDays, Clock, MapPin, Users, Video } from 'lucide-react'
+import { ArrowLeft, CalendarDays, Clock3, MapPin, Users, Video } from 'lucide-react'
 
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { plural } from '@/utilities/plural'
 import type { Event, Media as MediaType } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
+import { getPreviewAwareServerURL } from '@/utilities/getURL'
 import {
   formatEventDate,
+  formatEventDayNumber,
+  formatEventMonthShort,
   formatEventRange,
   formatEventTime,
   getEventTimes,
@@ -23,8 +25,34 @@ import { EventUserStateProvider } from '@/components/Events/EventUserState'
 import { EventActionBar } from '@/components/Events/EventActionBar'
 import { EventJoinCard } from '@/components/Events/EventJoinCard'
 import { AddToCalendar } from '@/components/Events/AddToCalendar'
+import { InteractionSection } from '@/components/CommentsAndLikes/InteractionSection'
+import { ShareButtons } from '@/components/ShareButtons'
 
 export const revalidate = 300
+
+type Args = {
+  params: Promise<{ locale: SiteLocale; slug: string }>
+}
+
+function eventPageUrl(locale: SiteLocale, slug: string): string {
+  const base = getPreviewAwareServerURL()
+  return `${base}${locale === 'en' ? '/en' : ''}/events/${encodeURIComponent(slug)}`
+}
+
+async function queryEventBySlug(locale: SiteLocale, slug: string): Promise<Event | undefined> {
+  const payload = await getPayload({ config: configPromise })
+  // The meeting link is excluded from the shared ISR page by field access.
+  const result = await payload.find({
+    collection: 'events',
+    locale,
+    depth: 1,
+    draft: false,
+    overrideAccess: false,
+    where: { slug: { equals: slug }, _status: { equals: 'published' } },
+    limit: 1,
+  })
+  return result.docs[0] as Event | undefined
+}
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -37,41 +65,16 @@ export async function generateStaticParams() {
     where: { _status: { equals: 'published' } },
     select: { slug: true },
   })
-
   return events.docs.flatMap(({ slug }) => locales.map((locale) => ({ locale, slug })))
-}
-
-type Args = {
-  params: Promise<{ locale: SiteLocale; slug: string }>
-}
-
-async function queryEventBySlug(locale: SiteLocale, slug: string): Promise<Event | undefined> {
-  const payload = await getPayload({ config: configPromise })
-  // overrideAccess: false — published only, meeting link stripped from the
-  // static render (registered users fetch it client-side).
-  const result = await payload.find({
-    collection: 'events',
-    locale,
-    depth: 1,
-    draft: false,
-    overrideAccess: false,
-    where: {
-      slug: { equals: slug },
-      _status: { equals: 'published' },
-    },
-    limit: 1,
-  })
-  return result.docs[0] as Event | undefined
 }
 
 export default async function EventPage({ params: paramsPromise }: Args) {
   const { locale, slug } = await paramsPromise
   const t = getFrontendMessages(locale)
-  const payload = await getPayload({ config: configPromise })
-
   const event = await queryEventBySlug(locale, slug)
   if (!event) notFound()
 
+  const payload = await getPayload({ config: configPromise })
   const { totalDocs: enrolledCount } = await payload.count({
     collection: 'event-enrollments',
     where: { event: { equals: event.id } },
@@ -82,213 +85,243 @@ export default async function EventPage({ params: paramsPromise }: Args) {
   const prefix = locale === 'en' ? '/en' : ''
   const past = isEventPast(event)
   const isFull = typeof event.capacity === 'number' && enrolledCount >= event.capacity
-  const seatsLeft =
-    typeof event.capacity === 'number' ? Math.max(event.capacity - enrolledCount, 0) : null
+  const seatsLeft = typeof event.capacity === 'number' ? Math.max(event.capacity - enrolledCount, 0) : null
   const { startsAt, endsAt } = getEventTimes(event)
-  const multiDay = startsAt.toDateString() !== endsAt.toDateString()
-  const eventUrl = `${getServerSideURL()}${prefix}/events/${event.slug}`
+  const eventUrl = eventPageUrl(locale, event.slug)
+  const locationLabel = event.locationType === 'virtual' ? t.eventOnline : t.eventOffline
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.title,
+    description: event.description || undefined,
+    startDate: startsAt.toISOString(),
+    endDate: event.endDate ? endsAt.toISOString() : undefined,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: event.locationType === 'virtual'
+      ? 'https://schema.org/OnlineEventAttendanceMode'
+      : 'https://schema.org/OfflineEventAttendanceMode',
+    location: event.locationType === 'virtual'
+      ? { '@type': 'VirtualLocation', url: eventUrl }
+      : { '@type': 'Place', name: event.address || t.eventOffline, address: event.address },
+    image: coverUrl ? new URL(coverUrl, new URL(eventUrl).origin).href : undefined,
+    url: eventUrl,
+  }
 
   return (
     <EventUserStateProvider eventId={event.id}>
-      <div className="pb-16">
-        <div className="relative overflow-hidden">
-          {coverUrl && (
-            <Image
-              src={coverUrl}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover opacity-25"
-            />
-          )}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(720px 440px at 85% 0%, rgb(4 40 113 / 0.5), transparent 60%), linear-gradient(180deg, rgb(34 52 88 / 0.86) 0%, var(--void) 100%)',
-            }}
-          />
-          <div className="relative container max-w-5xl pb-12 pt-14">
+      <article className="pb-16">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}
+        />
+        <header className="relative overflow-hidden border-b border-line bg-[linear-gradient(135deg,#1b3152_0%,#101b31_55%,#0b1221_100%)]">
+          <div className="pointer-events-none absolute -right-24 -top-32 h-96 w-96 rounded-full bg-orange/10 blur-3xl" />
+          <div className="container relative max-w-6xl py-10 lg:py-14">
             <Link
               href={`${prefix}/events`}
               className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.08em] text-fog transition-colors hover:text-orange"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ArrowLeft className="h-4 w-4" />
               {t.eventBackToEvents}
             </Link>
 
-            <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="chip">
-                {event.locationType === 'virtual' ? t.eventOnline : t.eventOffline}
-              </span>
-              {past && (
-                <span className="rounded-full bg-navy-2 px-3 py-1 font-display text-[10.5px] font-semibold uppercase tracking-[0.12em] text-fog">
-                  {t.eventFinished}
-                </span>
-              )}
-              {!past && seatsLeft !== null && !isFull && (
-                <span className="num rounded-full bg-orange/15 px-3 py-1 font-display text-[10.5px] font-semibold uppercase tracking-[0.12em] text-orange">
-                  {t.eventSeatsLeft} {seatsLeft}
-                </span>
-              )}
-            </div>
+            <div className="mt-7 grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.72fr)] lg:gap-14">
+              <div>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="chip">{locationLabel}</span>
+                  {past && <span className="rounded-full bg-navy-2 px-3 py-1 text-xs font-semibold text-fog">{t.eventFinished}</span>}
+                  {!past && seatsLeft !== null && !isFull && (
+                    <span className="rounded-full bg-orange/15 px-3 py-1 text-xs font-semibold text-orange">
+                      {t.eventSeatsLeft} {seatsLeft}
+                    </span>
+                  )}
+                </div>
+                <h1
+                  className="heading-display mt-5 max-w-[18ch] text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-[1.06]"
+                  data-testid="event-page-title"
+                >
+                  {event.title}
+                </h1>
+                {event.description && (
+                  <p className="mt-5 max-w-[56ch] text-base leading-relaxed text-fog lg:text-lg">
+                    {event.description}
+                  </p>
+                )}
+                <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-cloud">
+                  <time dateTime={event.startDate} className="flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4 text-orange" />
+                    {formatEventRange(event, locale)}
+                  </time>
+                  {enrolledCount > 0 && (
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-orange" />
+                      {enrolledCount} {plural(locale, enrolledCount, t.eventParticipantsPlural)}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 pl-6 text-xs text-steel">{t.eventTimeZone}</p>
+                <div className="mt-7">
+                  <EventActionBar
+                    eventId={event.id}
+                    eventSlug={event.slug}
+                    isPast={past}
+                    isFull={isFull}
+                    localePrefix={prefix}
+                    labels={{
+                      signIn: t.eventSignIn,
+                      loginToEnroll: t.eventLoginToEnroll,
+                      enroll: t.eventEnroll,
+                      unenroll: t.eventUnenroll,
+                      unenrollConfirm: t.eventUnenrollConfirm,
+                      enrolledBadge: t.eventEnrolledBadge,
+                      full: t.eventFull,
+                      finished: t.eventFinished,
+                    }}
+                  />
+                </div>
+              </div>
 
-            <h1
-              className="heading-display mb-3.5 mt-4 max-w-[22ch] text-[clamp(34px,4.6vw,54px)] font-bold leading-[1.04]"
-              data-testid="event-page-title"
-            >
-              {event.title}
-            </h1>
-
-            {event.description && (
-              <p className="max-w-[62ch] text-[15px] leading-relaxed text-fog">
-                {event.description}
-              </p>
-            )}
-
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13.5px] font-semibold text-fog">
-              <span className="num flex items-center gap-2">
-                <CalendarDays className="h-4 w-4 text-orange" />
-                {formatEventRange(event, locale)}
-              </span>
-              {multiDay && (
-                <span className="num flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-orange" />
-                  {formatEventTime(startsAt, locale)}
-                </span>
-              )}
-              {enrolledCount > 0 && (
-                <span className="num flex items-center gap-2">
-                  <Users className="h-4 w-4 text-orange" />
-                  {enrolledCount} {plural(locale, enrolledCount, t.eventParticipantsPlural)}
-                </span>
-              )}
-            </div>
-
-            <div className="mt-7">
-              <EventActionBar
-                eventId={event.id}
-                eventSlug={event.slug}
-                isPast={past}
-                isFull={isFull}
-                localePrefix={prefix}
-                labels={{
-                  signIn: t.eventSignIn,
-                  loginToEnroll: t.eventLoginToEnroll,
-                  enroll: t.eventEnroll,
-                  unenroll: t.eventUnenroll,
-                  unenrollConfirm: t.eventUnenrollConfirm,
-                  enrolledBadge: t.eventEnrolledBadge,
-                  full: t.eventFull,
-                  finished: t.eventFinished,
-                }}
-              />
+              <div className="relative hidden h-[300px] overflow-hidden rounded-2xl border border-white/10 bg-navy-2 shadow-2xl sm:block lg:h-[340px]">
+                {coverUrl ? (
+                  <Image
+                    src={coverUrl}
+                    alt={cover?.alt || event.title}
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(249,140,31,0.23),transparent_38%),linear-gradient(145deg,#243c62,#101a2f)]" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 flex items-end gap-4">
+                  <div className="rounded-xl bg-ink/90 px-4 py-3 text-center backdrop-blur">
+                    <b className="block font-display text-4xl leading-none text-orange">{formatEventDayNumber(startsAt)}</b>
+                    <span className="mt-1 block text-xs font-bold uppercase tracking-wider text-cloud">{formatEventMonthShort(startsAt, locale)}</span>
+                  </div>
+                  <span className="mb-1 text-sm font-semibold text-white">{formatEventTime(startsAt, locale)} · {t.eventTimeZone}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </header>
 
-        <div className="container max-w-5xl">
-          <div className="mt-10 grid gap-6 md:grid-cols-[1.5fr_1fr]">
-            <div className="space-y-6">
-              {event.locationType === 'local' ? (
-                <div className="rounded-[14px] border border-line bg-card p-6">
-                  <h3 className="flex items-center gap-2.5 font-display text-sm font-bold uppercase tracking-[0.08em]">
-                    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-orange/15 text-orange">
-                      <MapPin className="h-4.5 w-4.5" />
-                    </span>
-                    {t.eventLocationTitle}
-                  </h3>
-                  {event.address && (
-                    <p className="mt-4 text-[14.5px] leading-relaxed text-cloud">{event.address}</p>
-                  )}
-                  {event.mapLink && (
-                    <a
-                      href={event.mapLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-3 inline-flex items-center gap-2 rounded-full border border-line-2 px-4 py-2 font-display text-[11px] font-semibold uppercase tracking-[0.1em] text-fog transition-colors hover:border-orange hover:text-orange"
-                    >
-                      <MapPin className="h-3.5 w-3.5" />
-                      {t.eventOpenMap}
-                    </a>
-                  )}
-                </div>
-              ) : (
-                <EventJoinCard locale={locale} isPast={past} />
-              )}
-
-              {!past && (
-                <div className="rounded-[14px] border border-line bg-card p-6">
-                  <AddToCalendar event={event} locale={locale} eventUrl={eventUrl} />
-                </div>
-              )}
-            </div>
-
-            <div className="rounded-[14px] border border-line bg-card p-6">
-              <h3 className="font-display text-sm font-bold uppercase tracking-[0.08em]">
+        <div className="container max-w-6xl pt-8 lg:pt-10">
+          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="min-w-0 space-y-6">
+              <section aria-label={t.eventLocationTitle}>
                 {event.locationType === 'virtual' ? (
-                  <span className="flex items-center gap-2.5">
-                    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-blue-ill/15 text-blue-ill">
-                      <Video className="h-4.5 w-4.5" />
-                    </span>
-                    {t.eventOnline}
-                  </span>
+                  <EventJoinCard locale={locale} isPast={past} />
                 ) : (
-                  <span className="flex items-center gap-2.5">
-                    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[10px] bg-orange/15 text-orange">
-                      <CalendarDays className="h-4.5 w-4.5" />
-                    </span>
-                    {formatEventDate(startsAt, locale)}
-                  </span>
-                )}
-              </h3>
-              <dl className="mt-4 space-y-2.5 text-[13.5px]">
-                <div className="flex justify-between gap-4 border-b border-line pb-2.5">
-                  <dt className="text-steel">{t.eventStartLabel}</dt>
-                  <dd className="num font-semibold text-cloud">
-                    {formatEventDate(startsAt, locale)}, {formatEventTime(startsAt, locale)}
-                  </dd>
-                </div>
-                {event.endDate && (
-                  <div className="flex justify-between gap-4 border-b border-line pb-2.5">
-                    <dt className="text-steel">{t.eventEndLabel}</dt>
-                    <dd className="num font-semibold text-cloud">
-                      {formatEventDate(endsAt, locale)}, {formatEventTime(endsAt, locale)}
-                    </dd>
+                  <div className="rounded-2xl border border-line bg-card p-6">
+                    <h2 className="flex items-center gap-3 font-display text-base font-bold">
+                      <MapPin className="h-5 w-5 text-orange" /> {t.eventLocationTitle}
+                    </h2>
+                    {event.address && <p className="mt-4 text-base leading-relaxed text-cloud">{event.address}</p>}
+                    {event.mapLink && (
+                      <a href={event.mapLink} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange hover:text-amber">
+                        {t.eventOpenMap} <ArrowLeft className="h-4 w-4 rotate-[135deg]" />
+                      </a>
+                    )}
                   </div>
                 )}
-                {event.capacity != null && (
-                  <div className="flex justify-between gap-4">
+              </section>
+
+              {!past && (
+                <section className="rounded-2xl border border-line bg-card p-6" aria-label={t.eventAddToCalendar}>
+                  <AddToCalendar event={event} locale={locale} eventUrl={eventUrl} />
+                </section>
+              )}
+
+              <section className="rounded-2xl border border-line bg-card p-6" aria-label={t.shareLabel}>
+                <ShareButtons
+                  url={eventUrl}
+                  title={event.title}
+                  label={t.shareLabel}
+                  copyLabel={t.shareCopyLink}
+                  copiedLabel={t.copied}
+                />
+              </section>
+            </div>
+
+            <aside className="rounded-2xl border border-line bg-card p-6 lg:sticky lg:top-24">
+              <h2 className="flex items-center gap-2.5 font-display text-base font-bold">
+                {event.locationType === 'virtual' ? <Video className="h-5 w-5 text-blue-ill" /> : <MapPin className="h-5 w-5 text-orange" />}
+                {t.eventScheduleTitle}
+              </h2>
+              <dl className="mt-6 space-y-5 text-sm">
+                <div>
+                  <dt className="text-steel">{t.eventStartLabel}</dt>
+                  <dd className="mt-1 font-semibold text-cloud">{formatEventDate(startsAt, locale)}</dd>
+                  <dd className="font-display text-2xl font-bold text-orange">{formatEventTime(startsAt, locale)}</dd>
+                </div>
+                {event.endDate && (
+                  <div className="border-t border-line pt-4">
+                    <dt className="text-steel">{t.eventEndLabel}</dt>
+                    <dd className="mt-1 font-semibold text-cloud">{formatEventDate(endsAt, locale)}</dd>
+                    <dd className="font-display text-lg font-bold text-cloud">{formatEventTime(endsAt, locale)}</dd>
+                  </div>
+                )}
+                <div className="border-t border-line pt-4 text-fog">
+                  <Clock3 className="mr-2 inline h-4 w-4 text-orange" />{t.eventTimeZone}
+                </div>
+                {seatsLeft !== null && (
+                  <div className="flex justify-between gap-4 border-t border-line pt-4">
                     <dt className="text-steel">{t.eventSeatsLeft}</dt>
-                    <dd className="num font-semibold text-cloud">
-                      {seatsLeft} / {event.capacity}
-                    </dd>
+                    <dd className="font-semibold text-cloud">{seatsLeft} / {event.capacity}</dd>
                   </div>
                 )}
               </dl>
-            </div>
+            </aside>
           </div>
+
+          <section className="mt-10 max-w-[46rem] border-t border-line pt-5 lg:mt-14">
+            <InteractionSection
+              targetCollection="events"
+              targetId={event.id}
+              locale={locale}
+              redirectPath={`${prefix}/events/${event.slug}`}
+            />
+          </section>
         </div>
-      </div>
+      </article>
     </EventUserStateProvider>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale, slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
-  const result = await payload.find({
-    collection: 'events',
-    locale,
-    draft: false,
-    overrideAccess: false,
-    where: { slug: { equals: slug }, _status: { equals: 'published' } },
-    limit: 1,
-    depth: 0,
-    select: { title: true },
-  })
-  const event = result.docs[0]
-  if (!event) return {}
-  return { title: `${event.title} | Залізна Зміна` }
+  const event = await queryEventBySlug(locale, slug)
+  if (!event) return { title: locale === 'uk' ? 'Подію не знайдено' : 'Event not found' }
+
+  const url = eventPageUrl(locale, event.slug)
+  const cover = event.cover && typeof event.cover === 'object' ? (event.cover as MediaType) : null
+  const imagePath = cover?.sizes?.og?.url || cover?.url || '/og-image.webp'
+  const image = new URL(imagePath, new URL(url).origin).href
+  const title = `${event.title} | Залізна Зміна`
+  const description = event.description || formatEventRange(event, locale)
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      languages: {
+        uk: eventPageUrl('uk', event.slug),
+        en: eventPageUrl('en', event.slug),
+      },
+    },
+    robots: process.env.VERCEL_ENV === 'preview' ? { index: false, follow: false } : undefined,
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      url,
+      siteName: 'Залізна Зміна',
+      locale: locale === 'uk' ? 'uk_UA' : 'en_GB',
+      images: [{ url: image, alt: cover?.alt || event.title }],
+    },
+    twitter: { card: 'summary_large_image', title, description, images: [image] },
+  }
 }

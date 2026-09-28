@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useOptimistic, useState, useTransition } from 'react'
 import { getLikeInfo, toggleLike } from '@/actions/commentsAndLikes'
 
-type LikeTargetCollection = 'posts' | 'courses' | 'comments'
+type LikeTargetCollection = 'posts' | 'courses' | 'events' | 'comments'
 
 interface LikeButtonProps {
   targetCollection: LikeTargetCollection
@@ -15,6 +15,8 @@ interface LikeButtonProps {
   size?: 'sm' | 'md'
   loginUrl?: string
   loginPromptLabel?: string
+  likeLabel?: string
+  likedLabel?: string
 }
 
 export function LikeButton({
@@ -27,6 +29,8 @@ export function LikeButton({
   size = 'md',
   loginUrl,
   loginPromptLabel,
+  likeLabel = 'Like',
+  likedLabel = 'Liked',
 }: LikeButtonProps) {
   const [realState, setRealState] = useState({
     liked: initialLiked ?? false,
@@ -94,7 +98,7 @@ export function LikeButton({
           ? 'text-orange hover:text-amber'
           : 'text-muted-foreground hover:text-orange'
       } ${!isAuthenticated && !loginUrl ? 'cursor-default opacity-70' : 'cursor-pointer'} disabled:opacity-50`}
-      aria-label={guestCanLogin ? loginPromptLabel : optimistic.liked ? 'Unlike' : 'Like'}
+      aria-label={guestCanLogin ? loginPromptLabel : optimistic.liked ? likedLabel : likeLabel}
     >
       <svg
         className={`${iconSize} transition-transform duration-200 ${isPending ? 'scale-90' : 'scale-100'} ${optimistic.liked ? 'animate-[heartBeat_0.3s_ease-in-out]' : ''}`}
@@ -107,6 +111,7 @@ export function LikeButton({
       >
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
       </svg>
+      {!isSm && <span className="font-medium">{optimistic.liked ? likedLabel : likeLabel}</span>}
       {optimistic.count > 0 && <span className="font-medium tabular-nums">{optimistic.count}</span>}
     </button>
   )

@@ -3,6 +3,7 @@ import config from '@/payload.config'
 import { describe, it, beforeAll, afterAll, expect } from 'vitest'
 import { minimalEventData } from '../helpers/factories'
 import type { User } from '@/payload-types'
+import { formatEventRange, formatEventTime, isSameEventDay } from '@/utilities/eventTime'
 
 let payload: Payload
 let regularUser: User
@@ -47,6 +48,54 @@ describe('Events', () => {
     expect(event._status).toBe('published')
     expect(event.locationType).toBe('local')
     expect(event.address).toBeTruthy()
+  })
+
+  it('formats UTC timestamps consistently in Kyiv time across day boundaries', () => {
+    const start = new Date('2026-09-28T21:30:00.000Z')
+    const end = new Date('2026-09-29T00:30:00.000Z')
+    expect(formatEventTime(start, 'uk')).toBe('00:30')
+    expect(isSameEventDay(start, end)).toBe(true)
+    expect(formatEventRange({ startDate: start.toISOString(), endDate: end.toISOString() }, 'uk'))
+      .toContain('00:30 – 03:30')
+  })
+
+  it('stores event comments and likes and removes them when the event is deleted', async () => {
+    const event = await createEvent(minimalEventData('Interactive Event'))
+    const comment = await payload.create({
+      collection: 'comments',
+      data: {
+        body: 'Looking forward to this event',
+        author: regularUser.id,
+        targetCollection: 'events',
+        targetId: event.id,
+      },
+    })
+    await payload.create({
+      collection: 'likes',
+      data: { user: regularUser.id, targetCollection: 'events', targetId: event.id },
+    })
+    await payload.create({
+      collection: 'likes',
+      data: { user: regularUser.id, targetCollection: 'comments', targetId: comment.id },
+    })
+
+    const comments = await payload.find({
+      collection: 'comments',
+      where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: event.id } }] },
+    })
+    expect(comments.docs.map((doc) => doc.id)).toContain(comment.id)
+
+    await payload.delete({ collection: 'events', id: event.id, context: { disableRevalidate: true } })
+    createdEventIds.splice(createdEventIds.indexOf(event.id), 1)
+
+    const [remainingComments, remainingEventLikes, remainingCommentLikes] = await Promise.all([
+      payload.count({ collection: 'comments', where: { targetId: { equals: event.id } } }),
+      payload.count({ collection: 'likes', where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: event.id } }] } }),
+      payload.count({ collection: 'likes', where: { and: [{ targetCollection: { equals: 'comments' } }, { targetId: { equals: comment.id } }] } }),
+    ])
+    expect(remainingComments.totalDocs).toBe(0)
+    expect(remainingEventLikes.totalDocs).toBe(0)
+    expect(remainingCommentLikes.totalDocs).toBe(0)
   })
 
   it('rejects publishing a virtual event without a meeting link', async () => {

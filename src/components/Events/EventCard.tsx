@@ -8,6 +8,7 @@ import { cn } from '@/utilities/ui'
 import type { SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import {
+  formatEventDayNumber,
   formatEventMonthShort,
   formatEventRange,
   getEventTimes,
@@ -72,7 +73,7 @@ export const EventCard: React.FC<Props> = ({ event, locale, isEnrolled, isPast, 
           )}
           {/* Date tile — echoes the homepage calendar motif. */}
           <div className="absolute left-3 top-3 z-[2] w-[58px] rounded-[10px] bg-ink/90 px-1.5 py-2 text-center font-display uppercase leading-[1.1] text-cloud backdrop-blur-sm">
-            <b className="num block text-xl font-semibold text-orange">{startsAt.getDate()}</b>
+            <b className="num block text-xl font-semibold text-orange">{formatEventDayNumber(startsAt)}</b>
             <span className="text-[10.5px] tracking-[0.14em]">
               {formatEventMonthShort(startsAt, locale)}
             </span>

@@ -13,6 +13,8 @@ interface Labels {
   commentsSubmitting: string
   commentsLoginToComment: string
   likeLoginPrompt?: string
+  likeLabel: string
+  likedLabel: string
   commentsReply: string
   commentsReplying: string
   commentsDelete: string
@@ -22,7 +24,7 @@ interface Labels {
 }
 
 interface InteractionClientProps {
-  targetCollection: 'posts' | 'courses'
+  targetCollection: 'posts' | 'courses' | 'events'
   targetId: number
   loginUrl: string
   userProfileBase: string
@@ -69,6 +71,8 @@ export function InteractionClient({
           active={active}
           loginUrl={loginUrl}
           loginPromptLabel={labels.likeLoginPrompt}
+          likeLabel={labels.likeLabel}
+          likedLabel={labels.likedLabel}
         />
       </div>
 
