@@ -12,6 +12,7 @@ import { getFrontendMessages } from '@/utilities/i18n'
 import { plural } from '@/utilities/plural'
 import type { Event, Media as MediaType } from '@/payload-types'
 import { getPreviewAwareServerURL } from '@/utilities/getURL'
+import { AccentLine } from '@/components/brand'
 import {
   formatEventDate,
   formatEventDayNumber,
@@ -114,8 +115,21 @@ export default async function EventPage({ params: paramsPromise }: Args) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}
         />
-        <header className="relative overflow-hidden border-b border-line bg-[linear-gradient(135deg,#1b3152_0%,#101b31_55%,#0b1221_100%)]">
-          <div className="pointer-events-none absolute -right-24 -top-32 h-96 w-96 rounded-full bg-orange/10 blur-3xl" />
+        <header className="relative overflow-hidden border-b border-line">
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(720px 440px at 85% 0%, rgb(4 40 113 / 0.5), transparent 60%), linear-gradient(180deg, rgb(34 52 88 / 0.86) 0%, var(--void) 100%)',
+            }}
+            aria-hidden="true"
+          />
+          <img
+            src="/illustrations/hero-lines.svg"
+            alt=""
+            className="pointer-events-none absolute -bottom-8 -right-32 w-[560px] max-w-none opacity-40"
+            aria-hidden="true"
+          />
           <div className="container relative max-w-6xl py-10 lg:py-14">
             <Link
               href={`${prefix}/events`}
@@ -142,6 +156,7 @@ export default async function EventPage({ params: paramsPromise }: Args) {
                 >
                   {event.title}
                 </h1>
+                <AccentLine className="mt-4" />
                 {event.description && (
                   <p className="mt-5 max-w-[56ch] text-base leading-relaxed text-fog lg:text-lg">
                     {event.description}
