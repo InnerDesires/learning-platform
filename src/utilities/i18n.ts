@@ -246,6 +246,8 @@ type FrontendMessages = {
   commentsDeleteConfirm: string
   commentsShowReplies: string
   commentsHideReplies: string
+  commentsLoadError: string
+  commentsRetry: string
   likesCount: string
   likeLiked: string
   likeNotLiked: string
@@ -602,6 +604,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     commentsDeleteConfirm: 'Ви впевнені, що хочете видалити цей коментар?',
     commentsShowReplies: 'Показати відповіді',
     commentsHideReplies: 'Сховати відповіді',
+    commentsLoadError: 'Не вдалося завантажити коментарі.',
+    commentsRetry: 'Спробувати ще раз',
     likesCount: 'вподобань',
     likeLiked: 'Вам сподобалось',
     likeNotLiked: 'Вподобати',
@@ -958,6 +962,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     commentsDeleteConfirm: 'Are you sure you want to delete this comment?',
     commentsShowReplies: 'Show replies',
     commentsHideReplies: 'Hide replies',
+    commentsLoadError: 'Could not load comments.',
+    commentsRetry: 'Try again',
     likesCount: 'likes',
     likeLiked: 'Liked',
     likeNotLiked: 'Like',

@@ -44,6 +44,8 @@ export function InteractionSection({
         commentsDeleteConfirm: t.commentsDeleteConfirm,
         commentsShowReplies: t.commentsShowReplies,
         commentsHideReplies: t.commentsHideReplies,
+        commentsLoadError: t.commentsLoadError,
+        commentsRetry: t.commentsRetry,
       }}
     />
   )

@@ -19,6 +19,8 @@ interface Labels {
   commentsDeleteConfirm: string
   commentsShowReplies: string
   commentsHideReplies: string
+  commentsLoadError: string
+  commentsRetry: string
 }
 
 interface InteractionClientProps {
@@ -95,6 +97,8 @@ export function InteractionClient({
           deleteConfirm: labels.commentsDeleteConfirm,
           showReplies: labels.commentsShowReplies,
           hideReplies: labels.commentsHideReplies,
+          loadError: labels.commentsLoadError,
+          retry: labels.commentsRetry,
         }}
       />
     </div>

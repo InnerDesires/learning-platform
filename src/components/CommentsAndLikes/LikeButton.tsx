@@ -43,11 +43,17 @@ export function LikeButton({
   useEffect(() => {
     if (initialLiked !== undefined || !active) return
     let cancelled = false
-    getLikeInfo(targetCollection, targetId).then((info) => {
-      if (!cancelled) {
-        setRealState({ liked: info.liked, count: info.count, loaded: true })
-      }
-    })
+    getLikeInfo(targetCollection, targetId)
+      .then((info) => {
+        if (!cancelled) {
+          setRealState({ liked: info.liked, count: info.count, loaded: true })
+        }
+      })
+      .catch(() => {
+        // A failed lookup must not leave the placeholder pulsing forever; fall back to a
+        // usable unliked button and let the next toggle reconcile the real state.
+        if (!cancelled) setRealState({ liked: false, count: 0, loaded: true })
+      })
     return () => {
       cancelled = true
     }
@@ -61,9 +67,13 @@ export function LikeButton({
 
     startTransition(async () => {
       setOptimistic('toggle')
-      const result = await toggleLike(targetCollection, targetId)
-      if (result.success) {
-        setRealState({ liked: result.liked, count: result.count, loaded: true })
+      try {
+        const result = await toggleLike(targetCollection, targetId)
+        if (result.success) {
+          setRealState({ liked: result.liked, count: result.count, loaded: true })
+        }
+      } catch {
+        // The optimistic flip reverts when the transition settles without a state update.
       }
     })
   }, [isAuthenticated, loginUrl, targetCollection, targetId, setOptimistic])
