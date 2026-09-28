@@ -21,9 +21,24 @@ export const isEventPast = (
 ): boolean => getEventTimes(event).endsAt < now
 
 const INTL_LOCALES: Record<SiteLocale, string> = { uk: 'uk-UA', en: 'en-GB' }
+export const EVENT_TIME_ZONE = 'Europe/Kyiv'
+
+const eventDayKey = (date: Date): string =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: EVENT_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+
+export const isSameEventDay = (a: Date, b: Date): boolean => eventDayKey(a) === eventDayKey(b)
+
+export const formatEventDayNumber = (date: Date): string =>
+  new Intl.DateTimeFormat('en-GB', { day: 'numeric', timeZone: EVENT_TIME_ZONE }).format(date)
 
 export const formatEventDate = (date: Date, locale: SiteLocale): string =>
   new Intl.DateTimeFormat(INTL_LOCALES[locale], {
+    timeZone: EVENT_TIME_ZONE,
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -31,12 +46,15 @@ export const formatEventDate = (date: Date, locale: SiteLocale): string =>
 
 export const formatEventTime = (date: Date, locale: SiteLocale): string =>
   new Intl.DateTimeFormat(INTL_LOCALES[locale], {
+    timeZone: EVENT_TIME_ZONE,
     hour: '2-digit',
     minute: '2-digit',
   }).format(date)
 
 export const formatEventMonthShort = (date: Date, locale: SiteLocale): string =>
-  new Intl.DateTimeFormat(INTL_LOCALES[locale], { month: 'short' }).format(date).replace('.', '')
+  new Intl.DateTimeFormat(INTL_LOCALES[locale], { month: 'short', timeZone: EVENT_TIME_ZONE })
+    .format(date)
+    .replace('.', '')
 
 /** "12 січня 2026, 18:00 – 20:00" or "12 – 14 січня 2026" for multi-day events. */
 export const formatEventRange = (
@@ -44,7 +62,7 @@ export const formatEventRange = (
   locale: SiteLocale,
 ): string => {
   const { startsAt, endsAt } = getEventTimes(event)
-  const sameDay = startsAt.toDateString() === endsAt.toDateString()
+  const sameDay = isSameEventDay(startsAt, endsAt)
 
   if (!event.endDate || (sameDay && startsAt.getTime() === endsAt.getTime())) {
     return `${formatEventDate(startsAt, locale)}, ${formatEventTime(startsAt, locale)}`

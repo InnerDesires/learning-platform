@@ -1244,7 +1244,7 @@ export interface Comment {
   id: number;
   body: string;
   author: number | User;
-  targetCollection: 'posts' | 'courses';
+  targetCollection: 'posts' | 'courses' | 'events';
   targetId: number;
   parent?: (number | null) | Comment;
   updatedAt: string;
@@ -1257,7 +1257,7 @@ export interface Comment {
 export interface Like {
   id: number;
   user: number | User;
-  targetCollection: 'posts' | 'courses' | 'comments';
+  targetCollection: 'posts' | 'courses' | 'events' | 'comments';
   targetId: number;
   updatedAt: string;
   createdAt: string;

@@ -131,6 +131,9 @@ export default buildConfig({
   cors: [
     getServerSideURL(),
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+    process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL
+      ? `https://${process.env.VERCEL_BRANCH_URL}`
+      : '',
   ].filter(Boolean),
   globals: [Header, Footer, HomeCalendar],
   i18n: {

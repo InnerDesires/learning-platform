@@ -114,7 +114,7 @@ export function EventActionBar({
               <Check className="h-3 w-3" strokeWidth={4} />
               {labels.enrolledBadge}
             </span>
-            <Button onClick={handleUnenroll} disabled={isPending} size="lg" variant="outline">
+            <Button onClick={handleUnenroll} disabled={isPending} size="sm" variant="ghost" className="text-fog hover:text-error">
               {isPending && <LoaderCircle className="h-4 w-4 animate-spin" />}
               {labels.unenroll}
             </Button>

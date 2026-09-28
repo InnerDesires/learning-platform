@@ -45,6 +45,12 @@ test.describe('Events pages', () => {
     await page.goto(`/events/${eventSlug}`)
     await waitForPageReady(page)
     await expect(page.getByTestId('event-page-title')).toHaveText('E2E Public Event')
+    await expect(page.getByText('За київським часом').first()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Копіювати лінк' })).toBeVisible()
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /E2E Public Event/)
+    await expect(page.locator('script[type="application/ld+json"]')).toContainText('EventScheduled')
+    await page.locator('#comments').scrollIntoViewIfNeeded()
+    await expect(page.getByRole('heading', { name: 'Коментарі' })).toBeVisible()
   })
 
   test('anonymous visitors are asked to sign in before registering', async ({ page }) => {

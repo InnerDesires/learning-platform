@@ -40,6 +40,35 @@ export const Events: CollectionConfig = {
           where: { event: { equals: id } },
           req,
         })
+        const comments = await req.payload.find({
+          collection: 'comments',
+          where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: id } }] },
+          depth: 0,
+          limit: 10000,
+          req,
+        })
+        if (comments.docs.length > 0) {
+          await req.payload.delete({
+            collection: 'likes',
+            where: {
+              and: [
+                { targetCollection: { equals: 'comments' } },
+                { targetId: { in: comments.docs.map((comment) => comment.id) } },
+              ],
+            },
+            req,
+          })
+        }
+        await req.payload.delete({
+          collection: 'likes',
+          where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: id } }] },
+          req,
+        })
+        await req.payload.delete({
+          collection: 'comments',
+          where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: id } }] },
+          req,
+        })
       },
     ],
   },
@@ -88,6 +117,7 @@ export const Events: CollectionConfig = {
           admin: {
             date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' },
             width: '50%',
+            description: 'На сайті час відображається за часовим поясом Europe/Kyiv.',
           },
         },
         {
@@ -97,6 +127,7 @@ export const Events: CollectionConfig = {
           admin: {
             date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' },
             width: '50%',
+            description: 'На сайті час відображається за часовим поясом Europe/Kyiv.',
           },
           validate: (value, { siblingData }) => {
             const start = (siblingData as { startDate?: string })?.startDate
