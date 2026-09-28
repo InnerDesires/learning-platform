@@ -40,24 +40,33 @@ export const Events: CollectionConfig = {
           where: { event: { equals: id } },
           req,
         })
-        const comments = await req.payload.find({
-          collection: 'comments',
-          where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: id } }] },
-          depth: 0,
-          limit: 10000,
-          req,
-        })
-        if (comments.docs.length > 0) {
-          await req.payload.delete({
-            collection: 'likes',
+        // Comment likes are polymorphic (no FK), so walk every comment page rather than
+        // capping the lookup; comments themselves are only deleted after the walk.
+        for (let page = 1; ; page += 1) {
+          const comments = await req.payload.find({
+            collection: 'comments',
             where: {
-              and: [
-                { targetCollection: { equals: 'comments' } },
-                { targetId: { in: comments.docs.map((comment) => comment.id) } },
-              ],
+              and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: id } }],
             },
+            depth: 0,
+            limit: 1000,
+            page,
+            select: {},
             req,
           })
+          if (comments.docs.length > 0) {
+            await req.payload.delete({
+              collection: 'likes',
+              where: {
+                and: [
+                  { targetCollection: { equals: 'comments' } },
+                  { targetId: { in: comments.docs.map((comment) => comment.id) } },
+                ],
+              },
+              req,
+            })
+          }
+          if (!comments.hasNextPage) break
         }
         await req.payload.delete({
           collection: 'likes',
@@ -184,15 +193,15 @@ export const Events: CollectionConfig = {
       type: 'text',
       label: 'Посилання на зустріч',
       access: {
-        // The join link is for registered participants; keep it out of
-        // anonymous REST/API responses. ISR pages fetch with
-        // overrideAccess: false and no user, so it never lands in the shared
-        // static cache either — enrolled users get it via a server action.
-        read: ({ req }) => Boolean(req.user),
+        // Only enrolled users may see the join link and enrollment is not visible to
+        // field access, so REST exposes it to admins alone. Pages fetch with
+        // overrideAccess: false and never receive it; enrolled users get it from the
+        // getEventJoinInfo server action, which checks the enrollment itself.
+        read: ({ req }) => admin({ req }),
       },
       admin: {
         condition: (data) => data?.locationType === 'virtual',
-        description: 'Zoom, Google Meet або інша платформа. Бачать лише зареєстровані учасники.',
+        description: 'Zoom, Google Meet або інша платформа. Бачать лише зареєстровані учасники (адміністратори бачать завжди).',
       },
       validate: ((value, { data }) => {
         const shape = data as { locationType?: string } | undefined

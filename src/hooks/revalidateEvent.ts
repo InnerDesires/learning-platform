@@ -6,14 +6,19 @@ import type { Event } from '@/payload-types'
 
 const LOCALE_PREFIXES = ['', '/en']
 
-// Busts every ISR-cached surface an event appears on. Scheduled publishes run
-// outside a request, where revalidatePath throws; a missed bust falls back to
-// the time window, so never fail the save.
+// Busts every ISR-cached surface an event appears on, including pages that embed
+// the events block. Scheduled publishes run outside a request, where
+// revalidatePath throws; a missed bust falls back to the time window, so never
+// fail the save.
 function revalidateEventPaths(payload: Payload, slug: string | null | undefined) {
   try {
     for (const prefix of LOCALE_PREFIXES) {
       if (slug) revalidatePath(`${prefix}/events/${slug}`)
       revalidatePath(`${prefix}/events`)
+      // The events block can be embedded in the homepage, CMS pages and posts.
+      revalidatePath(prefix || '/')
+      revalidatePath(`${prefix}/[slug]`, 'page')
+      revalidatePath(`${prefix}/posts/[slug]`, 'page')
     }
   } catch (err) {
     payload.logger.warn({ err, slug }, 'events: revalidation skipped')

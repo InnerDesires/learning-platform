@@ -7,6 +7,7 @@ import { formatEventRange, formatEventTime, isSameEventDay } from '@/utilities/e
 
 let payload: Payload
 let regularUser: User
+let adminUser: User
 const createdEventIds: number[] = []
 
 async function createEvent(data: Record<string, unknown>) {
@@ -32,6 +33,16 @@ describe('Events', () => {
         role: ['learner'],
       },
     })) as User
+
+    adminUser = (await payload.create({
+      collection: 'users',
+      data: {
+        name: 'Events Test Admin',
+        email: `events-test-admin-${Date.now()}@test.local`,
+        emailVerified: true,
+        role: ['admin'],
+      },
+    })) as User
   })
 
   afterAll(async () => {
@@ -41,6 +52,7 @@ describe('Events', () => {
         .catch(() => {})
     }
     await payload.delete({ collection: 'users', id: regularUser.id }).catch(() => {})
+    await payload.delete({ collection: 'users', id: adminUser.id }).catch(() => {})
   })
 
   it('creates a published local event', async () => {
@@ -143,7 +155,7 @@ describe('Events', () => {
     expect(anonResult.totalDocs).toBe(0)
   })
 
-  it('strips meetingLink from anonymous reads but keeps it for authenticated users', async () => {
+  it('strips meetingLink from anonymous and non-admin reads but keeps it for admins', async () => {
     const event = await createEvent(
       minimalEventData('Virtual Event', {
         locationType: 'virtual',
@@ -160,13 +172,21 @@ describe('Events', () => {
     expect(anonResult.totalDocs).toBe(1)
     expect(anonResult.docs[0].meetingLink ?? null).toBeNull()
 
-    const authedResult = await payload.find({
+    const learnerResult = await payload.find({
       collection: 'events',
       where: { id: { equals: event.id } },
       user: regularUser,
       overrideAccess: false,
     })
-    expect(authedResult.docs[0].meetingLink).toBe('https://us02web.zoom.us/j/1234567890')
+    expect(learnerResult.docs[0].meetingLink ?? null).toBeNull()
+
+    const adminResult = await payload.find({
+      collection: 'events',
+      where: { id: { equals: event.id } },
+      user: adminUser,
+      overrideAccess: false,
+    })
+    expect(adminResult.docs[0].meetingLink).toBe('https://us02web.zoom.us/j/1234567890')
   })
 
   it('rejects create/update from non-admin users', async () => {

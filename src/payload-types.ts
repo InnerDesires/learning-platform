@@ -992,7 +992,7 @@ export interface Event {
    */
   mapLink?: string | null;
   /**
-   * Zoom, Google Meet або інша платформа. Бачать лише зареєстровані учасники.
+   * Zoom, Google Meet або інша платформа. Бачать лише зареєстровані учасники (адміністратори бачать завжди).
    */
   meetingLink?: string | null;
   /**

@@ -6,6 +6,7 @@ type FrontendMessages = {
   searchTypeCourse: string
   searchTypeCategory: string
   searchTypePage: string
+  searchTypeEvent: string
   postsEyebrow: string
   coursesEyebrow: string
   coursesSub: string
@@ -316,10 +317,8 @@ type FrontendMessages = {
   eventsEmptyUpcoming: string
   eventsEmptyPast: string
   eventsNextEvent: string
-  eventsAll: string
   eventOnline: string
   eventOffline: string
-  eventToday: string
   eventFinished: string
   eventEnroll: string
   eventUnenroll: string
@@ -350,7 +349,6 @@ type FrontendMessages = {
   eventStartsInSuffix: string
   eventStartsNow: string
   profileUpcomingEvents: string
-  profileNoUpcomingEvents: string
   eventsBlockSeeAll: string
 }
 
@@ -361,6 +359,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     searchTypeCourse: 'Курс',
     searchTypeCategory: 'Категорія',
     searchTypePage: 'Сторінка',
+    searchTypeEvent: 'Подія',
     postsEyebrow: 'Блог проєкту',
     coursesEyebrow: 'Каталог',
     coursesSub: 'Обирай курс, проходь кроки, складай фінальний тест — збирай XP і отримуй сертифікат.',
@@ -679,10 +678,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventsEmptyUpcoming: 'Найближчих подій поки немає — зазирни згодом.',
     eventsEmptyPast: 'Минулих подій ще немає.',
     eventsNextEvent: 'Найближча подія',
-    eventsAll: 'Всі події',
     eventOnline: 'Онлайн',
     eventOffline: 'Офлайн',
-    eventToday: 'Сьогодні',
     eventFinished: 'Завершилась',
     eventEnroll: 'Зареєструватися',
     eventUnenroll: 'Скасувати реєстрацію',
@@ -713,7 +710,6 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventStartsInSuffix: 'до початку',
     eventStartsNow: 'Вже триває',
     profileUpcomingEvents: 'Мої події',
-    profileNoUpcomingEvents: 'Ви поки не зареєстровані на жодну подію.',
     eventsBlockSeeAll: 'Всі події',
   },
   en: {
@@ -722,6 +718,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     searchTypeCourse: 'Course',
     searchTypeCategory: 'Category',
     searchTypePage: 'Page',
+    searchTypeEvent: 'Event',
     postsEyebrow: 'Project blog',
     coursesEyebrow: 'Catalog',
     coursesSub: 'Pick a course, complete the steps, pass the final quiz — earn XP and get a certificate.',
@@ -1039,10 +1036,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventsEmptyUpcoming: 'No upcoming events yet — check back soon.',
     eventsEmptyPast: 'No past events yet.',
     eventsNextEvent: 'Next event',
-    eventsAll: 'All events',
     eventOnline: 'Online',
     eventOffline: 'In person',
-    eventToday: 'Today',
     eventFinished: 'Finished',
     eventEnroll: 'Register',
     eventUnenroll: 'Cancel registration',
@@ -1073,7 +1068,6 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     eventStartsInSuffix: 'to start',
     eventStartsNow: 'Happening now',
     profileUpcomingEvents: 'My events',
-    profileNoUpcomingEvents: 'You are not registered for any events yet.',
     eventsBlockSeeAll: 'All events',
   },
 }

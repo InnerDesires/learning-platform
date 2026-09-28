@@ -1,7 +1,7 @@
 import type { Metadata } from 'next/types'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import React from 'react'
+import React, { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -39,7 +39,7 @@ function eventPageUrl(locale: SiteLocale, slug: string): string {
   return `${base}${locale === 'en' ? '/en' : ''}/events/${encodeURIComponent(slug)}`
 }
 
-async function queryEventBySlug(locale: SiteLocale, slug: string): Promise<Event | undefined> {
+const queryEventBySlug = cache(async (locale: SiteLocale, slug: string): Promise<Event | undefined> => {
   const payload = await getPayload({ config: configPromise })
   // The meeting link is excluded from the shared ISR page by field access.
   const result = await payload.find({
@@ -52,7 +52,7 @@ async function queryEventBySlug(locale: SiteLocale, slug: string): Promise<Event
     limit: 1,
   })
   return result.docs[0] as Event | undefined
-}
+})
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })

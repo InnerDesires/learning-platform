@@ -63,7 +63,7 @@ export const EventsBlockComponent: React.FC<
       const doc = byId.get(eventId)
       return doc ? [doc as EventCardData] : []
     })
-  } else {
+  } else if (populateBy !== 'selection') {
     const fetched = await payload.find({
       collection: 'events',
       depth: 1,

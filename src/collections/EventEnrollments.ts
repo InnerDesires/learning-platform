@@ -1,4 +1,5 @@
-import type { CollectionConfig, Access } from 'payload'
+import { sql } from '@payloadcms/db-postgres'
+import type { CollectionConfig, Access, PayloadRequest } from 'payload'
 import { APIError } from 'payload'
 
 import { admin } from '../access/admin'
@@ -12,6 +13,24 @@ const adminOrOwn: Access = ({ req: { user } }) => {
   return {
     user: { equals: user.id },
   }
+}
+
+const EVENT_SEATS_LOCK_NAMESPACE = 7301
+
+// Serializes registrations per event for the rest of the create transaction, so the
+// seat count below cannot be read concurrently by two requests. Without an open
+// transaction the lock would be released at once, so the guard is skipped.
+const lockEventSeats = async (req: PayloadRequest, eventId: number | string) => {
+  const transactionID = await req.transactionID
+  if (!transactionID) return
+  const sessions = (
+    req.payload.db as unknown as {
+      sessions?: Record<string, { db: { execute: (query: ReturnType<typeof sql>) => Promise<unknown> } }>
+    }
+  ).sessions
+  await sessions?.[transactionID]?.db.execute(
+    sql`select pg_advisory_xact_lock(${EVENT_SEATS_LOCK_NAMESPACE}, ${Number(eventId)})`,
+  )
 }
 
 export const EventEnrollments: CollectionConfig = {
@@ -123,6 +142,7 @@ export const EventEnrollments: CollectionConfig = {
           }
 
           if (typeof event.capacity === 'number') {
+            await lockEventSeats(req, data.event)
             const { totalDocs } = await req.payload.count({
               collection: 'event-enrollments',
               where: { event: { equals: data.event } },

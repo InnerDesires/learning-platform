@@ -132,6 +132,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
             courses: t.searchTypeCourse,
             'course-categories': t.searchTypeCategory,
             pages: t.searchTypePage,
+            events: t.searchTypeEvent,
           }}
         />
       ) : (

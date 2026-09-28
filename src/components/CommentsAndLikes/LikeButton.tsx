@@ -43,6 +43,8 @@ export function LikeButton({
     count: state.liked ? Math.max(0, state.count - 1) : state.count + 1,
   }))
   const [isPending, startTransition] = useTransition()
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
     if (initialLiked !== undefined || !active) return
@@ -50,20 +52,30 @@ export function LikeButton({
     getLikeInfo(targetCollection, targetId)
       .then((info) => {
         if (!cancelled) {
+          setLoadFailed(false)
           setRealState({ liked: info.liked, count: info.count, loaded: true })
         }
       })
       .catch(() => {
-        // A failed lookup must not leave the placeholder pulsing forever; fall back to a
-        // usable unliked button and let the next toggle reconcile the real state.
-        if (!cancelled) setRealState({ liked: false, count: 0, loaded: true })
+        // The real like state is unknown: show a neutral button without a count and let a
+        // click retry the lookup, instead of asserting "unliked, 0 likes".
+        if (!cancelled) {
+          setLoadFailed(true)
+          setRealState((state) => ({ ...state, loaded: true }))
+        }
       })
     return () => {
       cancelled = true
     }
-  }, [targetCollection, targetId, initialLiked, active])
+  }, [targetCollection, targetId, initialLiked, active, reloadKey])
 
   const handleToggle = useCallback(() => {
+    if (loadFailed) {
+      setLoadFailed(false)
+      setRealState((state) => ({ ...state, loaded: false }))
+      setReloadKey((key) => key + 1)
+      return
+    }
     if (!isAuthenticated) {
       if (loginUrl) window.location.assign(loginUrl)
       return
@@ -80,7 +92,7 @@ export function LikeButton({
         // The optimistic flip reverts when the transition settles without a state update.
       }
     })
-  }, [isAuthenticated, loginUrl, targetCollection, targetId, setOptimistic])
+  }, [loadFailed, isAuthenticated, loginUrl, targetCollection, targetId, setOptimistic])
 
   const isSm = size === 'sm'
   const iconSize = isSm ? 'w-4 h-4' : 'w-5 h-5'

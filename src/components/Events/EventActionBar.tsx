@@ -2,7 +2,6 @@
 
 import React, { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Check, LoaderCircle } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -39,7 +38,6 @@ export function EventActionBar({
   const { loading, isLoggedIn, enrolled, refresh } = useEventUserState()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
 
   if (loading) return <ActionButtonSkeleton />
 
@@ -57,7 +55,6 @@ export function EventActionBar({
       const result = await enrollInEvent(eventId)
       if (result.success) {
         await refresh()
-        router.refresh()
       } else {
         setError(result.error ?? 'Error')
       }
@@ -71,7 +68,6 @@ export function EventActionBar({
       const result = await unenrollFromEvent(eventId)
       if (result.success) {
         await refresh()
-        router.refresh()
       } else {
         setError(result.error ?? 'Error')
       }

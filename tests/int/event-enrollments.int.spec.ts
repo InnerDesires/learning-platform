@@ -156,6 +156,28 @@ describe('EventEnrollments', () => {
     expect(adminCreated.id).toBeDefined()
   })
 
+  it('never exceeds capacity when registrations arrive concurrently', async () => {
+    const tiny = await createEvent(minimalEventData('Racy Event', { capacity: 1 }))
+
+    const results = await Promise.allSettled([
+      payload.create({
+        collection: 'event-enrollments',
+        data: { user: user.id, event: tiny.id },
+      }),
+      payload.create({
+        collection: 'event-enrollments',
+        data: { user: otherUser.id, event: tiny.id },
+      }),
+    ])
+
+    expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(1)
+    const { totalDocs } = await payload.count({
+      collection: 'event-enrollments',
+      where: { event: { equals: tiny.id } },
+    })
+    expect(totalDocs).toBe(1)
+  })
+
   it('binds non-admin API registrations to the requesting user', async () => {
     const enrollment = await payload.create({
       collection: 'event-enrollments',
