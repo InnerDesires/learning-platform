@@ -20,6 +20,7 @@ type HomeContent = {
     supportName: string
     features: string[]
     mock: {
+      lesson: string
       course: string
       progress: string
       steps: string[]
@@ -111,6 +112,7 @@ const content: Record<SiteLocale, HomeContent> = {
       supportName: 'УКРЗАЛІЗНИЦЯ',
       features: ['Відеоуроки', 'Тести', 'XP та рейтинг', 'Сертифікати'],
       mock: {
+        lesson: 'Урок 3',
         course: 'Лідерство для підлітків',
         progress: '3 із 5 кроків',
         steps: ['Вступ до лідерства', 'Робота в команді', 'Публічний виступ'],
@@ -254,6 +256,7 @@ const content: Record<SiteLocale, HomeContent> = {
       supportName: 'UKRZALIZNYTSIA',
       features: ['Video lessons', 'Quizzes', 'XP & leaderboard', 'Certificates'],
       mock: {
+        lesson: 'Lesson 3',
         course: 'Leadership for teens',
         progress: '3 of 5 steps',
         steps: ['Intro to leadership', 'Teamwork', 'Public speaking'],

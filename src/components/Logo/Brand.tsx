@@ -32,7 +32,7 @@ export const Brand: React.FC<{
       <span
         className={cn(
           'font-display text-[17px] font-semibold uppercase leading-[1.1] tracking-[0.06em] whitespace-nowrap text-cloud md:text-[19px]',
-          size === 'header' && 'mt-[22px]',
+          size === 'header' && 'mt-[22px] md:hidden lg:block',
         )}
       >
         {t.brandName1} <em className="not-italic text-orange">{t.brandName2}</em>

@@ -36,7 +36,7 @@ export function AboutSection({
         aria-hidden="true"
       />
       <div className="container relative">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-stretch">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start">
           <div>
             <FadeIn>
               <Eyebrow>{tag}</Eyebrow>
@@ -67,8 +67,8 @@ export function AboutSection({
             </FadeIn>
           </div>
 
-          <FadeIn delay={300} className="h-full">
-            <div className="flex h-full flex-col justify-center rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7">
+          <FadeIn delay={300}>
+            <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7 md:p-8">
               <h3 className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-amber">
                 {goalsTitle}
               </h3>

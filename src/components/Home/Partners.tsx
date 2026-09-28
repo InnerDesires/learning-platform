@@ -28,7 +28,7 @@ function PartnerTile({ partner, featured }: { partner: Partner; featured?: boole
       title={partner.name}
       aria-label={partner.name}
       className={`group flex w-full items-center justify-center rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] transition-all duration-300 hover:-translate-y-1 hover:border-orange/60 hover:shadow-[0_18px_36px_-18px_rgb(249_140_31/0.45)] focus-visible:outline-2 focus-visible:outline-orange ${
-        featured ? 'h-32 p-6 sm:h-40 sm:p-8' : 'h-24 p-4 sm:h-28 sm:p-5'
+        featured ? 'h-24 p-5 sm:h-40 sm:p-8' : 'h-24 p-4 sm:h-28 sm:p-5'
       }`}
     >
       <img
@@ -72,9 +72,9 @@ export function PartnersSection({ tag, title, description, items }: Props) {
               </li>
             ))}
           </ul>
-          <ul className="mx-auto mt-4 grid max-w-5xl grid-cols-2 gap-4 sm:mt-5 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4">
+          <ul className="mx-auto mt-4 flex max-w-5xl flex-wrap justify-center gap-4 sm:mt-5 sm:gap-5">
             {rest.map((partner) => (
-              <li key={partner.name}>
+              <li key={partner.name} className="w-[calc(50%-8px)] sm:w-[calc(33.333%-14px)] lg:w-[calc(25%-15px)]">
                 <PartnerTile partner={partner} />
               </li>
             ))}
