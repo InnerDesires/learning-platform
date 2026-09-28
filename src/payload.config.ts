@@ -48,9 +48,17 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
+      afterNavLinks: ['@/components/admin/Docs/DocsNavLinks'],
       graphics: {
         Icon: '@/components/admin/graphics/Icon',
         Logo: '@/components/admin/graphics/Logo',
+      },
+      views: {
+        docs: {
+          Component: '@/components/admin/Docs/DocsView',
+          exact: false,
+          path: '/docs',
+        },
       },
     },
     meta: {
