@@ -234,7 +234,7 @@ export default async function EventPage({ params: paramsPromise }: Args) {
                 </section>
               )}
 
-              <section className="rounded-2xl border border-line bg-card p-6" aria-label={t.shareLabel}>
+              <section aria-label={t.shareLabel}>
                 <ShareButtons
                   url={eventUrl}
                   title={event.title}

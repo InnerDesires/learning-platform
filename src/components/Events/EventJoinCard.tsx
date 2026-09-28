@@ -10,7 +10,8 @@ import { useEventUserState } from './EventUserState'
 
 const PLATFORM_ACCENTS: Record<string, string> = {
   zoom: '#2D8CFF',
-  'google-meet': '#00897B',
+  // Same green as the "registered" badge (--success) so the two never read as different states.
+  'google-meet': '#31c47f',
   youtube: '#FF0033',
   other: '#5b9bff',
 }
@@ -68,8 +69,7 @@ export function EventJoinCard({ locale, isPast }: Props) {
             href={meetingLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#08111F] transition-all hover:-translate-y-px"
-            style={{ background: accent, boxShadow: `0 6px 20px -8px ${accent}99` }}
+            className="inline-flex items-center gap-2 rounded-full bg-orange px-6 py-3 font-display text-sm font-semibold uppercase tracking-[0.1em] text-[#1B1204] shadow-[0_6px_20px_-8px_rgb(249_140_31/0.6)] transition-all hover:-translate-y-px hover:bg-amber"
           >
             {t.eventJoin}
             <ExternalLink className="h-4 w-4" />
