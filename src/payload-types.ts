@@ -974,7 +974,13 @@ export interface Event {
   slug: string;
   description?: string | null;
   cover?: (number | null) | Media;
+  /**
+   * На сайті час відображається за часовим поясом Europe/Kyiv.
+   */
   startDate: string;
+  /**
+   * На сайті час відображається за часовим поясом Europe/Kyiv.
+   */
   endDate?: string | null;
   locationType: 'local' | 'virtual';
   /**
