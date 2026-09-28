@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Award, Check, PlayCircle, Trophy } from 'lucide-react'
+import { ArrowRight, Award, Check, Play, Trophy } from 'lucide-react'
 import { FadeIn } from './FadeIn'
 import { XpChip } from '@/components/brand'
 
@@ -16,6 +16,7 @@ type Props = {
   supportName: string
   features: string[]
   mock: {
+    lesson: string
     course: string
     progress: string
     steps: string[]
@@ -123,15 +124,32 @@ export function HeroSection({
         <FadeIn delay={300}>
           <div className="relative mx-auto w-full max-w-[440px] pb-10 pt-6 lg:mx-0 lg:ml-auto" aria-hidden="true">
             <div className="overflow-hidden rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.62),var(--navy))] shadow-[0_30px_60px_-30px_rgb(0_0_0/0.7)]">
-              <div className="relative aspect-[16/9] bg-navy-2">
+              <div
+                className="relative aspect-[16/9] overflow-hidden"
+                style={{
+                  background:
+                    'radial-gradient(360px 220px at 78% 12%, rgb(249 140 31 / 0.28), transparent 62%), radial-gradient(420px 260px at 10% 100%, rgb(42 84 176 / 0.55), transparent 65%), linear-gradient(160deg, #10204a, #0b1327)',
+                }}
+              >
                 <img
-                  src="/illustrations/course-leadership.svg"
+                  src="/illustrations/hero-lines.svg"
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="absolute -bottom-6 -right-10 w-[78%] max-w-none opacity-70"
                 />
-                <span className="absolute inset-0 grid place-items-center">
-                  <PlayCircle className="h-14 w-14 text-cloud/90 drop-shadow-lg" strokeWidth={1.5} />
+                <span className="absolute left-4 top-4 rounded-full bg-void/70 px-3 py-1 font-display text-[11px] font-semibold uppercase tracking-[0.14em] text-cloud backdrop-blur">
+                  {mock.lesson}
                 </span>
+                <span className="absolute inset-0 grid place-items-center">
+                  <span className="grid h-16 w-16 place-items-center rounded-full bg-orange shadow-[0_0_0_10px_rgb(249_140_31/0.18),0_12px_32px_-8px_rgb(249_140_31/0.7)]">
+                    <Play className="ml-0.5 h-6 w-6 text-[#1B1204]" fill="currentColor" strokeWidth={0} />
+                  </span>
+                </span>
+                <div className="absolute inset-x-4 bottom-3.5 flex items-center gap-3">
+                  <div className="h-1 flex-1 rounded-full bg-cloud/25">
+                    <div className="h-full w-2/5 rounded-full bg-orange" />
+                  </div>
+                  <span className="num text-[11px] font-semibold text-cloud/80">04:12 / 10:30</span>
+                </div>
               </div>
               <div className="p-5">
                 <h3 className="font-display text-lg font-bold uppercase tracking-[0.04em] text-cloud">
