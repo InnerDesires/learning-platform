@@ -25,9 +25,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <link href="/favicon.ico" rel="icon" sizes="48x48" />
-        <link href="/favicon-192.png" rel="icon" type="image/png" sizes="192x192" />
-        <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+        <link href="/favicon.ico?v=2" rel="icon" sizes="16x16 32x32 48x48" />
+        <link href="/favicon-192.png?v=2" rel="icon" type="image/png" sizes="192x192" />
+        <link href="/favicon-512.png?v=2" rel="icon" type="image/png" sizes="512x512" />
+        <link href="/apple-touch-icon.png?v=2" rel="apple-touch-icon" sizes="180x180" />
       </head>
       <body>
         <NextTopLoader color="var(--primary)" showSpinner={false} height={3} />
