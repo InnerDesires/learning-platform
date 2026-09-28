@@ -7,7 +7,6 @@ import type { HomeCalendar } from '@/payload-types'
 
 export const APPLY_FORM_URL = 'https://forms.gle/z2QhrPRL1uSKYU79A'
 export const LANDING_URL = 'https://www.ironsquad.org.ua'
-export const STORIES_URL = 'https://www.ironsquad.org.ua/history'
 
 type HomeContent = {
   hero: {
@@ -29,7 +28,6 @@ type HomeContent = {
     }
   }
   about: {
-    stats: { value: number; label: string }[]
     tag: string
     title: string
     description: string
@@ -38,7 +36,14 @@ type HomeContent = {
     goals: string[]
     support: string
     cta: string
-    storiesCta: string
+  }
+  platform: {
+    tag: string
+    title: string
+    features: { title: string; text: string }[]
+    statsTag: string
+    statsTitle: string
+    stats: { value: number; label: string }[]
   }
   partners: {
     tag: string
@@ -72,8 +77,11 @@ type HomeContent = {
     facebook: string
     tiktok: string
     discord: string
-    cta: string
-    ctaSecondary: string
+    description: string
+    detailsTitle: string
+    socialsTitle: string
+    write: string
+    writeVia: { telegram: string; email: string; phone: string }
   }
   courses: {
     tag: string
@@ -111,11 +119,6 @@ const content: Record<SiteLocale, HomeContent> = {
       },
     },
     about: {
-      stats: [
-        { value: 9400, label: 'дітей у проєкті' },
-        { value: 72, label: 'зміни проведено' },
-        { value: 590, label: 'тренінгів і курсів' },
-      ],
       tag: 'Про нас',
       title: 'Комʼюніті майбутнього покоління',
       description:
@@ -133,7 +136,24 @@ const content: Record<SiteLocale, HomeContent> = {
       support:
         'Проєкт реалізується за підтримки АТ «Укрзалізниця» та міжнародних партнерів — Howard G. Buffett Foundation та Nova Ukraine.',
       cta: 'Дізнатися більше',
-      storiesCta: 'Історії дітей',
+    },
+    platform: {
+      tag: 'Про платформу',
+      title: 'Усе для навчання в одному місці',
+      features: [
+        { title: 'Відеоуроки', text: 'Короткі уроки та матеріали, які можна проходити у власному темпі.' },
+        { title: 'Тести', text: 'Фінальний тест перевіряє засвоєне й відкриває сертифікат.' },
+        { title: 'XP та рівні', text: 'За кожен крок і тест нараховується XP — навчання стає грою.' },
+        { title: 'Рейтинг', text: 'Порівнюй свої результати з іншими учасниками в таблиці лідерів.' },
+        { title: 'Сертифікати', text: 'Завершив курс — отримай сертифікат, який можна завантажити.' },
+      ],
+      statsTag: 'Наші досягнення',
+      statsTitle: 'Проєкт у цифрах',
+      stats: [
+        { value: 9400, label: 'дітей у проєкті' },
+        { value: 72, label: 'зміни проведено' },
+        { value: 590, label: 'тренінгів і курсів' },
+      ],
     },
     partners: {
       tag: 'Партнери',
@@ -201,8 +221,11 @@ const content: Record<SiteLocale, HomeContent> = {
       facebook: 'https://www.facebook.com/zaliznazmina',
       tiktok: 'https://www.tiktok.com/@zaliznazmina.uz',
       discord: 'https://discord.gg/EQgr3vxe57',
-      cta: 'Telegram',
-      ctaSecondary: 'Написати нам',
+      description: 'Маєте запитання про платформу чи проєкт? Напишіть нам — відповімо якнайшвидше.',
+      detailsTitle: 'Контакти',
+      socialsTitle: 'Ми в соцмережах',
+      write: 'Написати нам',
+      writeVia: { telegram: 'У Telegram', email: 'На пошту', phone: 'Зателефонувати' },
     },
     courses: {
       tag: 'Онлайн навчання',
@@ -239,11 +262,6 @@ const content: Record<SiteLocale, HomeContent> = {
       },
     },
     about: {
-      stats: [
-        { value: 9400, label: 'children in the project' },
-        { value: 72, label: 'shifts held' },
-        { value: 590, label: 'trainings and courses' },
-      ],
       tag: 'About us',
       title: 'The community of the next generation',
       description:
@@ -261,7 +279,24 @@ const content: Record<SiteLocale, HomeContent> = {
       support:
         "The project is implemented with the support of JSC 'Ukrzaliznytsia' and international partners — the Howard G. Buffett Foundation and Nova Ukraine.",
       cta: 'Learn more',
-      storiesCta: "Children's stories",
+    },
+    platform: {
+      tag: 'About the platform',
+      title: 'Everything for learning in one place',
+      features: [
+        { title: 'Video lessons', text: 'Short lessons and materials you can complete at your own pace.' },
+        { title: 'Quizzes', text: 'A final quiz checks what you learned and unlocks your certificate.' },
+        { title: 'XP and levels', text: 'Every step and quiz earns XP — learning becomes a game.' },
+        { title: 'Leaderboard', text: 'Compare your results with other participants on the leaderboard.' },
+        { title: 'Certificates', text: 'Finish a course and get a certificate you can download.' },
+      ],
+      statsTag: 'Our achievements',
+      statsTitle: 'The project in numbers',
+      stats: [
+        { value: 9400, label: 'children in the project' },
+        { value: 72, label: 'shifts held' },
+        { value: 590, label: 'trainings and courses' },
+      ],
     },
     partners: {
       tag: 'Partners',
@@ -329,8 +364,11 @@ const content: Record<SiteLocale, HomeContent> = {
       facebook: 'https://www.facebook.com/zaliznazmina',
       tiktok: 'https://www.tiktok.com/@zaliznazmina.uz',
       discord: 'https://discord.gg/EQgr3vxe57',
-      cta: 'Telegram',
-      ctaSecondary: 'Contact us',
+      description: 'Have a question about the platform or the project? Write to us — we will reply as soon as we can.',
+      detailsTitle: 'Contacts',
+      socialsTitle: 'Follow us',
+      write: 'Contact us',
+      writeVia: { telegram: 'On Telegram', email: 'By email', phone: 'Call us' },
     },
     courses: {
       tag: 'Online learning',

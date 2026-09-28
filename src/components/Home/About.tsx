@@ -3,11 +3,9 @@
 import { ArrowRight, Check } from 'lucide-react'
 import { FadeIn } from './FadeIn'
 import { Eyebrow, AccentLine } from '@/components/brand'
-import { StatCounter } from './Stats'
-import { LANDING_URL, STORIES_URL } from './content'
+import { LANDING_URL } from './content'
 
 type Props = {
-  stats: { value: number; label: string }[]
   tag: string
   title: string
   description: string
@@ -16,11 +14,9 @@ type Props = {
   goals: string[]
   support: string
   cta: string
-  storiesCta: string
 }
 
 export function AboutSection({
-  stats,
   tag,
   title,
   description,
@@ -29,7 +25,6 @@ export function AboutSection({
   goals,
   support,
   cta,
-  storiesCta,
 }: Props) {
   return (
     <section id="about" className="relative scroll-mt-24 overflow-hidden py-24">
@@ -41,7 +36,7 @@ export function AboutSection({
         aria-hidden="true"
       />
       <div className="container relative">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-stretch">
           <div>
             <FadeIn>
               <Eyebrow>{tag}</Eyebrow>
@@ -57,23 +52,6 @@ export function AboutSection({
             <FadeIn delay={350}>
               <p className="mt-6 text-[13px] leading-relaxed text-steel">{support}</p>
             </FadeIn>
-            <FadeIn delay={400}>
-              <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 border-t border-line pt-6">
-                {stats.map((stat) => (
-                  <div key={stat.label}>
-                    <dt className="sr-only">{stat.label}</dt>
-                    <dd>
-                      <b className="num block font-display text-[clamp(26px,3.4vw,36px)] font-extrabold leading-none text-orange">
-                        <StatCounter value={stat.value} />
-                      </b>
-                      <span className="mt-1.5 block text-[11.5px] font-semibold uppercase tracking-[0.08em] text-fog">
-                        {stat.label}
-                      </span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </FadeIn>
             <FadeIn delay={450}>
               <div className="mt-8 flex flex-wrap gap-3.5">
                 <a
@@ -85,21 +63,12 @@ export function AboutSection({
                   {cta}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
-                <a
-                  href={STORIES_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-amber transition-colors hover:text-orange"
-                >
-                  {storiesCta}
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
               </div>
             </FadeIn>
           </div>
 
-          <FadeIn delay={300}>
-            <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7">
+          <FadeIn delay={300} className="h-full">
+            <div className="flex h-full flex-col justify-center rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7">
               <h3 className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-amber">
                 {goalsTitle}
               </h3>

@@ -5,6 +5,7 @@ import type { SiteLocale } from '@/utilities/locales'
 import { getHomeContent, type CalendarContent } from './content'
 import { HeroSection } from './Hero'
 import { AboutSection } from './About'
+import { PlatformSection } from './Platform'
 import { CoursesSection } from './Courses'
 import { PartnersSection } from './Partners'
 import { CalendarSection } from './Calendar'
@@ -18,8 +19,8 @@ type Props = {
   coursesSlot: ReactNode
 }
 
-// Order: platform (hero, courses) → live content (news) → the project behind it
-// (about) → join a shift (calendar) → trust (partners) → contact.
+// Order: hero → about → platform & achievements → courses → news & shift calendar
+// → partners → contact.
 export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
   const c = getHomeContent(locale)
 
@@ -27,19 +28,18 @@ export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
     <main className="overflow-x-clip">
       <HeroSection {...c.hero} locale={locale} />
       <SectionDivider className="-mt-px" />
-      <CoursesSection {...c.courses} locale={locale}>
+      <AboutSection {...c.about} />
+      <PlatformSection {...c.platform} />
+      <CoursesSection {...c.courses} locale={locale} className="mt-16">
         {coursesSlot}
       </CoursesSection>
 
       <div id="news" className="band on-paper mt-14 scroll-mt-24">
-        <div className="container">{newsSlot}</div>
-      </div>
-
-      <AboutSection {...c.about} />
-
-      <div id="calendar" className="band on-paper scroll-mt-24">
         <div className="container">
-          <CalendarSection {...calendar} />
+          {newsSlot}
+          <div id="calendar" className="scroll-mt-24">
+            <CalendarSection {...calendar} />
+          </div>
         </div>
       </div>
 
