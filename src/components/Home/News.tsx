@@ -60,7 +60,7 @@ export function NewsSection({ tag, title, cta, items, locale }: Props) {
         />
       </FadeIn>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 sm:[&>*:nth-child(3)]:hidden lg:grid-cols-3 lg:[&>*:nth-child(3)]:block">
         {items.map((item, i) => (
           <FadeIn key={item.slug} delay={100 + i * 100}>
             <article className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-[#E4DFD2] bg-white text-ink transition-all duration-200 hover:-translate-y-1 hover:border-orange hover:shadow-[0_14px_34px_-18px_rgb(14_27_58/0.4)]">

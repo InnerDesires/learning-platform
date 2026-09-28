@@ -151,7 +151,7 @@ export function HeroSection({
                   <span className="num text-[11px] font-semibold text-cloud/80">04:12 / 10:30</span>
                 </div>
               </div>
-              <div className="p-5">
+              <div className="p-5 pb-11">
                 <h3 className="font-display text-lg font-bold uppercase tracking-[0.04em] text-cloud">
                   {mock.course}
                 </h3>
@@ -182,7 +182,7 @@ export function HeroSection({
 
             <XpChip
               xp={30}
-              className="absolute right-2 top-0 -rotate-3 shadow-[0_10px_24px_-10px_rgb(249_140_31/0.7)] sm:-right-4"
+              className="absolute right-2 top-0 -rotate-3 rounded-full border border-orange/40 bg-void px-3.5 py-1.5 shadow-[0_10px_24px_-10px_rgb(249_140_31/0.7)] sm:-right-4"
             />
 
             <div className="absolute -bottom-0 left-2 flex items-center gap-3 rounded-xl border border-line-2 bg-void px-4 py-3 shadow-[0_18px_36px_-16px_rgb(0_0_0/0.8)] sm:-left-6">

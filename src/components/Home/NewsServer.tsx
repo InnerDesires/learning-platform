@@ -59,7 +59,7 @@ export function NewsSectionSkeleton({ locale }: Props) {
           {c.news.title}
         </h2>
       </div>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-2 sm:[&>*:nth-child(3)]:hidden lg:grid-cols-3 lg:[&>*:nth-child(3)]:block">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
