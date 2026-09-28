@@ -12,6 +12,8 @@ import { CourseCategories } from './collections/CourseCategories'
 import { CourseFiles } from './collections/CourseFiles'
 import { Courses } from './collections/Courses'
 import { Enrollments } from './collections/Enrollments'
+import { EventEnrollments } from './collections/EventEnrollments'
+import { Events } from './collections/Events'
 import { Likes } from './collections/Likes'
 import { QuizAttempts } from './collections/QuizAttempts'
 import { XpEvents } from './collections/XpEvents'
@@ -119,6 +121,8 @@ export default buildConfig({
     CourseFiles,
     Courses,
     Enrollments,
+    Events,
+    EventEnrollments,
     Comments,
     Likes,
     QuizAttempts,
@@ -127,6 +131,9 @@ export default buildConfig({
   cors: [
     getServerSideURL(),
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+    process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL
+      ? `https://${process.env.VERCEL_BRANCH_URL}`
+      : '',
   ].filter(Boolean),
   globals: [Header, Footer, HomeCalendar],
   i18n: {

@@ -9,6 +9,15 @@ export const getServerSideURL = () => {
   )
 }
 
+// PR previews are opened on the stable branch alias, which may contain routes
+// that do not exist on the production domain yet.
+export const getPreviewAwareServerURL = (): string => {
+  const previewHost = process.env.VERCEL_ENV === 'preview'
+    ? process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL
+    : undefined
+  return previewHost ? `https://${previewHost}` : getServerSideURL()
+}
+
 export const getClientSideURL = () => {
   if (canUseDOM) {
     const protocol = window.location.protocol

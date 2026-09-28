@@ -6,6 +6,7 @@ type FrontendMessages = {
   searchTypeCourse: string
   searchTypeCategory: string
   searchTypePage: string
+  searchTypeEvent: string
   postsEyebrow: string
   coursesEyebrow: string
   coursesSub: string
@@ -246,6 +247,8 @@ type FrontendMessages = {
   commentsDeleteConfirm: string
   commentsShowReplies: string
   commentsHideReplies: string
+  commentsLoadError: string
+  commentsRetry: string
   likesCount: string
   likeLiked: string
   likeNotLiked: string
@@ -305,6 +308,48 @@ type FrontendMessages = {
   forgotResetting: string
   forgotSuccess: string
   forgotErrorGeneric: string
+  eventsTitle: string
+  eventsMetaTitle: string
+  eventsEyebrow: string
+  eventsSub: string
+  eventsUpcoming: string
+  eventsPast: string
+  eventsEmptyUpcoming: string
+  eventsEmptyPast: string
+  eventsNextEvent: string
+  eventOnline: string
+  eventOffline: string
+  eventFinished: string
+  eventEnroll: string
+  eventUnenroll: string
+  eventUnenrollConfirm: string
+  eventEnrolledBadge: string
+  eventFull: string
+  eventSeatsLeft: string
+  eventParticipantsPlural: string
+  eventLoginToEnroll: string
+  eventSignIn: string
+  eventBackToEvents: string
+  eventLocationTitle: string
+  eventOpenMap: string
+  eventJoinTitle: string
+  eventJoin: string
+  eventJoinHint: string
+  eventJoinLocked: string
+  eventAddToCalendar: string
+  eventGoogleCalendar: string
+  eventDownloadIcs: string
+  eventStartLabel: string
+  eventEndLabel: string
+  eventScheduleTitle: string
+  eventTimeZone: string
+  eventStartsInDaysPlural: string
+  eventStartsInHoursPlural: string
+  eventStartsInMinutesPlural: string
+  eventStartsInSuffix: string
+  eventStartsNow: string
+  profileUpcomingEvents: string
+  eventsBlockSeeAll: string
 }
 
 const frontendMessages: Record<SiteLocale, FrontendMessages> = {
@@ -314,6 +359,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     searchTypeCourse: 'Курс',
     searchTypeCategory: 'Категорія',
     searchTypePage: 'Сторінка',
+    searchTypeEvent: 'Подія',
     postsEyebrow: 'Блог проєкту',
     coursesEyebrow: 'Каталог',
     coursesSub: 'Обирай курс, проходь кроки, складай фінальний тест — збирай XP і отримуй сертифікат.',
@@ -559,6 +605,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     commentsDeleteConfirm: 'Ви впевнені, що хочете видалити цей коментар?',
     commentsShowReplies: 'Показати відповіді',
     commentsHideReplies: 'Сховати відповіді',
+    commentsLoadError: 'Не вдалося завантажити коментарі.',
+    commentsRetry: 'Спробувати ще раз',
     likesCount: 'вподобань',
     likeLiked: 'Вам сподобалось',
     likeNotLiked: 'Вподобати',
@@ -621,6 +669,48 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     forgotResetting: 'Зберігаємо…',
     forgotSuccess: 'Пароль змінено. Тепер ви можете увійти.',
     forgotErrorGeneric: 'Не вдалося скинути пароль. Перевірте код і спробуйте ще раз.',
+    eventsTitle: 'Події',
+    eventsMetaTitle: 'Події | Залізна Зміна',
+    eventsEyebrow: 'Календар',
+    eventsSub: 'Зустрічі, табори та онлайн-зміни спільноти — реєструйся та приєднуйся.',
+    eventsUpcoming: 'Майбутні',
+    eventsPast: 'Минулі',
+    eventsEmptyUpcoming: 'Найближчих подій поки немає — зазирни згодом.',
+    eventsEmptyPast: 'Минулих подій ще немає.',
+    eventsNextEvent: 'Найближча подія',
+    eventOnline: 'Онлайн',
+    eventOffline: 'Офлайн',
+    eventFinished: 'Завершилась',
+    eventEnroll: 'Зареєструватися',
+    eventUnenroll: 'Скасувати реєстрацію',
+    eventUnenrollConfirm: 'Скасувати вашу реєстрацію на цю подію?',
+    eventEnrolledBadge: 'Ви зареєстровані',
+    eventFull: 'Вільних місць немає',
+    eventSeatsLeft: 'Залишилось місць:',
+    eventParticipantsPlural: 'учасник|учасники|учасників',
+    eventLoginToEnroll: 'Увійдіть, щоб зареєструватися на подію',
+    eventSignIn: 'Увійти',
+    eventBackToEvents: 'До всіх подій',
+    eventLocationTitle: 'Місце проведення',
+    eventOpenMap: 'Відкрити мапу',
+    eventJoinTitle: 'Онлайн-зустріч',
+    eventJoin: 'Приєднатися',
+    eventJoinHint: 'Посилання на зустріч доступне після реєстрації.',
+    eventJoinLocked: 'Зареєструйтесь, щоб отримати посилання на зустріч',
+    eventAddToCalendar: 'Додати в календар',
+    eventGoogleCalendar: 'Google Календар',
+    eventDownloadIcs: 'Файл .ics',
+    eventStartLabel: 'Початок',
+    eventEndLabel: 'Завершення',
+    eventScheduleTitle: 'Коли і де',
+    eventTimeZone: 'За київським часом',
+    eventStartsInDaysPlural: 'день|дні|днів',
+    eventStartsInHoursPlural: 'година|години|годин',
+    eventStartsInMinutesPlural: 'хвилина|хвилини|хвилин',
+    eventStartsInSuffix: 'до початку',
+    eventStartsNow: 'Вже триває',
+    profileUpcomingEvents: 'Мої події',
+    eventsBlockSeeAll: 'Всі події',
   },
   en: {
     searchTitle: 'Search',
@@ -628,6 +718,7 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     searchTypeCourse: 'Course',
     searchTypeCategory: 'Category',
     searchTypePage: 'Page',
+    searchTypeEvent: 'Event',
     postsEyebrow: 'Project blog',
     coursesEyebrow: 'Catalog',
     coursesSub: 'Pick a course, complete the steps, pass the final quiz — earn XP and get a certificate.',
@@ -872,6 +963,8 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     commentsDeleteConfirm: 'Are you sure you want to delete this comment?',
     commentsShowReplies: 'Show replies',
     commentsHideReplies: 'Hide replies',
+    commentsLoadError: 'Could not load comments.',
+    commentsRetry: 'Try again',
     likesCount: 'likes',
     likeLiked: 'Liked',
     likeNotLiked: 'Like',
@@ -934,6 +1027,48 @@ const frontendMessages: Record<SiteLocale, FrontendMessages> = {
     forgotResetting: 'Saving…',
     forgotSuccess: 'Password changed. You can now log in.',
     forgotErrorGeneric: 'Could not reset password. Check the code and try again.',
+    eventsTitle: 'Events',
+    eventsMetaTitle: 'Events | Iron Squad',
+    eventsEyebrow: 'Calendar',
+    eventsSub: 'Community meetups, camps and online sessions — register and join in.',
+    eventsUpcoming: 'Upcoming',
+    eventsPast: 'Past',
+    eventsEmptyUpcoming: 'No upcoming events yet — check back soon.',
+    eventsEmptyPast: 'No past events yet.',
+    eventsNextEvent: 'Next event',
+    eventOnline: 'Online',
+    eventOffline: 'In person',
+    eventFinished: 'Finished',
+    eventEnroll: 'Register',
+    eventUnenroll: 'Cancel registration',
+    eventUnenrollConfirm: 'Cancel your registration for this event?',
+    eventEnrolledBadge: 'You are registered',
+    eventFull: 'No seats left',
+    eventSeatsLeft: 'Seats left:',
+    eventParticipantsPlural: 'participant|participants|participants',
+    eventLoginToEnroll: 'Sign in to register for this event',
+    eventSignIn: 'Sign in',
+    eventBackToEvents: 'All events',
+    eventLocationTitle: 'Location',
+    eventOpenMap: 'Open map',
+    eventJoinTitle: 'Online meeting',
+    eventJoin: 'Join',
+    eventJoinHint: 'The meeting link becomes available after you register.',
+    eventJoinLocked: 'Register to get the meeting link',
+    eventAddToCalendar: 'Add to calendar',
+    eventGoogleCalendar: 'Google Calendar',
+    eventDownloadIcs: '.ics file',
+    eventStartLabel: 'Start',
+    eventEndLabel: 'End',
+    eventScheduleTitle: 'When and where',
+    eventTimeZone: 'Kyiv time',
+    eventStartsInDaysPlural: 'day|days|days',
+    eventStartsInHoursPlural: 'hour|hours|hours',
+    eventStartsInMinutesPlural: 'minute|minutes|minutes',
+    eventStartsInSuffix: 'to start',
+    eventStartsNow: 'Happening now',
+    profileUpcomingEvents: 'My events',
+    eventsBlockSeeAll: 'All events',
   },
 }
 

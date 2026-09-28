@@ -79,6 +79,7 @@ export const Comments: CollectionConfig = {
       options: [
         { label: 'Публікації', value: 'posts' },
         { label: 'Курси', value: 'courses' },
+        { label: 'Події', value: 'events' },
       ],
       index: true,
     },

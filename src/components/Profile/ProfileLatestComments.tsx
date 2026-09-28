@@ -49,12 +49,15 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
   const courseIds = topGroups
     .filter((g) => g.latest.targetCollection === 'courses')
     .map((g) => g.latest.targetId)
+  const eventIds = topGroups
+    .filter((g) => g.latest.targetCollection === 'events')
+    .map((g) => g.latest.targetId)
   const parentIds = topGroups
     .map((g) => g.latest.parent)
     .filter((p): p is number => typeof p === 'number')
   const displayedIds = topGroups.map((g) => g.latest.id)
 
-  const [postsRes, coursesRes, parentsRes, likesRes] = await Promise.all([
+  const [postsRes, coursesRes, eventsRes, parentsRes, likesRes] = await Promise.all([
     postIds.length
       ? payload.find({
           collection: 'posts',
@@ -71,6 +74,16 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
           where: { id: { in: courseIds }, _status: { equals: 'published' } },
           depth: 0,
           limit: courseIds.length,
+          select: { title: true, slug: true },
+        })
+      : null,
+    eventIds.length
+      ? payload.find({
+          collection: 'events',
+          locale,
+          where: { id: { in: eventIds }, _status: { equals: 'published' } },
+          depth: 0,
+          limit: eventIds.length,
           select: { title: true, slug: true },
         })
       : null,
@@ -103,6 +116,12 @@ export async function ProfileLatestComments({ userId, locale }: Props) {
     targets.set(`courses:${course.id}`, {
       title: course.title,
       url: `${prefix}/courses/${course.slug}#comments`,
+    })
+  }
+  for (const event of eventsRes?.docs ?? []) {
+    targets.set(`events:${event.id}`, {
+      title: event.title,
+      url: `${prefix}/events/${event.slug}#comments`,
     })
   }
 
