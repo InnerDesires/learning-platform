@@ -85,7 +85,7 @@ export async function CategoryCarousels({
                 <h3 className="heading-display text-[clamp(17px,2.2vw,22px)]">{cat.title}</h3>
                 <ArrowRight className="h-4 w-4 flex-none text-orange transition-transform group-hover:translate-x-1" />
               </Link>
-              <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-1 md:-mx-8 md:px-8">
+              <div className="no-scrollbar -mx-4 -mt-2 flex snap-x gap-4 overflow-x-auto px-4 pb-1 pt-2 md:-mx-8 md:px-8">
                 {visibleCourses.map((course) => (
                   <CourseCard
                     key={course.id}

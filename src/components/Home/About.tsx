@@ -2,8 +2,8 @@
 
 import { ArrowRight, Check } from 'lucide-react'
 import { FadeIn } from './FadeIn'
-import { Eyebrow, Rails } from '@/components/brand'
-import { LANDING_URL, STORIES_URL } from './content'
+import { Eyebrow, AccentLine } from '@/components/brand'
+import { LANDING_URL } from './content'
 
 type Props = {
   tag: string
@@ -14,7 +14,6 @@ type Props = {
   goals: string[]
   support: string
   cta: string
-  storiesCta: string
 }
 
 export function AboutSection({
@@ -26,7 +25,6 @@ export function AboutSection({
   goals,
   support,
   cta,
-  storiesCta,
 }: Props) {
   return (
     <section id="about" className="relative scroll-mt-24 overflow-hidden py-24">
@@ -38,12 +36,12 @@ export function AboutSection({
         aria-hidden="true"
       />
       <div className="container relative">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-stretch">
           <div>
             <FadeIn>
               <Eyebrow>{tag}</Eyebrow>
               <h2 className="heading-display mt-2.5 text-[clamp(26px,3.4vw,38px)]">{title}</h2>
-              <Rails className="mt-4" />
+              <AccentLine className="mt-4" />
             </FadeIn>
             <FadeIn delay={150}>
               <p className="mt-7 leading-relaxed text-fog">{description}</p>
@@ -65,21 +63,12 @@ export function AboutSection({
                   {cta}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </a>
-                <a
-                  href={STORIES_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-amber transition-colors hover:text-orange"
-                >
-                  {storiesCta}
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
               </div>
             </FadeIn>
           </div>
 
-          <FadeIn delay={300}>
-            <div className="rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7">
+          <FadeIn delay={300} className="h-full">
+            <div className="flex h-full flex-col justify-center rounded-2xl border border-line-2 bg-[linear-gradient(150deg,rgb(4_40_113/0.5),var(--navy))] p-7">
               <h3 className="font-display text-sm font-semibold uppercase tracking-[0.14em] text-amber">
                 {goalsTitle}
               </h3>
