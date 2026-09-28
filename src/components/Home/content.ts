@@ -19,11 +19,17 @@ type HomeContent = {
     ctaSecondary: string
     supportLabel: string
     supportName: string
-  }
-  stats: {
-    children: { value: number; label: string; suffix?: string }[]
+    features: string[]
+    mock: {
+      course: string
+      progress: string
+      steps: string[]
+      quiz: string
+      certificate: string
+    }
   }
   about: {
+    stats: { value: number; label: string }[]
     tag: string
     title: string
     description: string
@@ -38,7 +44,7 @@ type HomeContent = {
     tag: string
     title: string
     description: string
-    names: { name: string; url: string }[]
+    items: { name: string; url: string; logo: string }[]
   }
   calendar: {
     tag: string
@@ -86,24 +92,30 @@ type HomeContent = {
 const content: Record<SiteLocale, HomeContent> = {
   uk: {
     hero: {
-      kick: 'Онлайн-платформа проєкту',
-      title1: 'Залізна',
-      title2: 'Зміна',
+      kick: 'Освітня платформа «Залізної Зміни»',
+      title1: 'Прокачуй',
+      title2: 'свій потенціал',
       subtitle:
-        'Унікальний проєкт розвитку талановитої молоді України. Навчайся онлайн, проходь курси та тести, збирай XP і отримуй сертифікати — у своєму темпі.',
-      cta: 'Почати навчання',
-      ctaSecondary: 'Про проєкт',
+        'Відеоуроки, практичні матеріали та тести від команди «Залізної Зміни». Навчайся у своєму темпі, збирай XP, підіймайся в рейтингу та отримуй сертифікати.',
+      cta: 'Обрати курс',
+      ctaSecondary: 'Створити акаунт',
       supportLabel: 'За підтримки',
       supportName: 'УКРЗАЛІЗНИЦЯ',
+      features: ['Відеоуроки', 'Тести', 'XP та рейтинг', 'Сертифікати'],
+      mock: {
+        course: 'Лідерство для підлітків',
+        progress: '3 із 5 кроків',
+        steps: ['Вступ до лідерства', 'Робота в команді', 'Публічний виступ'],
+        quiz: 'Фінальний тест',
+        certificate: 'Сертифікат',
+      },
     },
-    stats: {
-      children: [
+    about: {
+      stats: [
         { value: 9400, label: 'дітей у проєкті' },
         { value: 72, label: 'зміни проведено' },
         { value: 590, label: 'тренінгів і курсів' },
       ],
-    },
-    about: {
       tag: 'Про нас',
       title: 'Комʼюніті майбутнього покоління',
       description:
@@ -128,17 +140,21 @@ const content: Record<SiteLocale, HomeContent> = {
       title: 'Нам довіряють',
       description:
         'Проєкт реалізується за підтримки АТ «Укрзалізниця» та міжнародних партнерів — Howard G. Buffett Foundation та Nova Ukraine. Нас підтримують провідні українські компанії та інституції.',
-      names: [
-        { name: 'Укрзалізниця', url: 'https://www.uz.gov.ua/' },
-        { name: 'Howard G. Buffett Foundation', url: 'https://www.thehowardgbuffettfoundation.org/' },
-        { name: 'Nova Ukraine', url: 'https://novaukraine.org/' },
-        { name: 'Ajax Systems', url: 'https://ajax.systems/ua/about/' },
-        { name: 'Sense Bank', url: 'https://sensebank.ua/' },
-        { name: 'Superhumans', url: 'https://superhumans.com/' },
-        { name: 'Суспільне', url: 'https://suspilne.media/' },
-        { name: 'МЗС України', url: 'https://mfa.gov.ua/' },
-        { name: 'МВС України', url: 'https://mvs.gov.ua/' },
-        { name: 'The Wall', url: 'https://www.thewall.lviv.ua/' },
+      items: [
+        { name: 'Укрзалізниця', url: 'https://www.uz.gov.ua/', logo: '/partners/ukrzaliznytsia.png' },
+        { name: 'Howard G. Buffett Foundation', url: 'https://www.thehowardgbuffettfoundation.org/', logo: '/partners/buffet-logo-w.png' },
+        { name: 'Nova Ukraine', url: 'https://novaukraine.org/', logo: '/partners/nova-ukraine-logo-w.png' },
+        { name: 'ФК Локомотив', url: 'https://www.facebook.com/fc.lokomotyv.ua/', logo: '/partners/loko-logo-w.png' },
+        { name: 'Sense Bank', url: 'https://sensebank.ua/', logo: '/partners/sense-w.png' },
+        { name: 'Ajax Systems', url: 'https://ajax.systems/ua/about/', logo: '/partners/ajax-logo-w.png' },
+        { name: 'The Wall', url: 'https://www.thewall.lviv.ua/', logo: '/partners/thewall-logo-w.png' },
+        { name: 'Українська академія лідерства', url: 'https://ual.ua/', logo: '/partners/ual.png' },
+        { name: 'Суспільне', url: 'https://suspilne.media/', logo: '/partners/suspilne.png' },
+        { name: 'Міністерство закордонних справ', url: 'https://mfa.gov.ua/', logo: '/partners/mfa.png' },
+        { name: 'Міністерство внутрішніх справ', url: 'https://mvs.gov.ua/', logo: '/partners/mvs.png' },
+        { name: 'Chevalier Panorama', url: 'https://chevalier-panorama.com/', logo: '/partners/chevalier.png' },
+        { name: 'Superhumans', url: 'https://superhumans.com/', logo: '/partners/superhumans.png' },
+        { name: 'Всеукраїнська Рада Реанімації', url: 'https://urc.org.ua/', logo: '/partners/urc.png' },
       ],
     },
     calendar: {
@@ -204,24 +220,30 @@ const content: Record<SiteLocale, HomeContent> = {
   },
   en: {
     hero: {
-      kick: "The project's online platform",
-      title1: 'Iron',
-      title2: 'Squad',
+      kick: 'The Iron Squad learning platform',
+      title1: 'Level up',
+      title2: 'your potential',
       subtitle:
-        'A unique development project for talented Ukrainian youth. Learn online, take courses and quizzes, earn XP and certificates — at your own pace.',
-      cta: 'Start learning',
-      ctaSecondary: 'About the project',
+        'Video lessons, practical materials and quizzes from the Iron Squad team. Learn at your own pace, earn XP, climb the leaderboard and collect certificates.',
+      cta: 'Browse courses',
+      ctaSecondary: 'Create an account',
       supportLabel: 'Supported by',
       supportName: 'UKRZALIZNYTSIA',
+      features: ['Video lessons', 'Quizzes', 'XP & leaderboard', 'Certificates'],
+      mock: {
+        course: 'Leadership for teens',
+        progress: '3 of 5 steps',
+        steps: ['Intro to leadership', 'Teamwork', 'Public speaking'],
+        quiz: 'Final quiz',
+        certificate: 'Certificate',
+      },
     },
-    stats: {
-      children: [
+    about: {
+      stats: [
         { value: 9400, label: 'children in the project' },
         { value: 72, label: 'shifts held' },
         { value: 590, label: 'trainings and courses' },
       ],
-    },
-    about: {
       tag: 'About us',
       title: 'The community of the next generation',
       description:
@@ -246,17 +268,21 @@ const content: Record<SiteLocale, HomeContent> = {
       title: 'Trusted by',
       description:
         "The project is implemented with the support of JSC 'Ukrzaliznytsia' and international partners — the Howard G. Buffett Foundation and Nova Ukraine. Leading Ukrainian companies and institutions support us.",
-      names: [
-        { name: 'Ukrzaliznytsia', url: 'https://www.uz.gov.ua/' },
-        { name: 'Howard G. Buffett Foundation', url: 'https://www.thehowardgbuffettfoundation.org/' },
-        { name: 'Nova Ukraine', url: 'https://novaukraine.org/' },
-        { name: 'Ajax Systems', url: 'https://ajax.systems/ua/about/' },
-        { name: 'Sense Bank', url: 'https://sensebank.ua/' },
-        { name: 'Superhumans', url: 'https://superhumans.com/' },
-        { name: 'Suspilne', url: 'https://suspilne.media/' },
-        { name: 'MFA of Ukraine', url: 'https://mfa.gov.ua/' },
-        { name: 'MIA of Ukraine', url: 'https://mvs.gov.ua/' },
-        { name: 'The Wall', url: 'https://www.thewall.lviv.ua/' },
+      items: [
+        { name: 'Ukrzaliznytsia', url: 'https://www.uz.gov.ua/', logo: '/partners/ukrzaliznytsia.png' },
+        { name: 'Howard G. Buffett Foundation', url: 'https://www.thehowardgbuffettfoundation.org/', logo: '/partners/buffet-logo-w.png' },
+        { name: 'Nova Ukraine', url: 'https://novaukraine.org/', logo: '/partners/nova-ukraine-logo-w.png' },
+        { name: 'FC Lokomotyv', url: 'https://www.facebook.com/fc.lokomotyv.ua/', logo: '/partners/loko-logo-w.png' },
+        { name: 'Sense Bank', url: 'https://sensebank.ua/', logo: '/partners/sense-w.png' },
+        { name: 'Ajax Systems', url: 'https://ajax.systems/ua/about/', logo: '/partners/ajax-logo-w.png' },
+        { name: 'The Wall', url: 'https://www.thewall.lviv.ua/', logo: '/partners/thewall-logo-w.png' },
+        { name: 'Ukrainian Leadership Academy', url: 'https://ual.ua/', logo: '/partners/ual.png' },
+        { name: 'Suspilne', url: 'https://suspilne.media/', logo: '/partners/suspilne.png' },
+        { name: 'Ministry of Foreign Affairs of Ukraine', url: 'https://mfa.gov.ua/', logo: '/partners/mfa.png' },
+        { name: 'Ministry of Internal Affairs of Ukraine', url: 'https://mvs.gov.ua/', logo: '/partners/mvs.png' },
+        { name: 'Chevalier Panorama', url: 'https://chevalier-panorama.com/', logo: '/partners/chevalier.png' },
+        { name: 'Superhumans', url: 'https://superhumans.com/', logo: '/partners/superhumans.png' },
+        { name: 'Ukrainian Resuscitation Council', url: 'https://urc.org.ua/', logo: '/partners/urc.png' },
       ],
     },
     calendar: {

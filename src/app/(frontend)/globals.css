@@ -255,34 +255,46 @@
     text-wrap: balance;
   }
 
-  /* railway-track motif under headings */
-  .rails {
-    width: 96px;
-    height: 11px;
-    position: relative;
+  /* abstract accent line under headings: a bold orange stroke trailing into a fading blue one */
+  .accent-line {
+    width: 120px;
+    height: 3px;
     flex: none;
+    border-radius: 2px;
+    background: linear-gradient(
+      90deg,
+      var(--orange) 0 34%,
+      transparent 34% 40%,
+      var(--line-2) 40%,
+      transparent
+    );
   }
-  .rails::before,
-  .rails::after {
+  .on-paper .accent-line {
+    background: linear-gradient(
+      90deg,
+      var(--orange) 0 34%,
+      transparent 34% 40%,
+      #c9c2b2 40%,
+      transparent
+    );
+  }
+
+  /* full-width abstract divider between page sections */
+  .section-divider {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line-2) 20%, var(--line-2) 80%, transparent);
+  }
+  .section-divider::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 2.5px;
-    background: var(--orange);
+    left: 50%;
+    top: -1px;
+    width: 72px;
+    height: 3px;
+    transform: translateX(-50%);
     border-radius: 2px;
-  }
-  .rails::before {
-    top: 0;
-  }
-  .rails::after {
-    bottom: 0;
-  }
-  .rails > i {
-    position: absolute;
-    inset: 2.5px 0;
-    background: repeating-linear-gradient(90deg, var(--orange) 0 2.5px, transparent 2.5px 14px);
-    opacity: 0.6;
+    background: var(--orange);
   }
 
   /* diagonal warm-cream band (landing echo) */

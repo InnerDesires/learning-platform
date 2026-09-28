@@ -25,7 +25,7 @@ export function CalendarSection({ tag, title, description, events, cta }: Props)
   return (
     <>
       <FadeIn>
-        <SectionHead eyebrow={tag} title={title} className="mt-16" />
+        <SectionHead eyebrow={tag} title={title} />
       </FadeIn>
       <FadeIn delay={100}>
         <p className="-mt-4 mb-8 max-w-[60ch] text-sm text-paper-muted">{description}</p>

@@ -8,7 +8,7 @@ import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { getFrontendMessages } from '@/utilities/i18n'
-import { Rails } from '@/components/brand'
+import { AccentLine } from '@/components/brand'
 
 export const PostHero: React.FC<{
   locale: SiteLocale
@@ -52,7 +52,7 @@ export const PostHero: React.FC<{
           <h1 className="heading-display mb-5 max-w-[24ch] text-[clamp(30px,4.4vw,52px)] font-bold leading-[1.04]">
             {title}
           </h1>
-          <Rails />
+          <AccentLine />
 
           <div className="mb-8 mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12.5px] font-semibold text-fog">
             {hasAuthors && (

@@ -2,9 +2,13 @@ import React from 'react'
 import { Zap } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
-export const Rails: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn('rails', className)} aria-hidden="true">
-    <i />
+export const AccentLine: React.FC<{ className?: string }> = ({ className }) => (
+  <div className={cn('accent-line', className)} aria-hidden="true" />
+)
+
+export const SectionDivider: React.FC<{ className?: string }> = ({ className }) => (
+  <div className={cn('container', className)} aria-hidden="true">
+    <div className="section-divider" />
   </div>
 )
 
@@ -41,7 +45,7 @@ export const PageHead: React.FC<{
     <h1 className="heading-display mt-2 text-[clamp(38px,5vw,60px)] font-bold leading-none">
       {title}
     </h1>
-    <Rails className="mt-4" />
+    <AccentLine className="mt-4" />
     {sub ? <div className="mt-3 text-sm text-fog">{sub}</div> : null}
     {children}
   </div>
@@ -72,7 +76,7 @@ export const SectionHead: React.FC<{
       >
         {title}
       </h2>
-      <Rails className="mt-4" />
+      <AccentLine className="mt-4" />
     </div>
     {action}
   </div>

@@ -2,10 +2,12 @@
 
 import { ArrowRight, Check } from 'lucide-react'
 import { FadeIn } from './FadeIn'
-import { Eyebrow, Rails } from '@/components/brand'
+import { Eyebrow, AccentLine } from '@/components/brand'
+import { StatCounter } from './Stats'
 import { LANDING_URL, STORIES_URL } from './content'
 
 type Props = {
+  stats: { value: number; label: string }[]
   tag: string
   title: string
   description: string
@@ -18,6 +20,7 @@ type Props = {
 }
 
 export function AboutSection({
+  stats,
   tag,
   title,
   description,
@@ -43,7 +46,7 @@ export function AboutSection({
             <FadeIn>
               <Eyebrow>{tag}</Eyebrow>
               <h2 className="heading-display mt-2.5 text-[clamp(26px,3.4vw,38px)]">{title}</h2>
-              <Rails className="mt-4" />
+              <AccentLine className="mt-4" />
             </FadeIn>
             <FadeIn delay={150}>
               <p className="mt-7 leading-relaxed text-fog">{description}</p>
@@ -53,6 +56,23 @@ export function AboutSection({
             </FadeIn>
             <FadeIn delay={350}>
               <p className="mt-6 text-[13px] leading-relaxed text-steel">{support}</p>
+            </FadeIn>
+            <FadeIn delay={400}>
+              <dl className="mt-8 grid max-w-xl grid-cols-3 gap-4 border-t border-line pt-6">
+                {stats.map((stat) => (
+                  <div key={stat.label}>
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd>
+                      <b className="num block font-display text-[clamp(26px,3.4vw,36px)] font-extrabold leading-none text-orange">
+                        <StatCounter value={stat.value} />
+                      </b>
+                      <span className="mt-1.5 block text-[11.5px] font-semibold uppercase tracking-[0.08em] text-fog">
+                        {stat.label}
+                      </span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             </FadeIn>
             <FadeIn delay={450}>
               <div className="mt-8 flex flex-wrap gap-3.5">
