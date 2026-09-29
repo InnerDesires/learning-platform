@@ -30,10 +30,16 @@ admin: {
 | Слот | Компонент | Що робить |
 | --- | --- | --- |
 | `beforeLogin` | `src/components/BeforeLogin` | Українське привітання над формою входу |
-| `beforeDashboard` | `src/components/BeforeDashboard` | Лого, привітання по імені, 4 quick actions (новий курс / публікація / сторінка, медіатека) і лічильники courses/users/posts/enrollments/comments |
+| `beforeDashboard` | `src/components/BeforeDashboard` | Лого, привітання по імені, 5 quick actions (новий курс / подія / публікація / сторінка, медіатека) і лічильники courses/users/posts/enrollments/events/event-enrollments/comments. Обидва списки — масиви `quickStats` / `quickActions` угорі файлу: нова колекція = один рядок |
 | `afterNavLinks` | `src/components/admin/Docs/DocsNavLinks` | Посилання на цю документацію в боковому меню |
 | `graphics.Icon` / `graphics.Logo` | `src/components/admin/graphics/*` | Лого «Залізна Зміна» замість Payload |
 | `views.docs` | `src/components/admin/Docs/DocsView` | Кастомний view `/admin/docs` — рендерер цієї документації (`exact: false` → підхоплює всі підшляхи `/admin/docs/...`) |
+
+### Панель адміністратора на сайті (`AdminBar`)
+
+Це не слот Payload, а фронтенд-компонент: `src/components/AdminBar/index.tsx` рендериться у `[locale]/layout.tsx` і показує чорну смугу швидких посилань **лише адміністраторам** (клієнтська перевірка: сесія Better Auth заявляє роль `admin`, після чого роль підтверджується запитом `/api/users/me`; звичайні користувачі цей запит не роблять). На вузьких екранах панель прихована (`small-break` у `index.scss`).
+
+Посилання задає масив `quickLinks` — кожен елемент `{ href, icon, label }`: Курси, Події, Календар змін (`/admin/globals/home-calendar`), Публікації, Сторінки, Користувачі. Кнопок «+ створити» біля пунктів **немає** — створення доступне зі сторінок розділів і кнопок дашборду. Додати пункт = додати рядок у `quickLinks` (для глобалів `href` веде на `/admin/globals/<slug>`).
 
 Компоненти документації: `DocsView/` (DocsShell, DocsHome, TrackHome,
 ArticleView, NotFoundView) + клієнтські `DocsSidebar.client.tsx` /

@@ -1,6 +1,15 @@
 'use client'
 
-import { GraduationCap, LayoutDashboard, LogOut, Newspaper, PanelsTopLeft, Plus, Users } from 'lucide-react'
+import {
+  CalendarDays,
+  CalendarRange,
+  GraduationCap,
+  LayoutDashboard,
+  LogOut,
+  Newspaper,
+  PanelsTopLeft,
+  Users,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -15,10 +24,12 @@ import './index.scss'
 const baseClass = 'admin-bar'
 
 const quickLinks = [
-  { create: true, icon: GraduationCap, label: 'Курси', slug: 'courses' },
-  { create: true, icon: Newspaper, label: 'Публікації', slug: 'posts' },
-  { create: true, icon: PanelsTopLeft, label: 'Сторінки', slug: 'pages' },
-  { create: false, icon: Users, label: 'Користувачі', slug: 'users' },
+  { href: '/admin/collections/courses', icon: GraduationCap, label: 'Курси' },
+  { href: '/admin/collections/events', icon: CalendarDays, label: 'Події' },
+  { href: '/admin/globals/home-calendar', icon: CalendarRange, label: 'Календар змін' },
+  { href: '/admin/collections/posts', icon: Newspaper, label: 'Публікації' },
+  { href: '/admin/collections/pages', icon: PanelsTopLeft, label: 'Сторінки' },
+  { href: '/admin/collections/users', icon: Users, label: 'Користувачі' },
 ] as const
 
 type AdminBarProps = {
@@ -78,7 +89,10 @@ export const AdminBar: React.FC<AdminBarProps> = ({ adminBarProps }) => {
   }
 
   return (
-    <div className={cn(baseClass, 'py-1.5 bg-black text-white', isAdmin ? 'block' : 'hidden')}>
+    <div
+      className={cn(baseClass, 'py-1.5 bg-black text-white', isAdmin ? 'block' : 'hidden')}
+      data-testid="admin-bar"
+    >
       <div className="container flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         <Link
           className={`${baseClass}__brand flex items-center gap-2 font-medium`}
@@ -90,26 +104,15 @@ export const AdminBar: React.FC<AdminBarProps> = ({ adminBarProps }) => {
           Адмін-панель
         </Link>
         <nav className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          {quickLinks.map(({ create, icon: IconComponent, label, slug }) => (
-            <span className={`${baseClass}__item flex items-center gap-0.5`} key={slug}>
-              <Link
-                className="flex items-center gap-1.5 hover:text-orange transition-colors"
-                href={`/admin/collections/${slug}`}
-              >
-                <IconComponent aria-hidden="true" size={14} />
-                {label}
-              </Link>
-              {create ? (
-                <Link
-                  aria-label={`Створити: ${label}`}
-                  className={`${baseClass}__create hover:text-orange transition-colors`}
-                  href={`/admin/collections/${slug}/create`}
-                  title={`Створити: ${label}`}
-                >
-                  <Plus size={13} />
-                </Link>
-              ) : null}
-            </span>
+          {quickLinks.map(({ href, icon: IconComponent, label }) => (
+            <Link
+              className="flex items-center gap-1.5 hover:text-orange transition-colors"
+              href={href}
+              key={href}
+            >
+              <IconComponent aria-hidden="true" size={14} />
+              {label}
+            </Link>
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-3">

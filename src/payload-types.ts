@@ -105,6 +105,9 @@ export interface Config {
       account: 'accounts';
       session: 'sessions';
     };
+    events: {
+      registrations: 'event-enrollments';
+    };
     'payload-folders': {
       documentsAndFolders: 'payload-folders' | 'media';
     };
@@ -999,10 +1002,30 @@ export interface Event {
    * Залиште порожнім, якщо кількість учасників не обмежена
    */
   capacity?: number | null;
+  /**
+   * Хто зареєструвався. Кнопкою «Додати новий» можна записати учасника вручну.
+   */
+  registrations?: {
+    docs?: (number | EventEnrollment)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-enrollments".
+ */
+export interface EventEnrollment {
+  id: number;
+  user: number | User;
+  event: number | Event;
+  enrolledAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1227,18 +1250,6 @@ export interface Enrollment {
   quizPassed?: boolean | null;
   bestQuizScore?: number | null;
   quizAttempts?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "event-enrollments".
- */
-export interface EventEnrollment {
-  id: number;
-  user: number | User;
-  event: number | Event;
-  enrolledAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2309,6 +2320,7 @@ export interface EventsSelect<T extends boolean = true> {
   mapLink?: T;
   meetingLink?: T;
   capacity?: T;
+  registrations?: T;
   publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;

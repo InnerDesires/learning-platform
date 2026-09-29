@@ -10,11 +10,14 @@ const quickStats = [
   { slug: 'users', label: 'Користувачі' },
   { slug: 'posts', label: 'Публікації' },
   { slug: 'enrollments', label: 'Записи на курси' },
+  { slug: 'events', label: 'Події' },
+  { slug: 'event-enrollments', label: 'Реєстрації на події' },
   { slug: 'comments', label: 'Коментарі' },
 ] as const
 
 const quickActions = [
   { href: '/admin/collections/courses/create', label: 'Новий курс' },
+  { href: '/admin/collections/events/create', label: 'Нова подія' },
   { href: '/admin/collections/posts/create', label: 'Нова публікація' },
   { href: '/admin/collections/pages/create', label: 'Нова сторінка' },
   { href: '/admin/collections/media', label: 'Медіатека' },

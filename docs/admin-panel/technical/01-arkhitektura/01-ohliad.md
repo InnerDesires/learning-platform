@@ -33,7 +33,7 @@ src/
 │   ├── (payload)/             # Адмінка (/admin) + REST (/api/[...slug]) + GraphQL
 │   └── api/                   # Власні API-маршрути: auth, dev-login,
 │                              # reindex-search, courses/[id]/completions, admin-docs
-├── collections/               # Конфіги колекцій Payload (13 проєктних)
+├── collections/               # Конфіги колекцій Payload (15 проєктних)
 ├── Header/ Footer/ HomeCalendar/  # Глобали (конфіг + RowLabel + revalidate-хук)
 ├── components/                # React-компоненти (admin/ і фронтенд)
 ├── hooks/                     # Спільні Payload-хуки (rateLimitCreate,
