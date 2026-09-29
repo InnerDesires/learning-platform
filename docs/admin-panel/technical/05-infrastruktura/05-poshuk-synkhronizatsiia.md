@@ -3,7 +3,7 @@ title: Пошук — синхронізація локалей
 description: Чому plugin-search породжує «привидні» картки в мультилокальному сетапі, як їх лікують backfill-плагін і read-side hack, і як безпечно реіндексувати.
 ---
 
-Повнотекстовий пошук побудований на `@payloadcms/plugin-search`: плагін тримає окрему колекцію `search`, куди afterChange-хуком синхронізує документи чотирьох колекцій — `searchIndexedCollections = ['posts', 'courses', 'course-categories', 'pages']` (`src/search/localeSync.ts`). Ця стаття — розбір головної болячки плагіна в мультилокальному проєкті і трьох шарів обходу, які тут напрацьовані.
+Повнотекстовий пошук побудований на `@payloadcms/plugin-search`: плагін тримає окрему колекцію `search`, куди afterChange-хуком синхронізує документи пʼяти колекцій — `searchIndexedCollections = ['posts', 'courses', 'course-categories', 'pages', 'events']` (`src/search/localeSync.ts`). Ця стаття — розбір головної болячки плагіна в мультилокальному проєкті і трьох шарів обходу, які тут напрацьовані.
 
 ## Структура search-рядка
 

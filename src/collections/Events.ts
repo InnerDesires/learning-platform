@@ -222,6 +222,19 @@ export const Events: CollectionConfig = {
       },
     },
     {
+      name: 'registrations',
+      type: 'join',
+      collection: 'event-enrollments',
+      on: 'event',
+      label: 'Реєстрації',
+      defaultLimit: 50,
+      defaultSort: '-enrolledAt',
+      admin: {
+        defaultColumns: ['user', 'enrolledAt'],
+        description: 'Хто зареєструвався. Кнопкою «Додати новий» можна записати учасника вручну.',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       label: 'Дата публікації',

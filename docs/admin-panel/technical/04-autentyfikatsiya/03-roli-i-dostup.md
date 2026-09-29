@@ -70,7 +70,7 @@ const adminOrOwn: Access = ({ req: { user } }) => {
 }
 ```
 
-- `adminOrOwn` — `Enrollments.ts`, `Likes.ts`, `QuizAttempts.ts` (адмін бачить усе, інші — лише свої записи, анонім — нічого);
+- `adminOrOwn` — `Enrollments.ts`, `EventEnrollments.ts`, `Likes.ts`, `QuizAttempts.ts` (адмін бачить усе, інші — лише свої записи, анонім — нічого);
 - `adminOrAuthor` — `Comments.ts`, те саме з фільтром `{ author: { equals: user.id } }`.
 
 Обидва повертають **query-фільтр**, а не boolean — Payload вшиває його в запит, тож «чужі» документи для власника просто не існують (у списках, лічильниках і по прямому id).
@@ -118,13 +118,15 @@ const adminOrOwn: Access = ({ req: { user } }) => {
 | `media`, `course-files`, `categories`, `course-categories` | admin | anyone | admin | admin |
 | `users` | admin | *(дефолт: admin-or-self)* | *(дефолт: admin-or-self, self лише `name`)* | admin |
 | `enrollments` | authenticated | adminOrOwn | **admin** | admin |
+| `events` | admin | authenticatedOrPublished (поле `meetingLink` — лише **admin**) | admin | admin |
+| `event-enrollments` | authenticated | adminOrOwn | admin (поля `user`/`event` не змінюються ніколи) | **adminOrOwn** (власник скасовує реєстрацію) |
 | `quiz-attempts` | **admin** | adminOrOwn | admin | admin |
 | `xp-events` | admin | admin | admin | admin |
 | `comments` | authenticated | anyone | admin | adminOrAuthor |
 | `likes` | authenticated | anyone | **`() => false`** (ніхто) | adminOrOwn |
 | Глобали `header`/`footer` | — | public | admin | — |
 
-Ключові рішення: `enrollments.update` — admin-only, бо прогрес пишуть server actions через Local API (відкритий owner-update дозволив би підробити `completedSteps`/`quizPassed`); `quiz-attempts.create` — admin-only, бо оцінювання серверне (відкритий create = підроблені бали); `likes.update` заборонений усім — лайк або існує, або ні. Записи, що їх створює `authenticated`, захищені хуками: колекції примусово ставлять `user`/`author = req.user.id` для не-адмінів.
+Ключові рішення: `enrollments.update` — admin-only, бо прогрес пишуть server actions через Local API (відкритий owner-update дозволив би підробити `completedSteps`/`quizPassed`); `quiz-attempts.create` — admin-only, бо оцінювання серверне (відкритий create = підроблені бали); `likes.update` заборонений усім — лайк або існує, або ні. `event-enrollments` дозволяє власнику видалення, бо там немає прогресу, який можна підробити (як у `likes`), а `events.meetingLink` закритий field access-ом `admin`, бо зареєструватись може будь-хто. Записи, що їх створює `authenticated`, захищені хуками: колекції примусово ставлять `user`/`author = req.user.id` для не-адмінів.
 
 ### Дві додаткові поверхні
 

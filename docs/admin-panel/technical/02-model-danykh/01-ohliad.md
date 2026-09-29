@@ -3,7 +3,7 @@ title: Огляд моделі даних
 description: Усі колекції платформи, схема звʼязків між ними та повна карта ручних каскадів видалення
 ---
 
-## Проєктні колекції (13)
+## Проєктні колекції (15)
 
 Оголошені в `src/collections/` і зареєстровані в `src/payload.config.ts`:
 
@@ -16,12 +16,14 @@ description: Усі колекції платформи, схема звʼязк
 | `enrollments` | `Enrollments.ts` | Запис користувача на курс + увесь прогрес |
 | `quiz-attempts` | `QuizAttempts.ts` | Спроби фінального тесту (оцінені сервером) |
 | `xp-events` | `XpEvents.ts` | Append-only лог нарахувань XP (періодні лідерборди) |
+| `events` | `Events.ts` | Події: офлайн/онлайн, дати, місця, drafts/versions — [деталі](/admin/docs/technical/model-danykh/podii) |
+| `event-enrollments` | `EventEnrollments.ts` | Реєстрація користувача на подію (unique `user × event`) |
 | `posts` | `Posts/index.ts` | Публікації (Lexical, SEO, drafts) |
 | `pages` | `Pages/index.ts` | CMS-сторінки (hero + blocks, drafts) |
 | `categories` | `Categories.ts` | Категорії постів (nested docs) |
 | `media` | `Media.ts` | Зображення (Vercel Blob, focal point, folders) |
-| `comments` | `Comments.ts` | Коментарі до постів/курсів (треди) |
-| `likes` | `Likes.ts` | Лайки постів/курсів/коментарів |
+| `comments` | `Comments.ts` | Коментарі до постів/курсів/подій (треди) |
+| `likes` | `Likes.ts` | Лайки постів/курсів/подій/коментарів |
 
 ## Колекції плагінів
 
@@ -35,7 +37,7 @@ description: Усі колекції платформи, схема звʼязк
 | `redirects` | plugin-redirects | Перенаправлення для pages/posts |
 | `forms` | plugin-form-builder | Конструктор форм |
 | `form-submissions` | plugin-form-builder | Відповіді форм |
-| `search` | plugin-search | Пошуковий індекс (posts, courses, course-categories, pages) |
+| `search` | plugin-search | Пошуковий індекс (posts, courses, course-categories, pages, events) |
 | `payload-mcp-api-keys` | plugin-mcp | API-ключі MCP-клієнтів |
 
 Службові колекції Payload: `payload-kv`, `payload-jobs` (черга
@@ -51,13 +53,17 @@ Mermaid рендерер не підтримує, тому — таблиця в
 | --- | --- | --- | --- |
 | `enrollments` | `user` | `users` | rel, required, unique разом із `course` |
 | `enrollments` | `course` | `courses` | rel, required |
+| `event-enrollments` | `user` | `users` | rel, required, unique разом із `event` |
+| `event-enrollments` | `event` | `events` | rel, required |
+| `events` | `registrations` | `event-enrollments` | join (віртуальне, зворотне до `event`) |
+| `events` | `cover` | `media` | upload |
 | `quiz-attempts` | `user`, `course` | `users`, `courses` | rel, required |
 | `xp-events` | `user`, `course` | `users`, `courses` | rel, required |
 | `comments` | `author` | `users` | rel, required |
 | `comments` | `parent` | `comments` | rel (треди) |
-| `comments` | `targetCollection` + `targetId` | `posts` \| `courses` | **поліморфний, без FK** |
+| `comments` | `targetCollection` + `targetId` | `posts` \| `courses` \| `events` | **поліморфний, без FK** |
 | `likes` | `user` | `users` | rel, required |
-| `likes` | `targetCollection` + `targetId` | `posts` \| `courses` \| `comments` | **поліморфний, без FK** |
+| `likes` | `targetCollection` + `targetId` | `posts` \| `courses` \| `events` \| `comments` | **поліморфний, без FK** |
 | `courses` | `category` | `course-categories` | rel |
 | `courses` | `heroImage` | `media` | upload |
 | `courses` | `steps[].file` (fileStep) | `course-files` | upload, required |
@@ -91,14 +97,15 @@ Drizzle генерує для relationship-полів FK з `ON DELETE SET NULL`
 
 ### Повна карта каскадів
 
-**`users.beforeDelete`** (`src/collections/Users/index.ts`) — 5 колекцій, у
+**`users.beforeDelete`** (`src/collections/Users/index.ts`) — 6 колекцій, у
 цьому порядку:
 
 1. `xp-events` де `user = id`
 2. `quiz-attempts` де `user = id`
 3. `enrollments` де `user = id`
-4. `likes` де `user = id`
-5. `comments` де `author = id`
+4. `event-enrollments` де `user = id`
+5. `likes` де `user = id`
+6. `comments` де `author = id`
 
 **`courses.beforeDelete`** (`src/collections/Courses.ts`) — 5 запитів:
 
@@ -107,6 +114,13 @@ Drizzle генерує для relationship-полів FK з `ON DELETE SET NULL`
 3. `enrollments` де `course = id`
 4. `comments` де `targetCollection = 'courses'` і `targetId = id`
 5. `likes` де `targetCollection = 'courses'` і `targetId = id`
+
+**`events.beforeDelete`** (`src/collections/Events.ts`) — 4 кроки:
+
+1. `event-enrollments` де `event = id`
+2. `likes` коментарів події (`targetCollection = 'comments'`, `targetId ∈` коментарі події) — сторінками по 1000
+3. `likes` де `targetCollection = 'events'` і `targetId = id`
+4. `comments` де `targetCollection = 'events'` і `targetId = id`
 
 **`deleteComment`** (server action, не хук) — каскад одного коментаря: лайки
 коментаря → прямі відповіді (`parent = commentId`, **один рівень** — «онуки»
@@ -125,17 +139,17 @@ Drizzle генерує для relationship-полів FK з `ON DELETE SET NULL`
 ## Спільні патерни колекцій
 
 - **Access-функції** з `src/access/`: `admin`, `anyone`, `authenticated`,
-  `authenticatedOrPublished` + інлайнові `adminOrOwn` (enrollments, likes,
+  `authenticatedOrPublished` + інлайнові `adminOrOwn` (enrollments, event-enrollments, likes,
   quiz-attempts) і `adminOrAuthor` (comments).
 - **`lockDocuments: false`** — всюди, де задано: блокування документів
   вимкнено свідомо (сольна адмін-команда).
-- **Drafts/versions** лише у контентних колекцій: `pages`, `posts`, `courses`
-  (autosave 10000/2000/10000 мс, `schedulePublish`, `maxPerDoc: 50`).
+- **Drafts/versions** лише у контентних колекцій: `pages`, `posts`, `courses`, `events`
+  (autosave 10000/2000/10000/10000 мс, `schedulePublish`, `maxPerDoc: 50`).
 - **Слаги** — core `slugField({ slugify: cyrillicSlugify })`: транслітерація
   кирилиці, `undefined` замість `''` (щоб autosave-чернетки не билися об
   unique-індекс).
 - **Rate limit на create** — фабрика `rateLimitCreate`
-  (`src/hooks/rateLimitCreate.ts`) у enrollments, comments, likes
+  (`src/hooks/rateLimitCreate.ts`) у enrollments, event-enrollments, comments, likes
   (див. [Rate limiting](/admin/docs/technical/biznes-logika/rate-limiting)).
 
 Детальні статті: [courses](/admin/docs/technical/model-danykh/courses),
