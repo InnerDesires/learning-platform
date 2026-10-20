@@ -24,6 +24,7 @@ import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { HomeCalendar } from './HomeCalendar/config'
+import { HomeSettings } from './HomeSettings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -135,7 +136,7 @@ export default buildConfig({
       ? `https://${process.env.VERCEL_BRANCH_URL}`
       : '',
   ].filter(Boolean),
-  globals: [Header, Footer, HomeCalendar],
+  globals: [Header, Footer, HomeSettings, HomeCalendar],
   i18n: {
     fallbackLanguage: 'uk',
     // uk only: with `en` listed, Payload ≥3.79 matches regional Accept-Language

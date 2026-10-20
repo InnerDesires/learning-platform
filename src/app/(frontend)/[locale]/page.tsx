@@ -27,16 +27,22 @@ type Args = {
 export default async function Page({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
 
-  const homeCalendar = await getCachedGlobal('home-calendar', 0, locale)()
+  const [homeCalendar, homeSettings] = await Promise.all([
+    getCachedGlobal('home-calendar', 0, locale)(),
+    getCachedGlobal('home-settings')(),
+  ])
 
   return (
     <HomePage
       locale={locale}
       calendar={resolveCalendarContent(locale, homeCalendar)}
+      showCalendar={homeSettings.showCalendar !== false}
       newsSlot={
-        <Suspense fallback={<NewsSectionSkeleton locale={locale} />}>
-          <NewsSectionServer locale={locale} />
-        </Suspense>
+        homeSettings.showNews !== false ? (
+          <Suspense fallback={<NewsSectionSkeleton locale={locale} />}>
+            <NewsSectionServer locale={locale} />
+          </Suspense>
+        ) : null
       }
       coursesSlot={
         <>
@@ -55,7 +61,10 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale } = await paramsPromise
 
-  const title = locale === 'uk' ? 'Залізна Зміна — Проєкт розвитку молоді' : 'Iron Squad — Youth Development Project'
+  const title =
+    locale === 'uk'
+      ? 'Залізна Зміна — Проєкт розвитку молоді'
+      : 'Iron Squad — Youth Development Project'
   const description =
     locale === 'uk'
       ? 'Унікальний проєкт розвитку талановитої молоді України. Навчання, спорт, творчість та розвиток.'

@@ -152,11 +152,13 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'home-settings': HomeSetting;
     'home-calendar': HomeCalendar;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'home-settings': HomeSettingsSelect<false> | HomeSettingsSelect<true>;
     'home-calendar': HomeCalendarSelect<false> | HomeCalendarSelect<true>;
   };
   locale: 'uk' | 'en';
@@ -2811,6 +2813,25 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Видимість секцій головної сторінки. Налаштування діють для обох мов. Вимкнення секції не видаляє її вміст.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-settings".
+ */
+export interface HomeSetting {
+  id: number;
+  /**
+   * Секція «Найближчі зміни» на головній сторінці.
+   */
+  showCalendar?: boolean | null;
+  /**
+   * Секція останніх новин на головній сторінці.
+   */
+  showNews?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * Секція «Найближчі зміни» на головній сторінці. Зберігайте обидві локалізації (українську та англійську) — інакше англійська версія показуватиме український текст.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2887,6 +2908,17 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-settings_select".
+ */
+export interface HomeSettingsSelect<T extends boolean = true> {
+  showCalendar?: T;
+  showNews?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

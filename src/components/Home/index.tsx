@@ -15,13 +15,14 @@ import { SectionDivider } from '@/components/brand'
 type Props = {
   locale: SiteLocale
   calendar: CalendarContent
+  showCalendar: boolean
   newsSlot: ReactNode
   coursesSlot: ReactNode
 }
 
 // Order: hero → about → platform & achievements → courses → news & shift calendar
 // → partners → contact.
-export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
+export function HomePage({ locale, calendar, showCalendar, newsSlot, coursesSlot }: Props) {
   const c = getHomeContent(locale)
 
   return (
@@ -34,14 +35,22 @@ export function HomePage({ locale, calendar, newsSlot, coursesSlot }: Props) {
         {coursesSlot}
       </CoursesSection>
 
-      <div id="news" className="band on-paper mt-14 scroll-mt-24">
-        <div className="container">
-          {newsSlot}
-          <div id="calendar" className="scroll-mt-24">
-            <CalendarSection {...calendar} />
+      {(newsSlot || showCalendar) && (
+        <div className="band on-paper mt-14">
+          <div className="container">
+            {newsSlot && (
+              <div id="news" className="scroll-mt-24">
+                {newsSlot}
+              </div>
+            )}
+            {showCalendar && (
+              <div id="calendar" className={newsSlot ? 'mt-16 scroll-mt-24' : 'scroll-mt-24'}>
+                <CalendarSection {...calendar} />
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       <PartnersSection {...c.partners} />
       <SectionDivider />
