@@ -10,7 +10,7 @@ import {
 import { CommentForm } from './CommentForm'
 import { CommentItem } from './CommentItem'
 
-type TargetCollection = 'posts' | 'courses'
+type TargetCollection = 'posts' | 'courses' | 'events'
 
 interface Labels {
   title: string
@@ -26,6 +26,8 @@ interface Labels {
   deleteConfirm: string
   showReplies: string
   hideReplies: string
+  loadError: string
+  retry: string
 }
 
 interface CommentsSectionProps {
@@ -57,6 +59,8 @@ export function CommentsSection({
 }: CommentsSectionProps) {
   const [comments, setComments] = useState<CommentWithMeta[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [reloadKey, setReloadKey] = useState(0)
   const [, startTransition] = useTransition()
 
   const [optimisticComments, setOptimisticComments] = useOptimistic(
@@ -75,16 +79,25 @@ export function CommentsSection({
   useEffect(() => {
     if (!active) return
     let cancelled = false
-    getComments(targetCollection, targetId).then((data) => {
-      if (!cancelled) {
-        setComments(data.comments)
-        setLoading(false)
-      }
-    })
+    setLoading(true)
+    setLoadFailed(false)
+    getComments(targetCollection, targetId)
+      .then((data) => {
+        if (!cancelled) {
+          setComments(data.comments)
+          setLoading(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLoadFailed(true)
+          setLoading(false)
+        }
+      })
     return () => {
       cancelled = true
     }
-  }, [targetCollection, targetId, active])
+  }, [targetCollection, targetId, active, reloadKey])
 
   const handleAddComment = useCallback(
     async (body: string): Promise<boolean> => {
@@ -176,6 +189,17 @@ export function CommentsSection({
               </div>
             </div>
           ))}
+        </div>
+      ) : loadFailed ? (
+        <div className="py-8 text-center text-sm text-muted-foreground">
+          <p>{labels.loadError}</p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((key) => key + 1)}
+            className="mt-3 rounded-full border border-line-2 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-cloud transition-colors hover:border-orange hover:text-orange"
+          >
+            {labels.retry}
+          </button>
         </div>
       ) : topLevelComments.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-8">{labels.empty}</p>

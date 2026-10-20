@@ -8,7 +8,7 @@ import { ArrowLeft } from 'lucide-react'
 import { locales, type SiteLocale } from '@/utilities/locales'
 import { getFrontendMessages } from '@/utilities/i18n'
 import { CourseGrid } from '@/components/Courses/CourseGrid'
-import { Eyebrow, Rails } from '@/components/brand'
+import { Eyebrow, AccentLine } from '@/components/brand'
 import { getCatalogData } from '@/lib/courses/getCatalogData'
 import { plural } from '@/utilities/plural'
 import type { Media as MediaType } from '@/payload-types'
@@ -95,7 +95,7 @@ export default async function CourseCategoryPage({ params: paramsPromise }: Args
           <h1 className="heading-display mt-2 text-[clamp(34px,4.6vw,54px)] font-bold leading-[1.04]">
             {category.title}
           </h1>
-          <Rails className="mt-4" />
+          <AccentLine className="mt-4" />
           {category.description && (
             <p className="mt-3 max-w-[60ch] text-sm leading-relaxed text-fog">
               {category.description}

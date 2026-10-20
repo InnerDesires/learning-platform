@@ -86,6 +86,7 @@ export const Likes: CollectionConfig = {
       options: [
         { label: 'Публікації', value: 'posts' },
         { label: 'Курси', value: 'courses' },
+        { label: 'Події', value: 'events' },
         { label: 'Коментарі', value: 'comments' },
       ],
       index: true,

@@ -73,6 +73,22 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     }
   }
 
+  if (collection === 'events') {
+    const { slug, title, description, cover } = originalDoc
+
+    return {
+      ...searchDoc,
+      slug,
+      collectionType: 'events',
+      meta: {
+        title,
+        description: description || null,
+        image: typeof cover === 'object' ? cover?.id : cover,
+      },
+      categories: [],
+    }
+  }
+
   if (collection === 'pages') {
     const { slug, title, meta } = originalDoc
 

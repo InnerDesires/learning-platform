@@ -31,7 +31,7 @@ export async function CoursesGridServer({ locale }: Props) {
   if (docs.length === 0) return null
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 sm:[&>*:nth-child(3)]:hidden lg:grid-cols-3 lg:[&>*:nth-child(3)]:block">
       {docs.map((course) => (
         <CourseCard key={course.id} course={course} locale={locale} />
       ))}
@@ -41,7 +41,7 @@ export async function CoursesGridServer({ locale }: Props) {
 
 export function CoursesGridSkeleton() {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 sm:[&>*:nth-child(3)]:hidden lg:grid-cols-3 lg:[&>*:nth-child(3)]:block">
       {[0, 1, 2].map((i) => (
         <div key={i} className="animate-pulse overflow-hidden rounded-[14px] border border-line bg-card">
           <div className="aspect-[16/9] bg-navy-2" />

@@ -18,7 +18,7 @@ description: Колекції взаємодії — поліморфний та
 | --- | --- | --- |
 | `body` | textarea | required, **maxLength 2000** |
 | `author` | rel → `users` | required, index, readOnly в адмінці |
-| `targetCollection` | select | required, index; options: `posts` («Публікації»), `courses` («Курси») |
+| `targetCollection` | select | required, index; options: `posts` («Публікації»), `courses` («Курси»), `events` («Події») |
 | `targetId` | number | required, index |
 | `parent` | rel → `comments` | index — тред-відповіді |
 
@@ -51,7 +51,7 @@ description: Колекції взаємодії — поліморфний та
 | Поле | Тип | Атрибути |
 | --- | --- | --- |
 | `user` | rel → `users` | required, index |
-| `targetCollection` | select | required, index; options: `posts`, `courses`, **`comments`** (лайкати можна й коментарі — на відміну від самих comments) |
+| `targetCollection` | select | required, index; options: `posts`, `courses`, `events`, **`comments`** (лайкати можна й коментарі — на відміну від самих comments) |
 | `targetId` | number | required, index |
 
 ### Unique-індекс
@@ -98,7 +98,7 @@ indexes: [{ fields: ['user', 'targetCollection', 'targetId'], unique: true }],
   `likesCount` + `userLiked`; видалений автор → `{id: 0, name: ''}`.
 
 Зворотні каскади від контенту: `courses.beforeDelete` зачищає
-comments/likes з `targetCollection='courses'`; `users.beforeDelete` — усі
+comments/likes з `targetCollection='courses'`; `events.beforeDelete` — з `targetCollection='events'` (включно з лайками коментарів події); `users.beforeDelete` — усі
 коментарі/лайки користувача. **Пости каскаду не мають** — їхні
 коментарі/лайки після видалення поста лишаються сиротами (див.
 [Огляд моделі даних](/admin/docs/technical/model-danykh/ohliad)).

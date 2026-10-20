@@ -37,6 +37,11 @@ export const Users: CollectionConfig = {
           req,
         })
         await req.payload.delete({
+          collection: 'event-enrollments',
+          where: { user: { equals: id } },
+          req,
+        })
+        await req.payload.delete({
           collection: 'likes',
           where: { user: { equals: id } },
           req,

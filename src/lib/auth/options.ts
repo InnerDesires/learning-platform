@@ -8,9 +8,14 @@ import { consumePreVerified } from '@/lib/auth/pre-verified'
 import { isRateLimitEnabled } from '@/lib/rate-limit'
 
 function resolveBaseURL(): string {
-  // Explicit override wins: VERCEL_PROJECT_PRODUCTION_URL is the *shortest*
-  // production custom domain, which during a domain migration is the old one.
-  // Set this in Vercel for the production environment only, or previews break.
+  // Preview requests use the branch alias. A production URL override may be
+  // present in Vercel's Preview environment, so select the preview host first.
+  if (process.env.VERCEL_ENV === 'preview') {
+    if (process.env.VERCEL_BRANCH_URL) return `https://${process.env.VERCEL_BRANCH_URL}`
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  }
+  // Outside previews, the explicit override wins: Vercel may report an old
+  // production domain during a custom domain migration.
   if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL) return process.env.NEXT_PUBLIC_BETTER_AUTH_URL
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL && process.env.VERCEL_ENV === 'production')
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -24,6 +29,8 @@ const baseURL = resolveBaseURL()
 
 const trustedOrigins = new Set([baseURL])
 if (process.env.VERCEL_URL) trustedOrigins.add(`https://${process.env.VERCEL_URL}`)
+if (process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL)
+  trustedOrigins.add(`https://${process.env.VERCEL_BRANCH_URL}`)
 if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
   trustedOrigins.add(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
 if (process.env.NEXT_PUBLIC_BETTER_AUTH_URL)

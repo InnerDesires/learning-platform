@@ -12,6 +12,8 @@ import { CourseCategories } from './collections/CourseCategories'
 import { CourseFiles } from './collections/CourseFiles'
 import { Courses } from './collections/Courses'
 import { Enrollments } from './collections/Enrollments'
+import { EventEnrollments } from './collections/EventEnrollments'
+import { Events } from './collections/Events'
 import { Likes } from './collections/Likes'
 import { QuizAttempts } from './collections/QuizAttempts'
 import { XpEvents } from './collections/XpEvents'
@@ -65,8 +67,8 @@ export default buildConfig({
     meta: {
       description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',
       icons: [
-        { type: 'image/png', rel: 'icon', url: '/favicon-192.png' },
-        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
+        { type: 'image/png', rel: 'icon', url: '/favicon-192.png?v=2' },
+        { rel: 'apple-touch-icon', url: '/apple-touch-icon.png?v=2' },
       ],
       openGraph: {
         description: 'Панель адміністратора навчальної платформи «Залізна Зміна»',
@@ -120,6 +122,8 @@ export default buildConfig({
     CourseFiles,
     Courses,
     Enrollments,
+    Events,
+    EventEnrollments,
     Comments,
     Likes,
     QuizAttempts,
@@ -128,6 +132,9 @@ export default buildConfig({
   cors: [
     getServerSideURL(),
     process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+    process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL
+      ? `https://${process.env.VERCEL_BRANCH_URL}`
+      : '',
   ].filter(Boolean),
   globals: [Header, Footer, HomeSettings, HomeCalendar],
   i18n: {

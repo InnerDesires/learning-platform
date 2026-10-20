@@ -13,16 +13,20 @@ interface Labels {
   commentsSubmitting: string
   commentsLoginToComment: string
   likeLoginPrompt?: string
+  likeLabel: string
+  likedLabel: string
   commentsReply: string
   commentsReplying: string
   commentsDelete: string
   commentsDeleteConfirm: string
   commentsShowReplies: string
   commentsHideReplies: string
+  commentsLoadError: string
+  commentsRetry: string
 }
 
 interface InteractionClientProps {
-  targetCollection: 'posts' | 'courses'
+  targetCollection: 'posts' | 'courses' | 'events'
   targetId: number
   loginUrl: string
   userProfileBase: string
@@ -69,6 +73,8 @@ export function InteractionClient({
           active={active}
           loginUrl={loginUrl}
           loginPromptLabel={labels.likeLoginPrompt}
+          likeLabel={labels.likeLabel}
+          likedLabel={labels.likedLabel}
         />
       </div>
 
@@ -95,6 +101,8 @@ export function InteractionClient({
           deleteConfirm: labels.commentsDeleteConfirm,
           showReplies: labels.commentsShowReplies,
           hideReplies: labels.commentsHideReplies,
+          loadError: labels.commentsLoadError,
+          retry: labels.commentsRetry,
         }}
       />
     </div>

@@ -20,7 +20,7 @@ pnpm test:int
 
 Тести працюють проти бази з `DATABASE_URL` — тобто локально проти **вашого сесійного Neon-бранча**, тієї самої, що й dev-сервер.
 
-Поточний набір у `tests/int/` покриває: access control (`access-control`, `user-default-role`), доменну логіку курсів (`course-completion`, `complete-step`, `quiz-attempts`, `quiz-answer-validation`, `courses`, `enrollments`, `courseJsonImport`), каскадні видалення (`courses-cascade-delete`, `users-cascade-delete`), взаємодію (`comments`, `likes`), інфраструктурні механізми (`rate-limit`, `search-locale-sync`, `certificate-token`, `cyrillicSlugify`, `media-block`, `admin-docs`, `api`). Новій фічі — новий `*.int.spec.ts` поруч.
+Поточний набір у `tests/int/` покриває: access control (`access-control`, `user-default-role`), доменну логіку курсів і подій (`events`, `event-enrollments` — зокрема гонка за останнє місце, доступ до `meetingLink`, join-поле реєстрацій) (`course-completion`, `complete-step`, `quiz-attempts`, `quiz-answer-validation`, `courses`, `enrollments`, `courseJsonImport`), каскадні видалення (`courses-cascade-delete`, `users-cascade-delete`), взаємодію (`comments`, `likes`), інфраструктурні механізми (`rate-limit`, `search-locale-sync`, `certificate-token`, `cyrillicSlugify`, `media-block`, `admin-docs`, `api`). Новій фічі — новий `*.int.spec.ts` поруч.
 
 ### vitest.setup.ts і заборона DATABASE_URL у .env.local
 
@@ -49,7 +49,7 @@ pnpm test:e2e:snapshots   # перезапис візуальних базлай
 - сід/клінап тестових користувачів — `tests/helpers/seedUser.ts`;
 - CI ставить лише chromium: `pnpm exec playwright install chromium --with-deps`.
 
-Сьютні файли в `tests/e2e/`: `admin.e2e.spec.ts` (адмінка), `frontend.e2e.spec.ts`, `registration.e2e.spec.ts` (OTP-флоу), `smoke-locale-content.e2e.spec.ts` (+ директорія `*-snapshots` з візуальними базлайнами).
+Сьютні файли в `tests/e2e/`: `admin.e2e.spec.ts` (адмінка), `frontend.e2e.spec.ts`, `registration.e2e.spec.ts` (OTP-флоу), `events.e2e.spec.ts` (каталог і сторінка події, `.ics`), `comments-resilience.e2e.spec.ts` (скелетони коментарів не висять, коли server action падає), `smoke-locale-content.e2e.spec.ts` (+ директорія `*-snapshots` з візуальними базлайнами).
 
 ### Візуальні снапшоти
 

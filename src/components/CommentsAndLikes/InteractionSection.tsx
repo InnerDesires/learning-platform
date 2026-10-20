@@ -5,7 +5,7 @@ import { defaultLocale } from '@/utilities/locales'
 import { InteractionClient } from './InteractionClient'
 
 interface InteractionSectionProps {
-  targetCollection: 'posts' | 'courses'
+  targetCollection: 'posts' | 'courses' | 'events'
   targetId: number
   locale: SiteLocale
   redirectPath?: string
@@ -38,12 +38,16 @@ export function InteractionSection({
         commentsSubmitting: t.commentsSubmitting,
         commentsLoginToComment: t.commentsLoginToComment,
         likeLoginPrompt: t.likeLoginPrompt,
+        likeLabel: t.likeNotLiked,
+        likedLabel: t.likeLiked,
         commentsReply: t.commentsReply,
         commentsReplying: t.commentsReplying,
         commentsDelete: t.commentsDelete,
         commentsDeleteConfirm: t.commentsDeleteConfirm,
         commentsShowReplies: t.commentsShowReplies,
         commentsHideReplies: t.commentsHideReplies,
+        commentsLoadError: t.commentsLoadError,
+        commentsRetry: t.commentsRetry,
       }}
     />
   )

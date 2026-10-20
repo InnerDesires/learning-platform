@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { FadeIn } from './FadeIn'
 import { SectionHead } from '@/components/brand'
+import { cn } from '@/utilities/ui'
 
 type Props = {
   tag: string
@@ -12,14 +13,15 @@ type Props = {
   description: string
   cta: string
   locale: string
+  className?: string
   children?: ReactNode
 }
 
-export function CoursesSection({ tag, title, description, cta, locale, children }: Props) {
+export function CoursesSection({ tag, title, description, cta, locale, className, children }: Props) {
   const prefix = locale === 'en' ? '/en' : ''
 
   return (
-    <section className="container pt-18 md:pt-20">
+    <section className={cn('container pb-6 pt-18 md:pb-10 md:pt-20', className)}>
       <FadeIn>
         <SectionHead
           eyebrow={tag}

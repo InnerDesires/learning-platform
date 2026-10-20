@@ -33,6 +33,10 @@ pnpm generate:types   # регенерує src/payload-types.ts — коміти
 
 Dev-сервер на старті сам синхронізує базу через drizzle push — міграція для локальної роботи не потрібна.
 
+:::tip Нова колекція, з якою щодня працюють адміністратори
+Окрім самої колекції не забудьте про адмін-поверхні: лічильник у `quickStats` та швидку дію в `quickActions` (`src/components/BeforeDashboard/index.tsx`), за потреби — пункт у `quickLinks` панелі `src/components/AdminBar/index.tsx`, індексацію в пошуку (`searchIndexedCollections`) і статті в обох треках цієї документації.
+:::
+
 ### 4. Міграція вручну — в тому ж PR
 
 Залізне правило: **схемна зміна без міграції в тому ж PR не мерджиться.** `pnpm payload migrate:create <name>` генерує забруднений diff — відредагуйте його до рівно вашої зміни і зробіть ідемпотентним (`IF NOT EXISTS`). Повний розбір: [Push vs міграції](/admin/docs/technical/infrastruktura/mihratsii).

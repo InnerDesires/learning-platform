@@ -87,7 +87,7 @@ export const plugins: Plugin[] = [
       comments: {
         enabled: true,
         description:
-          'User comments on posts and courses. Each comment has a body (max 2000 chars), author, target collection (posts or courses), target ID, and optional parent comment for threading.',
+          'User comments on posts, courses, and events. Each comment has a body (max 2000 chars), author, target collection, target ID, and optional parent comment for threading.',
       },
       likes: {
         enabled: {
@@ -97,7 +97,7 @@ export const plugins: Plugin[] = [
           delete: true,
         },
         description:
-          'User likes/reactions on posts, courses, and comments. Each like has a user, target collection, and target ID. Duplicate likes are rejected (409).',
+          'User likes/reactions on posts, courses, events, and comments. Each like has a user, target collection, and target ID. Duplicate likes are rejected (409).',
       },
     },
     globals: {

@@ -82,6 +82,8 @@ export interface Config {
     'course-files': CourseFile;
     courses: Course;
     enrollments: Enrollment;
+    events: Event;
+    'event-enrollments': EventEnrollment;
     comments: Comment;
     likes: Like;
     'quiz-attempts': QuizAttempt;
@@ -103,6 +105,9 @@ export interface Config {
       account: 'accounts';
       session: 'sessions';
     };
+    events: {
+      registrations: 'event-enrollments';
+    };
     'payload-folders': {
       documentsAndFolders: 'payload-folders' | 'media';
     };
@@ -122,6 +127,8 @@ export interface Config {
     'course-files': CourseFilesSelect<false> | CourseFilesSelect<true>;
     courses: CoursesSelect<false> | CoursesSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    'event-enrollments': EventEnrollmentsSelect<false> | EventEnrollmentsSelect<true>;
     comments: CommentsSelect<false> | CommentsSelect<true>;
     likes: LikesSelect<false> | LikesSelect<true>;
     'quiz-attempts': QuizAttemptsSelect<false> | QuizAttemptsSelect<true>;
@@ -439,7 +446,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | EventsBlock | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -932,6 +939,98 @@ export interface CourseFile {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EventsBlock".
+ */
+export interface EventsBlock {
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  populateBy?: ('upcoming' | 'selection') | null;
+  limit?: number | null;
+  selectedEvents?: (number | Event)[] | null;
+  showAllLink?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'eventsBlock';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  description?: string | null;
+  cover?: (number | null) | Media;
+  /**
+   * На сайті час відображається за часовим поясом Europe/Kyiv.
+   */
+  startDate: string;
+  /**
+   * На сайті час відображається за часовим поясом Europe/Kyiv.
+   */
+  endDate?: string | null;
+  locationType: 'local' | 'virtual';
+  /**
+   * Місце проведення, наприклад: Київ, вул. Хрещатик, 1
+   */
+  address?: string | null;
+  /**
+   * Посилання на Google Maps або інший сервіс мап
+   */
+  mapLink?: string | null;
+  /**
+   * Zoom, Google Meet або інша платформа. Бачать лише зареєстровані учасники (адміністратори бачать завжди).
+   */
+  meetingLink?: string | null;
+  /**
+   * Залиште порожнім, якщо кількість учасників не обмежена
+   */
+  capacity?: number | null;
+  /**
+   * Хто зареєструвався. Кнопкою «Додати новий» можна записати учасника вручну.
+   */
+  registrations?: {
+    docs?: (number | EventEnrollment)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-enrollments".
+ */
+export interface EventEnrollment {
+  id: number;
+  user: number | User;
+  event: number | Event;
+  enrolledAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
@@ -1164,7 +1263,7 @@ export interface Comment {
   id: number;
   body: string;
   author: number | User;
-  targetCollection: 'posts' | 'courses';
+  targetCollection: 'posts' | 'courses' | 'events';
   targetId: number;
   parent?: (number | null) | Comment;
   updatedAt: string;
@@ -1177,7 +1276,7 @@ export interface Comment {
 export interface Like {
   id: number;
   user: number | User;
-  targetCollection: 'posts' | 'courses' | 'comments';
+  targetCollection: 'posts' | 'courses' | 'events' | 'comments';
   targetId: number;
   updatedAt: string;
   createdAt: string;
@@ -1289,6 +1388,10 @@ export interface Search {
     | {
         relationTo: 'pages';
         value: number | Page;
+      }
+    | {
+        relationTo: 'events';
+        value: number | Event;
       };
   slug?: string | null;
   collectionType?: string | null;
@@ -1822,6 +1925,7 @@ export interface PagesSelect<T extends boolean = true> {
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
+        eventsBlock?: T | EventsBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
       };
   meta?:
@@ -1911,6 +2015,19 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   courseCategories?: T;
   limit?: T;
   selectedDocs?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "EventsBlock_select".
+ */
+export interface EventsBlockSelect<T extends boolean = true> {
+  introContent?: T;
+  populateBy?: T;
+  limit?: T;
+  selectedEvents?: T;
+  showAllLink?: T;
   id?: T;
   blockName?: T;
 }
@@ -2185,6 +2302,40 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   quizPassed?: T;
   bestQuizScore?: T;
   quizAttempts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  description?: T;
+  cover?: T;
+  startDate?: T;
+  endDate?: T;
+  locationType?: T;
+  address?: T;
+  mapLink?: T;
+  meetingLink?: T;
+  capacity?: T;
+  registrations?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "event-enrollments_select".
+ */
+export interface EventEnrollmentsSelect<T extends boolean = true> {
+  user?: T;
+  event?: T;
+  enrolledAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2826,6 +2977,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'courses';
           value: number | Course;
+        } | null)
+      | ({
+          relationTo: 'events';
+          value: number | Event;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

@@ -4,7 +4,7 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { Rails } from '@/components/brand'
+import { AccentLine } from '@/components/brand'
 import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
 
 export default function NotFound() {
@@ -22,7 +22,7 @@ export default function NotFound() {
         aria-hidden="true"
       />
       <img
-        src="/illustrations/hero-rails.svg"
+        src="/illustrations/hero-lines.svg"
         alt=""
         className="pointer-events-none absolute -bottom-8 -right-32 w-[560px] max-w-none opacity-50"
         aria-hidden="true"
@@ -31,7 +31,7 @@ export default function NotFound() {
         <h1 className="heading-display num text-[clamp(96px,18vw,220px)] font-bold leading-none text-transparent [-webkit-text-stroke:2px_var(--orange)]">
           404
         </h1>
-        <Rails className="mt-2" />
+        <AccentLine className="mt-2" />
         <p className="mt-5 max-w-[40ch] text-fog">{t.notFoundMessage}</p>
         <Button asChild className="mt-7">
           <Link href={locale === 'en' ? '/en' : '/'}>{t.goHome}</Link>

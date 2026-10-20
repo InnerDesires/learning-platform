@@ -29,7 +29,8 @@ import { defaultLocale, type SiteLocale } from '@/utilities/locales'
 import { STEP_XP, QUIZ_XP, levelForXp } from '@/utilities/xp'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { plural } from '@/utilities/plural'
-import type { Course } from '@/payload-types'
+import { formatEventRange, isEventPast } from '@/utilities/eventTime'
+import type { Course, Event } from '@/payload-types'
 import { SignOutButton } from './SignOutButton'
 
 type Args = {
@@ -56,7 +57,7 @@ export default async function ProfilePage({ params }: Args) {
   const prefix = locale === defaultLocale ? '' : `/${locale}`
 
   const payload = await getPayload()
-  const [userDoc, enrollments, recentAttempts] = await Promise.all([
+  const [userDoc, enrollments, recentAttempts, eventEnrollments] = await Promise.all([
     payload.findByID({
       collection: 'users',
       id: Number(user.id),
@@ -75,7 +76,22 @@ export default async function ProfilePage({ params }: Args) {
       limit: 5,
       depth: 1,
     }),
+    payload.find({
+      collection: 'event-enrollments',
+      where: { user: { equals: Number(user.id) } },
+      sort: '-enrolledAt',
+      limit: 100,
+      depth: 1,
+      locale,
+    }),
   ])
+
+  const upcomingEvents = eventEnrollments.docs
+    .flatMap((enrollment) =>
+      typeof enrollment.event === 'object' && enrollment.event ? [enrollment.event as Event] : [],
+    )
+    .filter((event) => event._status === 'published' && !isEventPast(event))
+    .sort((a, b) => +new Date(a.startDate) - +new Date(b.startDate))
 
   let stepsDone = 0
   let quizzesPassed = 0
@@ -271,6 +287,46 @@ export default async function ProfilePage({ params }: Args) {
             </div>
           )}
         </div>
+      )}
+
+      {upcomingEvents.length > 0 && (
+        <>
+          <h2 className={sectionHeading}>{t.profileUpcomingEvents}</h2>
+          <div className="grid gap-2.5">
+            {upcomingEvents.map((event) => (
+              <Link
+                key={event.id}
+                href={`${prefix}/events/${event.slug}`}
+                className="group flex items-center gap-4 rounded-xl border border-line bg-card px-5 py-3.5 transition-colors hover:border-orange/55"
+              >
+                <span className="w-[52px] flex-none rounded-[10px] bg-ink px-1.5 py-2 text-center font-display uppercase leading-[1.1] text-cloud">
+                  <b className="num block text-lg font-semibold text-orange">
+                    {new Date(event.startDate).getDate()}
+                  </b>
+                  <span className="text-[9.5px] tracking-[0.12em]">
+                    {new Intl.DateTimeFormat(locale === 'uk' ? 'uk-UA' : 'en-GB', {
+                      month: 'short',
+                    })
+                      .format(new Date(event.startDate))
+                      .replace('.', '')}
+                  </span>
+                </span>
+                <div className="min-w-0 flex-1">
+                  <span className="block break-words text-sm font-bold transition-colors group-hover:text-amber">
+                    {event.title}
+                  </span>
+                  <p className="num mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-steel">
+                    <span>{formatEventRange(event, locale)}</span>
+                    <span className="font-semibold uppercase tracking-[0.06em] text-fog">
+                      {event.locationType === 'virtual' ? t.eventOnline : event.address || t.eventOffline}
+                    </span>
+                  </p>
+                </div>
+                <ArrowRight className="h-4 w-4 flex-none text-steel transition-colors group-hover:text-orange" />
+              </Link>
+            ))}
+          </div>
+        </>
       )}
 
       {completed.length > 0 && (

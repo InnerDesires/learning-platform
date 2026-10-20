@@ -13,7 +13,7 @@ import { getFrontendMessages, getLocaleFromPathname } from '@/utilities/i18n'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { usePathname } from 'next/navigation'
 
-export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages'
+export type CardRelationTo = 'posts' | 'courses' | 'course-categories' | 'pages' | 'events'
 
 export type CardPostData = Pick<Post, 'id' | 'slug' | 'categories' | 'meta' | 'title'> & {
   collectionType?: string | null

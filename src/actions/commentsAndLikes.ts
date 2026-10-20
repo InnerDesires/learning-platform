@@ -7,8 +7,8 @@ import { getSession } from '@/lib/auth/getSession'
 
 const isRateLimited = (err: unknown): boolean => err instanceof APIError && err.status === 429
 
-type TargetCollection = 'posts' | 'courses'
-type LikeTargetCollection = 'posts' | 'courses' | 'comments'
+type TargetCollection = 'posts' | 'courses' | 'events'
+type LikeTargetCollection = TargetCollection | 'comments'
 
 export type CommentWithMeta = {
   id: number
@@ -249,7 +249,7 @@ export type LikeInfo = {
 }
 
 function revalidateCounts(kind: 'likes' | 'comments', targetCollection: LikeTargetCollection) {
-  if (targetCollection === 'posts' || targetCollection === 'courses') {
+  if (targetCollection !== 'comments') {
     revalidateTag(`${kind}-counts-${targetCollection}`)
   }
 }
