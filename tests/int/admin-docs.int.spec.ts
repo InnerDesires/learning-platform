@@ -128,4 +128,19 @@ describe('admin-docs loader (real content)', () => {
       expect(category.label).not.toMatch(/^\d+-/)
     }
   })
+
+  it('documents events in both tracks', () => {
+    const managerArticles = [
+      ['podii', 'stvorennia-podii'],
+      ['podii', 'reiestratsii-na-podii'],
+      ['podii', 'podii-na-saiti'],
+    ]
+    for (const parts of managerArticles) {
+      expect(findArticle('manager', parts), parts.join('/')).toBeDefined()
+    }
+    expect(findArticle('technical', ['model-danykh', 'podii'])).toBeDefined()
+    expect(findArticle('technical', ['biznes-logika', 'podii'])).toBeDefined()
+
+    expect(getNavTree('manager').map((category) => category.label)).toContain('Події')
+  })
 })

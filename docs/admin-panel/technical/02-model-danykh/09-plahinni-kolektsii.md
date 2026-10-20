@@ -8,9 +8,9 @@ description: search, redirects, forms, MCP-ключі та службові payl
 
 ## search
 
-Створюється `searchPlugin` для чотирьох колекцій
+Створюється `searchPlugin` для пʼяти колекцій
 (`searchIndexedCollections` у `src/search/localeSync.ts`): `posts`, `courses`,
-`course-categories`, `pages`. Один документ джерела → один search-рядок,
+`course-categories`, `pages`, `events`. Один документ джерела → один search-рядок,
 який плагін створює/оновлює в afterChange (тільки published; чернетки
 видаляються з індексу).
 
@@ -99,7 +99,7 @@ Prompts, перекладені як Інструменти / Ресурси / �
 | `likes` | `{find: true, create: true, update: false, delete: true}` — дзеркалить власний access колекції (update заборонений усім) |
 | глобали `header`, `footer` | enabled |
 
-Прогрес-колекції (`enrollments`, `quiz-attempts`, `xp-events`), `users` та
+Прогрес-колекції (`enrollments`, `event-enrollments`, `quiz-attempts`, `xp-events`), а також `events` (поки що), `users` та
 auth-колекції в MCP **не** експоновані — навмисно: MCP-клієнт (AI-інструмент)
 може вести контент, але не може торкатися прогресу, сертифікатної підстави чи
 акаунтів. Кожна експонована колекція має `description` у конфігу плагіна —

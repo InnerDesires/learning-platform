@@ -260,6 +260,29 @@ describe('EventEnrollments', () => {
     expect(remaining.totalDocs).toBe(0)
   })
 
+  it('lets an admin register someone by hand but never re-point a registration', async () => {
+    const created = await payload.create({
+      collection: 'event-enrollments',
+      data: { user: user.id, event: event.id },
+      user: adminUser,
+      overrideAccess: false,
+    })
+    expect(created.id).toBeDefined()
+
+    const other = await createEvent(minimalEventData('Other Event'))
+    const updated = await payload.update({
+      collection: 'event-enrollments',
+      id: created.id,
+      data: { user: otherUser.id, event: other.id },
+      user: adminUser,
+      overrideAccess: false,
+    })
+    const userId = typeof updated.user === 'object' ? updated.user.id : updated.user
+    const eventId = typeof updated.event === 'object' ? updated.event.id : updated.event
+    expect(userId).toBe(user.id)
+    expect(eventId).toBe(event.id)
+  })
+
   it('progress-free rows are not owner-updatable', async () => {
     const enrollment = await payload.create({
       collection: 'event-enrollments',

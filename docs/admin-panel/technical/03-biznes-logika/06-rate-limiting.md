@@ -120,6 +120,7 @@ if (!limit.ok) return { success: false, error: 'Забагато спроб. С�
 | Ключ / шлях | Вікно | Max | Де застосовано |
 | --- | --- | --- | --- |
 | `enroll-create:<userId>` | 600 с | 30 | хук `enrollments` (`rateLimitCreate`) |
+| `event-enroll-create:<userId>` | 600 с | 30 | хук `event-enrollments` (`rateLimitCreate`) |
 | `comment-create:<userId>` | 60 с | 10 | хук `comments` (`userField: 'author'`) |
 | `like-create:<userId>` | 60 с | 60 | хук `likes` |
 | `quiz-submit:<userId>` | 3600 с | 30 | `submitQuizAttempt` (server action) |

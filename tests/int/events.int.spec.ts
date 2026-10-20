@@ -101,7 +101,7 @@ describe('Events', () => {
     createdEventIds.splice(createdEventIds.indexOf(event.id), 1)
 
     const [remainingComments, remainingEventLikes, remainingCommentLikes] = await Promise.all([
-      payload.count({ collection: 'comments', where: { targetId: { equals: event.id } } }),
+      payload.count({ collection: 'comments', where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: event.id } }] } }),
       payload.count({ collection: 'likes', where: { and: [{ targetCollection: { equals: 'events' } }, { targetId: { equals: event.id } }] } }),
       payload.count({ collection: 'likes', where: { and: [{ targetCollection: { equals: 'comments' } }, { targetId: { equals: comment.id } }] } }),
     ])
@@ -187,6 +187,50 @@ describe('Events', () => {
       overrideAccess: false,
     })
     expect(adminResult.docs[0].meetingLink).toBe('https://us02web.zoom.us/j/1234567890')
+  })
+
+  it('lists registrations on the event for admins and never exposes them to the public', async () => {
+    const event = await createEvent(minimalEventData('Registrations Join Event'))
+    await payload.create({
+      collection: 'event-enrollments',
+      data: { user: regularUser.id, event: event.id },
+    })
+
+    const asAdmin = await payload.findByID({
+      collection: 'events',
+      id: event.id,
+      depth: 1,
+      user: adminUser,
+      overrideAccess: false,
+    })
+    expect(asAdmin.registrations?.docs).toHaveLength(1)
+
+    const asAnon = await payload.find({
+      collection: 'events',
+      where: { id: { equals: event.id } },
+      depth: 1,
+      overrideAccess: false,
+    })
+    expect(asAnon.totalDocs).toBe(1)
+    expect(asAnon.docs[0].registrations?.docs ?? []).toHaveLength(0)
+
+    const asLearner = await payload.findByID({
+      collection: 'events',
+      id: event.id,
+      depth: 1,
+      user: regularUser,
+      overrideAccess: false,
+    })
+    const visible = (asLearner.registrations?.docs ?? []) as Array<{ user: unknown }>
+    for (const registration of visible) {
+      const owner = typeof registration.user === 'object' ? (registration.user as User).id : registration.user
+      expect(owner).toBe(regularUser.id)
+    }
+
+    await payload.delete({
+      collection: 'event-enrollments',
+      where: { event: { equals: event.id } },
+    })
   })
 
   it('rejects create/update from non-admin users', async () => {

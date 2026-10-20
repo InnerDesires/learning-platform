@@ -64,9 +64,8 @@ export const EventEnrollments: CollectionConfig = {
       required: true,
       label: 'Користувач',
       index: true,
-      admin: {
-        readOnly: true,
-      },
+      // Chosen once when an admin registers someone by hand; never changeable afterwards.
+      access: { update: () => false },
     },
     {
       name: 'event',
@@ -75,9 +74,7 @@ export const EventEnrollments: CollectionConfig = {
       required: true,
       label: 'Подія',
       index: true,
-      admin: {
-        readOnly: true,
-      },
+      access: { update: () => false },
     },
     {
       name: 'enrolledAt',
