@@ -2,9 +2,29 @@ import { expect, test } from '@playwright/test'
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import { login } from '../helpers/login'
-import { DEV_ADMIN } from '../../src/lib/auth/dev-credentials'
+import { testUser } from '../helpers/seedUser'
+import { minimalLexicalContent } from '../helpers/factories'
 
-// Run against an isolated development database: these cases save global settings.
+let initialSettings: { showCalendar: boolean; showNews: boolean } | undefined
+let postIds: number[] = []
+
+test.afterEach(async ({ page }) => {
+  // Teardown has its own budget, so a failed assertion keeps its original error.
+  test.setTimeout(60_000)
+  for (const id of postIds) {
+    const deleted = await page.request.delete(`/api/posts/${id}`)
+    expect(deleted.ok()).toBeTruthy()
+  }
+  if (initialSettings) {
+    const restored = await page.request.post('/api/globals/home-settings', {
+      data: initialSettings,
+    })
+    expect(restored.ok()).toBeTruthy()
+  }
+})
+
+// Use the same seeded admin as the rest of the E2E suite, including CI.
+// Run against an isolated database: these cases save global settings.
 test('admin can independently hide calendar and news in both languages', async ({
   browser,
   page,
@@ -12,9 +32,16 @@ test('admin can independently hide calendar and news in both languages', async (
   test.setTimeout(180_000)
   const screenshots = process.env.HOME_VISIBILITY_SCREENSHOTS || testInfo.outputPath('screenshots')
   await mkdir(screenshots, { recursive: true })
+  initialSettings = undefined
+  postIds = []
+  await login({ page, user: testUser })
   const initialResponse = await page.request.get('/api/globals/home-settings')
   expect(initialResponse.ok()).toBeTruthy()
   const initial = await initialResponse.json()
+  initialSettings = {
+    showCalendar: initial.showCalendar !== false,
+    showNews: initial.showNews !== false,
+  }
   const visitor = await browser.newContext({ reducedMotion: 'reduce' })
   const home = await visitor.newPage()
 
@@ -24,7 +51,21 @@ test('admin can independently hide calendar and news in both languages', async (
     })
     expect(denied.status()).toBe(403)
 
-    await login({ page, user: DEV_ADMIN })
+    // CI starts from ci-base, which does not inherit the development news.
+    for (let i = 0; i < 3; i++) {
+      const created = await page.request.post('/api/posts?locale=uk', {
+        data: {
+          title: `E2E Home Visibility ${i + 1}`,
+          slug: `e2e-home-visibility-${Date.now()}-${i}`,
+          content: minimalLexicalContent,
+          _status: 'published',
+          publishedAt: new Date().toISOString(),
+        },
+      })
+      expect(created.ok()).toBeTruthy()
+      const { doc } = await created.json()
+      postIds.push(doc.id)
+    }
     // Start from a different state so the first case also exercises Save.
     const baseline = await page.request.post('/api/globals/home-settings', {
       data: { showCalendar: false, showNews: false },
@@ -96,10 +137,6 @@ test('admin can independently hide calendar and news in both languages', async (
       }
     }
   } finally {
-    // Keep repeat runs and other tests independent of the final hidden state.
-    await page.request.post('/api/globals/home-settings', {
-      data: { showCalendar: initial.showCalendar !== false, showNews: initial.showNews !== false },
-    })
     await visitor.close()
   }
 })
