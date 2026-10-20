@@ -7,7 +7,7 @@ import type { SiteLocale } from './locales'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0, locale?: SiteLocale) {
+async function getGlobal<T extends Global>(slug: T, depth = 0, locale?: SiteLocale) {
   const payload = await getPayload({ config: configPromise })
 
   const global = await payload.findGlobal({
@@ -19,7 +19,7 @@ async function getGlobal(slug: Global, depth = 0, locale?: SiteLocale) {
   return global
 }
 
-export const getCachedGlobal = (slug: Global, depth = 0, locale?: SiteLocale) =>
+export const getCachedGlobal = <T extends Global>(slug: T, depth = 0, locale?: SiteLocale) =>
   unstable_cache(async () => getGlobal(slug, depth, locale), [slug, locale ?? ''], {
     tags: [`global_${slug}`],
   })

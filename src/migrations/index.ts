@@ -21,6 +21,7 @@ import * as migration_20260724_170000_audit_access_and_indexes from './20260724_
 import * as migration_20260724_190000_rate_limit from './20260724_190000_rate_limit';
 import * as migration_20260724_200000_backfill_blob_urls from './20260724_200000_backfill_blob_urls';
 import * as migration_20260729_100000_backfill_user_roles from './20260729_100000_backfill_user_roles';
+import * as migration_20261020_100000_home_settings from './20261020_100000_home_settings';
 
 export const migrations = [
   {
@@ -137,5 +138,10 @@ export const migrations = [
     up: migration_20260729_100000_backfill_user_roles.up,
     down: migration_20260729_100000_backfill_user_roles.down,
     name: '20260729_100000_backfill_user_roles',
+  },
+  {
+    up: migration_20261020_100000_home_settings.up,
+    down: migration_20261020_100000_home_settings.down,
+    name: '20261020_100000_home_settings',
   },
 ];
